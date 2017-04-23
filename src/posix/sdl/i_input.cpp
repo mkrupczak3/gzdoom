@@ -280,7 +280,11 @@ void MessagePump (const SDL_Event &sev)
 		{
 			case SDL_WINDOWEVENT_FOCUS_GAINED:
 			case SDL_WINDOWEVENT_FOCUS_LOST:
+#ifdef __ANDROID__ // FIX THIS, makes game paused
+			    S_SetSoundPaused(1);
+#else
 				S_SetSoundPaused(sev.window.event == SDL_WINDOWEVENT_FOCUS_GAINED);
+#endif
 				break;
 		}
 		break;

@@ -82,6 +82,9 @@ static void CollectExtensions()
 		for (int i = 0; i < max; i++)
 		{
 			extension = (const char*)glGetStringi(GL_EXTENSIONS, i);
+#ifdef __MOBILE__
+			extension = "";
+#endif
 			m_Extensions.Push(FString(extension));
 		}
 	}
@@ -132,13 +135,14 @@ void gl_LoadExtensions()
 
 	const char *glversion = (const char*)glGetString(GL_VERSION);
 	gl.es = false;
-	
+
+#ifndef __MOBILE__ // Not using this for now..
 	if (glversion && strlen(glversion) > 10 && memcmp(glversion, "OpenGL ES ", 10) == 0)
 	{
 		glversion += 10;
 		gl.es = true;
 	}
-
+#endif
 	const char *version = Args->CheckValue("-glversion");
 
 	if (version == NULL)
@@ -179,6 +183,10 @@ void gl_LoadExtensions()
 	}
 	else
 	{
+
+#ifdef __MOBILE__
+        gl.glslversion = 0;
+#else
 		// Don't even start if it's lower than 2.0 or no framebuffers are available (The framebuffer extension is needed for glGenerateMipmapsEXT!)
 		if ((gl_version < 2.0f || !CheckExtension("GL_EXT_framebuffer_object")) && gl_version < 3.0f)
 		{
@@ -189,6 +197,7 @@ void gl_LoadExtensions()
 
 		// add 0.01 to account for roundoff errors making the number a tad smaller than the actual version
 		gl.glslversion = strtod((char*)glGetString(GL_SHADING_LANGUAGE_VERSION), NULL) + 0.01f;
+#endif
 
 		gl.vendorstring = (char*)glGetString(GL_VENDOR);
 

@@ -46,7 +46,9 @@
 
 #include <sys/types.h>
 #include <sys/wait.h>
+#ifndef __ANDROID__
 #include <wordexp.h>
+#endif
 #include <signal.h>
 
 int ChildQuit;
@@ -448,6 +450,10 @@ bool TimidityPPMIDIDevice::ValidateTimidity()
 
 bool TimidityPPMIDIDevice::LaunchTimidity ()
 {
+#ifdef __MOBILE__
+    return false;
+
+
 	if (CommandLine.IsEmpty())
 	{
 		return false;
@@ -455,7 +461,7 @@ bool TimidityPPMIDIDevice::LaunchTimidity ()
 
 	DPrintf (DMSG_NOTIFY, "cmd: \x1cG%s\n", CommandLine.GetChars());
 
-#ifdef _WIN32
+#elif _WIN32
 	STARTUPINFO startup = { sizeof(startup), };
 	PROCESS_INFORMATION procInfo;
 

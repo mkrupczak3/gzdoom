@@ -427,7 +427,9 @@ void GLPortal::End(bool usestencil)
 
 		gl_RenderState.ResetColor();
 		glDepthFunc(GL_LEQUAL);
+#ifndef __MOBILE__ // Makes stuff see through...
 		glDepthRange(0, 1);
+#endif
 		{
 			ScopedColorMask colorMask(0, 0, 0, 1); // mark portal in alpha channel but don't touch color
 			gl_RenderState.SetEffect(EFF_STENCIL);

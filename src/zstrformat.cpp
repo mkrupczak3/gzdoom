@@ -694,7 +694,11 @@ fp_begin:
 			dblarg = va_arg(arglist, double);
 			obuff = dtoaresult = dtoa(dblarg, type != 'H' ? (expchar ? 2 : 3) : 0, precision, &expt, &signflag, &dtoaend);
 //fp_common:
+#ifdef __ANDROID__
+			decimal_point = ".";
+#else
 			decimal_point = localeconv()->decimal_point;
+#endif
 			flags |= F_SIGNED;
 			if (signflag)
 			{

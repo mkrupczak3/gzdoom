@@ -39,7 +39,9 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <unistd.h>
+#ifndef __ANDROID__ // No wordexp in Android
 #include <wordexp.h>
+#endif
 #include "mus2midi.h"
 extern void ChildSigHandler (int signum);
 #endif

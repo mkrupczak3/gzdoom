@@ -116,11 +116,12 @@ FGLPostProcessState::~FGLPostProcessState()
 	else
 		glDisable(GL_MULTISAMPLE);
 
+#ifndef __MOBILE__
 	glBlendEquationSeparate(blendEquationRgb, blendEquationAlpha);
 	glBlendFuncSeparate(blendSrcRgb, blendDestRgb, blendSrcAlpha, blendDestAlpha);
 
 	glUseProgram(currentProgram);
-
+#endif
 	// Fully unbind to avoid incomplete texture warnings from Nvidia's driver when gl_debug_level 4 is active
 	for (unsigned int i = 0; i < textureBinding.Size(); i++)
 	{

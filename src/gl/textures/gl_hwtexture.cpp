@@ -213,7 +213,9 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 
 	if (mipmap && TexFilter[gl_texture_filter].mipmapping)
 	{
+#ifndef __MOBILE__
 		glGenerateMipmap(GL_TEXTURE_2D);
+#endif
 		glTex->mipmapped = true;
 	}
 

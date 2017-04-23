@@ -437,6 +437,7 @@ int FIWadManager::IdentifyVersion (TArray<FString> &wadfiles, const char *iwad, 
 				}
 			}
 		}
+#ifndef __MOBILE__
 		TArray<FString> gog_paths = I_GetGogPaths();
 		for (i = 0; i < gog_paths.Size(); ++i)
 		{
@@ -447,6 +448,7 @@ int FIWadManager::IdentifyVersion (TArray<FString> &wadfiles, const char *iwad, 
 		{
 			CheckIWAD (steam_path[i], &wads[0]);
 		}
+#endif
 	}
 
 	if (iwadparm != NULL && !wads[0].Path.IsEmpty())

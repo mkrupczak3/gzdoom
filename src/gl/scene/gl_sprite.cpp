@@ -447,7 +447,9 @@ void GLSprite::Draw(int pass)
 		}
 		else
 		{
+#ifndef __MOBILE__	//Models crash because glUnmapbuffer is not availiable, need to fix
 			gl_RenderModel(this);
+#endif
 		}
 	}
 

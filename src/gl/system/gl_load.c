@@ -40,6 +40,42 @@ static void* PosixGetProcAddress (const GLubyte* name)
 }
 #endif /* __sgi || __sun || __unix__ */
 
+#ifdef __MOBILE__
+
+#include <android/log.h>
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"JNITouchControlsUtils", __VA_ARGS__))
+
+static void CATCH(int a, int b, int c, int d, int e)
+{
+	LOGI("CAUGHT BAD");
+}
+
+static void* PosixGetProcAddressMobile (const GLubyte* name)
+{
+  static void* h = NULL;
+  static void* gpa;
+
+  if (h == NULL)
+  {
+    if ((h = dlopen(NULL, RTLD_LAZY | RTLD_LOCAL)) == NULL) return NULL;
+    gpa = dlsym(h, "glXGetProcAddress");
+  }
+
+  char newName[64];
+  memset(newName,0,64);
+  sprintf(newName,"jwzgles_%s",name);
+  LOGI("Loading.. %s", newName);
+  void * ret = 0;
+  if (gpa != NULL)
+    ret =  ((void*(*)(const GLubyte*))gpa)(newName);
+  else
+    ret =  dlsym(h, (const char*)newName);
+  if(! ret )
+   ret = CATCH;
+  return ret;
+}
+#endif
+
 #if defined(_WIN32)
 
 #ifdef APIENTRY
@@ -84,7 +120,9 @@ static PROC WinGetProcAddress(const char *name)
 	#if defined(__APPLE__)
 		#define IntGetProcAddress(name) AppleGLGetProcAddress(name)
 	#else
-		#if defined(__sgi) || defined(__sun) || defined(__unix__)
+	    #if defined(__MOBILE__)
+	        #define IntGetProcAddress(name) PosixGetProcAddressMobile((const GLubyte*)name)
+		#elif defined(__sgi) || defined(__sun) || defined(__unix__)
 			#define IntGetProcAddress(name) PosixGetProcAddress((const GLubyte*)name)
 /* END OF MANUAL CHANGES, DO NOT REMOVE! */
 		#else /* GLX */
@@ -2516,11 +2554,14 @@ int ogl_LoadFunctions()
 {
 	int numFailed = 0;
 	ClearExtensionVars();
-	
+#ifdef __MOBILE__
+    void jwzgles_reset (void);
+    jwzgles_reset();
+#endif
 	_ptrc_glGetIntegerv = (void (CODEGEN_FUNCPTR *)(GLenum, GLint *))IntGetProcAddress("glGetIntegerv");
 	if(!_ptrc_glGetIntegerv) return ogl_LOAD_FAILED;
 	_ptrc_glGetStringi = (const GLubyte * (CODEGEN_FUNCPTR *)(GLenum, GLuint))IntGetProcAddress("glGetStringi");
-
+#ifndef __MOBILE__
 	if (0 == ProcExtsFromExtList())
 	{
 		_ptrc_glGetString = (const GLubyte * (CODEGEN_FUNCPTR *)(GLenum))IntGetProcAddress("glGetString");
@@ -2528,7 +2569,7 @@ int ogl_LoadFunctions()
 
 		ProcExtsFromExtString((const char *)_ptrc_glGetString(GL_EXTENSIONS));
 	}
-
+#endif
 	numFailed = Load_Version_3_3();
 	
 	if(numFailed == 0)
