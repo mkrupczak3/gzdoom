@@ -41,6 +41,7 @@ struct _ native	// These are the global variables, the struct is only here to av
 	native ui float BackbuttonAlpha;
 	native readonly int Net_Arbitrator;
 	native ui BaseStatusBar StatusBar;
+	native readonly Weapon WP_NOCHANGE;
 	
 }
 
@@ -92,6 +93,8 @@ struct TexMan
 	native static Vector2 GetScaledSize(TextureID tex);
 	native static Vector2 GetScaledOffset(TextureID tex);
 	native static int CheckRealHeight(TextureID tex);
+
+	native static void SetCameraToTexture(Actor viewpoint, String texture, int fov);
 }
 
 enum DrawTextureTags
@@ -257,6 +260,7 @@ struct Translation version("2.4")
 	
 	native int AddTranslation();
 	native static bool SetPlayerTranslation(int group, int num, int plrnum, PlayerClass pclass);
+	native static int GetID(Name transname);
 	static int MakeID(int group, int num)
 	{
 		return (group << 16) + num;
@@ -286,7 +290,8 @@ struct CVar native
 		CVAR_Color,
 	};
 
-	native static CVar FindCVar(Name name, PlayerInfo player = null);
+	native static CVar FindCVar(Name name);
+	native static CVar GetCVar(Name name, PlayerInfo player = null);
 	native int GetInt();
 	native double GetFloat();
 	native String GetString();
@@ -340,7 +345,6 @@ class Object native
 	native static uint MSTime();
 	native vararg static void ThrowAbortException(String fmt, ...);
 
-	native Name GetClassName();
 	native virtualscope void Destroy();
 
 	// This does not call into the native method of the same name to avoid problems with objects that get garbage collected late on shutdown.
@@ -641,15 +645,29 @@ struct StringStruct native
 	native vararg void AppendFormat(String fmt, ...);
 
 	native void Replace(String pattern, String replacement);
-	native String Left(int len);
-	native String Mid(int pos = 0, int len = 2147483647);
+	native String Left(int len) const;
+	native String Mid(int pos = 0, int len = 2147483647) const;
 	native void Truncate(int newlen);
-	native String CharAt(int pos);
-	native int CharCodeAt(int pos);
+	native String CharAt(int pos) const;
+	native int CharCodeAt(int pos) const;
 	native String Filter();
 }
 
-class Floor : Thinker native
+class SectorEffect : Thinker native
+{
+	native protected Sector m_Sector;
+}
+
+class Mover : SectorEffect native
+{}
+
+class MovingFloor : Mover native
+{}
+
+class MovingCeiling : Mover native
+{}
+
+class Floor : MovingFloor native
 {
 	// only here so that some constants and functions can be added. Not directly usable yet.
 	enum EFloor
@@ -694,7 +712,7 @@ class Floor : Thinker native
 	native static bool CreateFloor(sector sec, EFloor floortype, line ln, double speed, double height = 0, int crush = -1, int change = 0, bool crushmode = false, bool hereticlower = false);
 }
 
-class Ceiling : Thinker native
+class Ceiling : MovingCeiling native
 {
 	enum ECeiling
 	{
@@ -747,11 +765,6 @@ struct LookExParams
 	int flags;
 	State seestate;
 };
-
-class SectorEffect : Thinker native
-{
-	native protected Sector m_Sector;
-}
 
 class Lighting : SectorEffect native
 {

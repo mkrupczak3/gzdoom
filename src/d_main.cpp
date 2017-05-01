@@ -1,20 +1,22 @@
-// Emacs style mode select	 -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id:$
+// Copyright 1993-1996 id Software
+// Copyright 1999-2016 Randy Heit
+// Copyright 2002-2016 Christoph Oelckers
 //
-// Copyright (C) 1993-1996 by id Software, Inc.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// This source is available for distribution and/or modification
-// only under the terms of the DOOM Source Code License as
-// published by id Software. All rights reserved.
-//
-// The source is distributed in the hope that it will be useful,
+// This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// FITNESS FOR A PARTICULAR PURPOSE. See the DOOM Source Code License
-// for more details.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-// $Log:$
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see http://www.gnu.org/licenses/
+//
 //
 // DESCRIPTION:
 //		DOOM main program (D_DoomMain) and game loop (D_DoomLoop),
@@ -112,6 +114,8 @@
 #include "g_levellocals.h"
 #include "events.h"
 #include "r_utility.h"
+#include "vm.h"
+#include "types.h"
 
 EXTERN_CVAR(Bool, hud_althud)
 void DrawHUD();
@@ -128,6 +132,7 @@ extern void M_SetDefaultMode ();
 extern void G_NewInit ();
 extern void SetupPlayerClasses ();
 extern void HUD_InitHud();
+void DeinitMenus();
 const FIWADInfo *D_FindIWAD(TArray<FString> &wadfiles, const char *iwad, const char *basewad);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -1768,7 +1773,7 @@ bool ConsiderPatches (const char *arg)
 //
 //==========================================================================
 
-FExecList *D_MultiExec (DArgs *list, FExecList *exec)
+FExecList *D_MultiExec (FArgs *list, FExecList *exec)
 {
 	for (int i = 0; i < list->NumArgs(); ++i)
 	{
@@ -1978,7 +1983,8 @@ static void SetMapxxFlag()
 
 static void FinalGC()
 {
-	Args = NULL;
+	delete Args;
+	Args = nullptr;
 	GC::FinalGC = true;
 	GC::FullGC();
 	GC::DelSoftRootHead();	// the soft root head will not be collected by a GC so we have to do it explicitly
@@ -2262,7 +2268,6 @@ void D_DoomMain (void)
 	int p;
 	const char *v;
 	const char *wad;
-	DArgs *execFiles;
 	TArray<FString> pwads;
 	FString *args;
 	int argcount;	
@@ -2370,13 +2375,15 @@ void D_DoomMain (void)
 
 		// Process automatically executed files
 		FExecList *exec;
-		execFiles = new DArgs;
+		FArgs *execFiles = new FArgs;
 		GameConfig->AddAutoexec(execFiles, gameinfo.ConfigName);
 		exec = D_MultiExec(execFiles, NULL);
+		delete execFiles;
 
 		// Process .cfg files at the start of the command line.
 		execFiles = Args->GatherFiles ("-exec");
 		exec = D_MultiExec(execFiles, exec);
+		delete execFiles;
 
 		// [RH] process all + commands on the command line
 		exec = C_ParseCmdLineParams(exec);
@@ -2507,6 +2514,9 @@ void D_DoomMain (void)
 		if (!batchrun) Printf ("DecalLibrary: Load decals.\n");
 		DecalLibrary.ReadAllDecals ();
 
+		// Load embedded Dehacked patches
+		D_LoadDehLumps(FromIWAD);
+
 		// [RH] Add any .deh and .bex files on the command line.
 		// If there are none, try adding any in the config file.
 		// Note that the command line overrides defaults from the config.
@@ -2528,7 +2538,7 @@ void D_DoomMain (void)
 		}
 
 		// Load embedded Dehacked patches
-		D_LoadDehLumps();
+		D_LoadDehLumps(FromPWADs);
 
 		// Create replacements for dehacked pickups
 		FinishDehPatch();
@@ -2727,6 +2737,7 @@ void D_DoomMain (void)
 		C_ClearAliases();				// CCMDs won't be reinitialized so these need to be deleted here
 		DestroyCVarsFlagged(CVAR_MOD);	// Delete any cvar left by mods
 		FS_Close();						// destroy the global FraggleScript.
+		DeinitMenus();
 
 		GC::FullGC();					// clean up before taking down the object list.
 
@@ -2738,14 +2749,13 @@ void D_DoomMain (void)
 			*(afunc->VMPointer) = NULL;
 		}
 
+		GC::DelSoftRootHead();
+
 		PClass::StaticShutdown();
 
 		GC::FullGC();					// perform one final garbage collection after shutdown
 
-		for (DObject *obj = GC::Root; obj; obj = obj->ObjNext)
-		{
-			obj->ClearClass();	// Delete the Class pointer because the data it points to has been deleted. This will automatically be reset if needed.
-		}
+		assert(GC::Root == nullptr);
 
 		restart++;
 		PClass::bShutdown = false;

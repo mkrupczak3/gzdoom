@@ -1,16 +1,23 @@
-// Emacs style mode select	 -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// Copyright (C) 1993-1996 by id Software, Inc.
+// Copyright 1993-1996 id Software
+// Copyright 1999-2016 Randy Heit
+// Copyright 2002-2016 Christoph Oelckers
 //
-// This source is available for distribution and/or modification
-// only under the terms of the DOOM Source Code License as
-// published by id Software. All rights reserved.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// The source is distributed in the hope that it will be useful,
+// This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// FITNESS FOR A PARTICULAR PURPOSE. See the DOOM Source Code License
-// for more details.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see http://www.gnu.org/licenses/
+//
+//-----------------------------------------------------------------------------
 //
 // DESCRIPTION:
 //		The not so system specific sound interface.
@@ -393,18 +400,6 @@ void S_SetEnvironment (const ReverbContainer *settings);
 ReverbContainer *S_FindEnvironment (const char *name);
 ReverbContainer *S_FindEnvironment (int id);
 void S_AddEnvironment (ReverbContainer *settings);
-
-enum EMidiDevice
-{
-	MDEV_DEFAULT = -1,
-	MDEV_MMAPI = 0,
-	MDEV_OPL = 1,
-	MDEV_SNDSYS = 2,
-	MDEV_TIMIDITY = 3,
-	MDEV_FLUIDSYNTH = 4,
-	MDEV_GUS = 5,
-	MDEV_WILDMIDI = 6,
-};
 
 struct MidiDeviceSetting
 {

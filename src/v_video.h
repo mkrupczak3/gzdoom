@@ -198,9 +198,8 @@ struct VMVa_List
 //
 // [RH] Made screens more implementation-independant:
 //
-class DCanvas : public DObject
+class DCanvas
 {
-	DECLARE_ABSTRACT_CLASS (DCanvas, DObject)
 public:
 	DCanvas (int width, int height, bool bgra);
 	virtual ~DCanvas ();
@@ -317,7 +316,7 @@ private:
 
 class DSimpleCanvas : public DCanvas
 {
-	DECLARE_CLASS (DSimpleCanvas, DCanvas)
+	typedef DCanvas Super;
 public:
 	DSimpleCanvas (int width, int height, bool bgra);
 	~DSimpleCanvas ();
@@ -357,7 +356,7 @@ public:
 
 class DFrameBuffer : public DSimpleCanvas
 {
-	DECLARE_ABSTRACT_CLASS (DFrameBuffer, DSimpleCanvas)
+	typedef DSimpleCanvas Super;
 public:
 	DFrameBuffer (int width, int height, bool bgra);
 
@@ -535,6 +534,7 @@ void V_Init2 ();
 void V_Shutdown ();
 
 class FScanner;
+struct FScriptPosition;
 // Returns the closest color to the one desired. String
 // should be of the form "rr gg bb".
 int V_GetColorFromString (const uint32_t *palette, const char *colorstring, FScriptPosition *sc = nullptr);

@@ -130,7 +130,6 @@ void PortableAction(int state, int action)
 	}
 	else
 	{
-
 		if ((action >= PORT_ACT_CUSTOM_0) && (action <= PORT_ACT_CUSTOM_7))
 		{
 			PortableKeyEvent(state, SDL_SCANCODE_A + action - PORT_ACT_CUSTOM_0, 0);
@@ -237,27 +236,22 @@ void PortableAction(int state, int action)
 	}
 }
 
-int mdx=0,mdy=0;
-void PortableMouse(float dx,float dy)
-{
-	dx *= 1500;
-	dy *= 1200;
-
-	mdx += dx;
-	mdy += dy;
-}
-
-int absx=0,absy=0;
-void PortableMouseAbs(float x,float y)
-{
-	absx = x;
-	absy = y;
-}
-
 
 // =================== FORWARD and SIDE MOVMENT ==============
 
-float forwardmove_android, sidemove_android; //Joystick mode
+//Move left/right fwd/back
+static float forwardmove_android = 0;
+static float sidemove_android = 0;
+
+//Look up and down
+static int look_pitch_mode = LOOK_MODE_MOUSE;
+static float look_pitch_mouse = 0;
+static float look_pitch_joy = 0;
+
+//left right
+static int look_yaw_mode;
+static float look_yaw_mouse = 0;
+static float look_yaw_joy = 0;
 
 void PortableMoveFwd(float fwd)
 {
@@ -287,9 +281,7 @@ void PortableMove(float fwd, float strafe)
 
 //======================================================================
 
-//Look up and down
-int look_pitch_mode;
-float look_pitch_mouse,look_pitch_abs,look_pitch_joy;
+
 void PortableLookPitch(int mode, float pitch)
 {
 	look_pitch_mode = mode;
@@ -298,18 +290,13 @@ void PortableLookPitch(int mode, float pitch)
 	case LOOK_MODE_MOUSE:
 		look_pitch_mouse += pitch;
 		break;
-	case LOOK_MODE_ABSOLUTE:
-		look_pitch_abs = pitch;
-		break;
 	case LOOK_MODE_JOYSTICK:
 		look_pitch_joy = pitch;
 		break;
 	}
 }
 
-//left right
-int look_yaw_mode;
-float look_yaw_mouse,look_yaw_joy;
+
 void PortableLookYaw(int mode, float yaw)
 {
 	look_yaw_mode = mode;
@@ -325,16 +312,16 @@ void PortableLookYaw(int mode, float yaw)
 }
 
 
-
-
-extern int main_android(int argc, char **argv);
-
+// Start game, does not return!
 void PortableInit(int argc,const char ** argv){
+
+    extern int main_android(int argc, char **argv);
 	main_android(argc,(char **)argv);
+
 }
 
 extern bool		automapactive;
-bool bindingbutton = false;
+static bool bindingbutton = false;
 
 touchscreemode_t PortableGetScreenMode()
 {
@@ -354,12 +341,11 @@ touchscreemode_t PortableGetScreenMode()
 	}
 	else
 		return TS_BLANK;
-
 }
 
 
-int PortableShowKeyboard(void){
-
+int PortableShowKeyboard(void)
+{
 	return 0;
 }
 
@@ -369,13 +355,16 @@ void PortableCommand(const char * cmd)
 	cmd_to_run = cmd;
 }
 
-float am_zoom = 0, am_pan_x = 0,am_pan_y = 0;
+static float am_zoom = 0;
+static float am_pan_x = 0;
+static float am_pan_y = 0;
+
 void PortableAutomapControl(float zoom, float x, float y)
 {
-	am_zoom += zoom;
-	am_pan_x += x;
-	am_pan_y += y;
-	LOGI("am_pan_x = %f",am_pan_x);
+	am_zoom += zoom * 5;
+	am_pan_x += x * 4000000;
+	am_pan_y += y * 4000000;
+	//LOGI("am_pan_x = %f",am_pan_x);
 }
 
 
@@ -404,7 +393,6 @@ extern void G_AddViewPitch (int look);
 
 void Mobile_IN_Move(ticcmd_t* cmd )
 {
-
 	cmd->ucmd.forwardmove  += forwardmove_android * forwardmove[1];
 	cmd->ucmd.sidemove  += sidemove_android   * sidemove[1];
 
@@ -425,11 +413,11 @@ void Mobile_IN_Move(ticcmd_t* cmd )
 	switch(look_yaw_mode)
 	{
 	case LOOK_MODE_MOUSE:
-		G_AddViewAngle(-look_yaw_mouse * 50000);
+		G_AddViewAngle(-look_yaw_mouse * 100000);
 		look_yaw_mouse = 0;
 		break;
 	case LOOK_MODE_JOYSTICK:
-		G_AddViewAngle(-look_yaw_joy * 1000);
+		G_AddViewAngle(-look_yaw_joy * 6000);
 		break;
 	}
 

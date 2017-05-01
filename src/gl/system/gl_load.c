@@ -53,25 +53,37 @@ static void CATCH(int a, int b, int c, int d, int e)
 static void* PosixGetProcAddressMobile (const GLubyte* name)
 {
   static void* h = NULL;
-  static void* gpa;
+  static void* gpa = NULL;
 
   if (h == NULL)
   {
-    if ((h = dlopen(NULL, RTLD_LAZY | RTLD_LOCAL)) == NULL) return NULL;
-    gpa = dlsym(h, "glXGetProcAddress");
+    if ((h = dlopen("libjwzgles_shared.so", RTLD_LAZY | RTLD_LOCAL)) == NULL)
+    {
+        LOGI("ERROR loading libjwzgles_shared");
+        return NULL;
+    }
+    //gpa = dlsym(h, "glXGetProcAddress");
   }
 
   char newName[64];
   memset(newName,0,64);
   sprintf(newName,"jwzgles_%s",name);
-  LOGI("Loading.. %s", newName);
+
   void * ret = 0;
   if (gpa != NULL)
     ret =  ((void*(*)(const GLubyte*))gpa)(newName);
   else
     ret =  dlsym(h, (const char*)newName);
-  if(! ret )
-   ret = CATCH;
+
+  if( !ret )
+  {
+    LOGI("Loading.. %s    FAIL", newName);
+    ret = CATCH;
+  }
+  else
+  {
+    LOGI("Loading.. %s    OK", newName);
+  }
   return ret;
 }
 #endif
@@ -123,7 +135,9 @@ static PROC WinGetProcAddress(const char *name)
 	    #if defined(__MOBILE__)
 	        #define IntGetProcAddress(name) PosixGetProcAddressMobile((const GLubyte*)name)
 		#elif defined(__sgi) || defined(__sun) || defined(__unix__)
-			#define IntGetProcAddress(name) PosixGetProcAddress((const GLubyte*)name)
+			void* SDL_GL_GetProcAddress(const char* proc);
+			#define IntGetProcAddress(name) SDL_GL_GetProcAddress((const char*)name)
+			//#define IntGetProcAddress(name) PosixGetProcAddress((const GLubyte*)name)
 /* END OF MANUAL CHANGES, DO NOT REMOVE! */
 		#else /* GLX */
 		    #include <GL/glx.h>

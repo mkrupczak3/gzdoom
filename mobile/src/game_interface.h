@@ -28,6 +28,8 @@ typedef enum
 } touchscreemode_t;
 
 
+void PortableInit(int argc,const char ** argv);
+
 int PortableKeyEvent(int state, int code ,int unitcode);
 void PortableAction(int state, int action);
 
@@ -36,15 +38,10 @@ void PortableMoveFwd(float fwd);
 void PortableMoveSide(float strafe);
 void PortableLookPitch(int mode, float pitch);
 void PortableLookYaw(int mode, float pitch);
+
 void PortableCommand(const char * cmd);
-
 void PortableAutomapControl(float zoom, float x, float y);
-
-void PortableInit(int argc,const char ** argv);
-void PortableFrame(void);
-
 int PortableShowKeyboard(void);
-
 touchscreemode_t PortableGetScreenMode();
 
 

@@ -42,6 +42,7 @@
 #include "i_system.h"
 #include "v_video.h"
 #include "g_level.h"
+#include "vm.h"
 
 gameinfo_t gameinfo;
 
@@ -370,6 +371,7 @@ void FMapInfoParser::ParseGameInfo()
 		GAMEINFOKEY_STRING_STAMPED(statusbarclass, "statusbarclass", statusbarclassfile)
 		GAMEINFOKEY_MUSIC(intermissionMusic, intermissionOrder, "intermissionMusic")
 		GAMEINFOKEY_STRING(CursorPic, "CursorPic")
+		GAMEINFOKEY_STRING(MessageBoxClass, "MessageBoxClass")
 		GAMEINFOKEY_BOOL(noloopfinalemusic, "noloopfinalemusic")
 		GAMEINFOKEY_BOOL(drawreadthis, "drawreadthis")
 		GAMEINFOKEY_BOOL(swapmenu, "swapmenu")

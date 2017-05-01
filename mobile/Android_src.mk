@@ -15,27 +15,6 @@ ifeq ($(BUILD_SERIAL),1)
 LOCAL_CPPFLAGS += -DANTI_HACK 
 endif
 
-#$(TOP_DIR)/GL \
-
-NON_GPL_SOURCE := \
-	r_poylmost.cpp 	\
-	r_bsp.cpp 	\
-	r_segs.cpp 	\
-	r_plane.cpp \
-	r_things.cpp \
-	r_draw.cpp \
-	r_drawt.cpp \
-	r_swrenderer.cpp \
-	r_3dfloors.cpp \
-	oplsynth/fmopl.cpp \
-	oplsynth/mlopl.cpp \
-	oplsynth/mlopl_io.cpp \
-	oplsynth/music_opldumper_mididevice.cpp \
-	oplsynth/music_opl_mididevice.cpp \
-	oplsynth/opl_mus_player.cpp \
-	oplsynth/dosbox/opl.cpp \
-	oplsynth/OPL3.cpp \
-	sound/music_mus_opl.cpp \
 	
 LOCAL_C_INCLUDES := \
  $(TOP_DIR)/ \
@@ -67,7 +46,7 @@ $(TOP_DIR)/jpeg8d \
 $(TOP_DIR)/Clibs_OpenTouch \
 $(TOP_DIR)/jwzgles \
 $(TOP_DIR)/MobileTouchControls  \
-
+$(GZDOOM_TOP_PATH)/mobile/src
 
 
 #############################################################################
@@ -77,8 +56,8 @@ $(TOP_DIR)/MobileTouchControls  \
 
 ANDROID_SRC_FILES = \
     ../mobile/src/game_interface.cpp \
-    ../mobile/src/touch_interface.cpp \
-    ../mobile/src/android_jni.cpp \
+    ../../common_interface/touch_interface.cpp \
+    ../../common_interface/android_jni.cpp \
     ../mobile/src/i_specialpaths_android.cpp
 
 PLAT_POSIX_SOURCES = \
@@ -103,7 +82,6 @@ FASTMATH_SOURCES = \
 	swrenderer/r_all.cpp \
 	polyrenderer/poly_all.cpp \
 	sound/oplsynth/opl_mus_player.cpp \
-	sound/fmodsound.cpp \
 	sound/mpg123_decoder.cpp \
 	sound/music_midi_base.cpp \
 	sound/oalsound.cpp \
@@ -173,7 +151,6 @@ PCH_SOURCES = \
 	dobject.cpp \
 	dobjgc.cpp \
 	dobjtype.cpp \
-	doomdef.cpp \
 	doomstat.cpp \
 	dsectoreffect.cpp \
 	dthinker.cpp \
@@ -234,7 +211,6 @@ PCH_SOURCES = \
 	p_mobj.cpp \
 	p_pillar.cpp \
 	p_plats.cpp \
-	p_portals.cpp \
 	p_pspr.cpp \
 	p_pusher.cpp \
 	p_saveg.cpp \
@@ -418,6 +394,7 @@ PCH_SOURCES = \
 	r_data/renderstyle.cpp \
 	r_data/r_interpolate.cpp \
 	scripting/symbols.cpp \
+	scripting/types.cpp \
 	scripting/thingdef.cpp \
 	scripting/thingdef_data.cpp \
 	scripting/thingdef_properties.cpp \
@@ -457,10 +434,10 @@ PCH_SOURCES = \
 	sound/musicformats/music_opl.cpp \
 	sound/musicformats/music_stream.cpp \
 	sound/oplsynth/fmopl.cpp \
-	sound/oplsynth/mlopl.cpp \
-	sound/oplsynth/mlopl_io.cpp \
 	sound/oplsynth/dosbox/opl.cpp \
 	sound/oplsynth/OPL3.cpp \
+	sound/oplsynth/oplio.cpp \
+	sound/oplsynth/musicblock.cpp \
 	sound/oplsynth/nukedopl3.cpp \
 	sound/timidity/common.cpp \
 	sound/timidity/instrum.cpp \
@@ -516,7 +493,7 @@ LOCAL_LDLIBS := -ldl -llog -lOpenSLES -lz -lGLESv1_CM
 
 LOCAL_LDLIBS +=  -lEGL
 LOCAL_STATIC_LIBRARIES := fluidsynth-static SDL2_net libjpeg lzma_dev gdtoa_dev dumb_dev gme_dev bzip2_dev
-LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 jwzgles_shared fmod
+LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 jwzgles_shared
 #fmod
 include $(BUILD_SHARED_LIBRARY)
 

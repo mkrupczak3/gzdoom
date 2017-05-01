@@ -33,7 +33,7 @@
 #endif
 
 /************ Begin %include sections from the grammar ************************/
-#line 2 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 39 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 
 // Allocates a new AST node off the parse state's arena.
 #define NEW_AST_NODE(type,name,tok) \
@@ -1833,7 +1833,7 @@ static void yy_destructor(
     case 151: /* SWITCH */
     case 152: /* CASE */
 {
-#line 79 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 116 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 
 #line 1839 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
 }
@@ -2490,61 +2490,61 @@ static void yy_reduce(
 /********** Begin reduce actions **********************************************/
         YYMINORTYPE yylhsminor;
       case 0: /* main ::= translation_unit */
-#line 135 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 172 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { stat->TopNode = yymsp[0].minor.yy392; DPrintf(DMSG_SPAMMY, "Parse complete\n"); }
 #line 2496 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 1: /* translation_unit ::= */
       case 29: /*class_innards ::= */ yytestcase(yyruleno==29);
       case 49: /*opt_struct_body ::= */ yytestcase(yyruleno==49);
-#line 138 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 175 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy392 = NULL; }
 #line 2503 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 2: /* translation_unit ::= translation_unit external_declaration */
       case 30: /*class_innards ::= class_innards class_member */ yytestcase(yyruleno==30);
-#line 139 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 176 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { SAFE_APPEND(yymsp[-1].minor.yy392,yymsp[0].minor.yy392); }
 #line 2509 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 3: /* translation_unit ::= error */
       case 50: /*opt_struct_body ::= error */ yytestcase(yyruleno==50);
-#line 141 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 178 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy392 = NULL; }
 #line 2515 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 4: /* external_declaration ::= class_definition */
-#line 144 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 181 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy392 = yymsp[0].minor.yy272; /*X-overwrites-A*/ }
 #line 2520 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 5: /* external_declaration ::= struct_def */
       case 33: /*class_member ::= struct_def */ yytestcase(yyruleno==33);
-#line 145 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 182 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy392 = yymsp[0].minor.yy505; /*X-overwrites-A*/ }
 #line 2526 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 6: /* external_declaration ::= enum_def */
       case 32: /*class_member ::= enum_def */ yytestcase(yyruleno==32);
       case 53: /*struct_member ::= enum_def */ yytestcase(yyruleno==53);
-#line 146 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 183 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy392 = yymsp[0].minor.yy245; /*X-overwrites-A*/ }
 #line 2533 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 7: /* external_declaration ::= const_def */
       case 36: /*class_member ::= const_def */ yytestcase(yyruleno==36);
       case 54: /*struct_member ::= const_def */ yytestcase(yyruleno==54);
-#line 147 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 184 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy392 = yymsp[0].minor.yy419; /*X-overwrites-A*/ }
 #line 2540 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 8: /* external_declaration ::= include_def */
-#line 148 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 185 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy392 = nullptr; }
 #line 2545 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 9: /* opt_expr ::= */
-#line 159 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 196 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	yymsp[1].minor.yy184 = NULL;
 }
@@ -2552,7 +2552,7 @@ static void yy_reduce(
         break;
       case 10: /* include_def ::= INCLUDE string_constant */
 {  yy_destructor(yypParser,51,&yymsp[-1].minor);
-#line 166 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 203 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	AddInclude(yymsp[0].minor.yy273);
 }
@@ -2560,7 +2560,7 @@ static void yy_reduce(
 }
         break;
       case 11: /* class_definition ::= class_head class_body */
-#line 180 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 217 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	yymsp[-1].minor.yy272->Body = yymsp[0].minor.yy392;
 	yymsp[-1].minor.yy272 = yymsp[-1].minor.yy272; /*X-overwrites-A*/
@@ -2569,7 +2569,7 @@ static void yy_reduce(
         break;
       case 12: /* class_head ::= EXTEND CLASS IDENTIFIER */
 {  yy_destructor(yypParser,52,&yymsp[-2].minor);
-#line 186 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 223 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(Class,head,yymsp[-1].minor.yy0);
 	head->NodeName = yymsp[0].minor.yy0.Name();
@@ -2585,7 +2585,7 @@ static void yy_reduce(
 }
         break;
       case 13: /* class_head ::= CLASS IDENTIFIER class_ancestry class_flags */
-#line 199 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 236 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(Class,head,yymsp[-3].minor.yy0);
 	head->NodeName = yymsp[-2].minor.yy0.Name();
@@ -2602,59 +2602,59 @@ static void yy_reduce(
         break;
       case 14: /* class_ancestry ::= */
       case 142: /*class_restrictor ::= */ yytestcase(yyruleno==142);
-#line 212 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 249 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy311 = NULL; }
 #line 2608 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 15: /* class_ancestry ::= COLON dottable_id */
 {  yy_destructor(yypParser,14,&yymsp[-1].minor);
-#line 213 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 250 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-1].minor.yy311 = yymsp[0].minor.yy311; /*yymsp[-1].minor.yy311-overwrites-yymsp[0].minor.yy311*/ }
 #line 2614 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
 }
         break;
       case 16: /* class_flags ::= */
-#line 216 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 253 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy271.Flags = 0; yymsp[1].minor.yy271.Replaces = NULL; yymsp[1].minor.yy271.Version = {0,0}; }
 #line 2620 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 17: /* class_flags ::= class_flags ABSTRACT */
-#line 217 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 254 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy271.Flags = yymsp[-1].minor.yy271.Flags | ZCC_Abstract; yylhsminor.yy271.Replaces = yymsp[-1].minor.yy271.Replaces; }
 #line 2625 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,55,&yymsp[0].minor);
   yymsp[-1].minor.yy271 = yylhsminor.yy271;
         break;
       case 18: /* class_flags ::= class_flags NATIVE */
-#line 218 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 255 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy271.Flags = yymsp[-1].minor.yy271.Flags | ZCC_Native; yylhsminor.yy271.Replaces = yymsp[-1].minor.yy271.Replaces; }
 #line 2632 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,56,&yymsp[0].minor);
   yymsp[-1].minor.yy271 = yylhsminor.yy271;
         break;
       case 19: /* class_flags ::= class_flags UI */
-#line 219 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 256 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy271.Flags = yymsp[-1].minor.yy271.Flags | ZCC_UIFlag; yylhsminor.yy271.Replaces = yymsp[-1].minor.yy271.Replaces; }
 #line 2639 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,57,&yymsp[0].minor);
   yymsp[-1].minor.yy271 = yylhsminor.yy271;
         break;
       case 20: /* class_flags ::= class_flags PLAY */
-#line 220 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 257 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy271.Flags = yymsp[-1].minor.yy271.Flags | ZCC_Play; yylhsminor.yy271.Replaces = yymsp[-1].minor.yy271.Replaces; }
 #line 2646 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,58,&yymsp[0].minor);
   yymsp[-1].minor.yy271 = yylhsminor.yy271;
         break;
       case 21: /* class_flags ::= class_flags REPLACES dottable_id */
-#line 221 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 258 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy271.Flags = yymsp[-2].minor.yy271.Flags; yylhsminor.yy271.Replaces = yymsp[0].minor.yy311; }
 #line 2653 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,59,&yymsp[-1].minor);
   yymsp[-2].minor.yy271 = yylhsminor.yy271;
         break;
       case 22: /* class_flags ::= class_flags VERSION LPAREN STRCONST RPAREN */
-#line 222 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 259 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy271.Flags = yymsp[-4].minor.yy271.Flags | ZCC_Version; yylhsminor.yy271.Replaces = yymsp[-4].minor.yy271.Replaces; yylhsminor.yy271.Version = yymsp[-1].minor.yy0.String->GetChars(); }
 #line 2660 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,60,&yymsp[-3].minor);
@@ -2665,7 +2665,7 @@ static void yy_reduce(
       case 23: /* dottable_id ::= IDENTIFIER */
       case 40: /*identifier_list ::= IDENTIFIER */ yytestcase(yyruleno==40);
       case 67: /*states_opt ::= IDENTIFIER */ yytestcase(yyruleno==67);
-#line 230 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 267 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(Identifier,id,yymsp[0].minor.yy0);
 	id->Id = yymsp[0].minor.yy0.Name();
@@ -2675,7 +2675,7 @@ static void yy_reduce(
   yymsp[0].minor.yy311 = yylhsminor.yy311;
         break;
       case 24: /* dottable_id ::= dottable_id DOT IDENTIFIER */
-#line 236 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 273 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(Identifier,id2,yymsp[-2].minor.yy311);
 	id2->Id = yymsp[0].minor.yy0.Name();
@@ -2686,7 +2686,7 @@ static void yy_reduce(
   yy_destructor(yypParser,44,&yymsp[-1].minor);
         break;
       case 25: /* dottable_id ::= dottable_id DOT DEFAULT */
-#line 243 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 280 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(Identifier,id2,yymsp[-2].minor.yy311);
 	id2->Id = NAME_Default;
@@ -2698,7 +2698,7 @@ static void yy_reduce(
   yy_destructor(yypParser,63,&yymsp[0].minor);
         break;
       case 26: /* dottable_id ::= dottable_id DOT COLOR */
-#line 254 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 291 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(Identifier,id2,yymsp[-2].minor.yy311);
 	id2->Id = NAME_Color;
@@ -2711,7 +2711,7 @@ static void yy_reduce(
         break;
       case 27: /* class_body ::= SEMICOLON class_innards EOF */
 {  yy_destructor(yypParser,49,&yymsp[-2].minor);
-#line 271 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 308 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-2].minor.yy392 = yymsp[-1].minor.yy392; /*yymsp[-2].minor.yy392-overwrites-yymsp[-1].minor.yy392*/ }
 #line 2717 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,48,&yymsp[0].minor);
@@ -2719,7 +2719,7 @@ static void yy_reduce(
         break;
       case 28: /* class_body ::= LBRACE class_innards RBRACE */
 {  yy_destructor(yypParser,65,&yymsp[-2].minor);
-#line 272 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 309 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-2].minor.yy392 = yymsp[-1].minor.yy392; /*yymsp[-2].minor.yy392-overwrites-yymsp[-1].minor.yy392*/ }
 #line 2725 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,66,&yymsp[0].minor);
@@ -2727,32 +2727,32 @@ static void yy_reduce(
         break;
       case 31: /* class_member ::= declarator */
       case 52: /*struct_member ::= declarator */ yytestcase(yyruleno==52);
-#line 283 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 320 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy392 = yymsp[0].minor.yy401; /*X-overwrites-A*/ }
 #line 2733 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 34: /* class_member ::= states_def */
-#line 286 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 323 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy392 = yymsp[0].minor.yy86; /*X-overwrites-A*/ }
 #line 2738 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 35: /* class_member ::= default_def */
-#line 287 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 324 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy392 = yymsp[0].minor.yy45; /*X-overwrites-A*/ }
 #line 2743 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 37: /* class_member ::= property_def */
-#line 289 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 326 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy392 = yymsp[0].minor.yy291; /*X-overwrites-A*/ }
 #line 2748 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 38: /* class_member ::= staticarray_statement */
-#line 290 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 327 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy392 = yymsp[0].minor.yy82; /*X-overwrites-A*/ }
 #line 2753 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 39: /* property_def ::= PROPERTY IDENTIFIER COLON identifier_list SEMICOLON */
-#line 302 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 339 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(Property,def,yymsp[-4].minor.yy0);
 	def->NodeName = yymsp[-3].minor.yy0.Name();
@@ -2766,7 +2766,7 @@ static void yy_reduce(
         break;
       case 41: /* identifier_list ::= states_opt COMMA IDENTIFIER */
       case 68: /*states_opt ::= states_opt COMMA IDENTIFIER */ yytestcase(yyruleno==68);
-#line 317 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 354 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(Identifier,id,yymsp[0].minor.yy0);
 	id->Id = yymsp[0].minor.yy0.Name();
@@ -2777,7 +2777,7 @@ static void yy_reduce(
   yy_destructor(yypParser,50,&yymsp[-1].minor);
         break;
       case 42: /* struct_def ::= STRUCT IDENTIFIER struct_flags LBRACE opt_struct_body RBRACE opt_semicolon */
-#line 325 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 362 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(Struct,def,yymsp[-6].minor.yy0);
 	def->NodeName = yymsp[-5].minor.yy0.Name();
@@ -2794,40 +2794,40 @@ static void yy_reduce(
   yymsp[-6].minor.yy505 = yylhsminor.yy505;
         break;
       case 43: /* struct_flags ::= */
-#line 337 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 374 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy271.Flags = 0; yymsp[1].minor.yy271.Version = {0, 0}; }
 #line 2800 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 44: /* struct_flags ::= struct_flags UI */
-#line 338 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 375 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy271.Flags = yymsp[-1].minor.yy271.Flags | ZCC_UIFlag; }
 #line 2805 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,57,&yymsp[0].minor);
   yymsp[-1].minor.yy271 = yylhsminor.yy271;
         break;
       case 45: /* struct_flags ::= struct_flags PLAY */
-#line 339 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 376 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy271.Flags = yymsp[-1].minor.yy271.Flags | ZCC_Play; }
 #line 2812 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,58,&yymsp[0].minor);
   yymsp[-1].minor.yy271 = yylhsminor.yy271;
         break;
       case 46: /* struct_flags ::= struct_flags CLEARSCOPE */
-#line 340 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 377 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy271.Flags = yymsp[-1].minor.yy271.Flags | ZCC_ClearScope; }
 #line 2819 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,69,&yymsp[0].minor);
   yymsp[-1].minor.yy271 = yylhsminor.yy271;
         break;
       case 47: /* struct_flags ::= struct_flags NATIVE */
-#line 341 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 378 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy271.Flags = yymsp[-1].minor.yy271.Flags | ZCC_Native; }
 #line 2826 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,56,&yymsp[0].minor);
   yymsp[-1].minor.yy271 = yylhsminor.yy271;
         break;
       case 48: /* struct_flags ::= struct_flags VERSION LPAREN STRCONST RPAREN */
-#line 342 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 379 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy271.Flags = yymsp[-4].minor.yy271.Flags | ZCC_Version; yylhsminor.yy271.Version = yymsp[-1].minor.yy0.String->GetChars(); }
 #line 2833 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,60,&yymsp[-3].minor);
@@ -2836,12 +2836,12 @@ static void yy_reduce(
   yymsp[-4].minor.yy271 = yylhsminor.yy271;
         break;
       case 51: /* struct_body ::= struct_body struct_member */
-#line 350 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 387 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-1].minor.yy392 = yymsp[-1].minor.yy392; /*X-overwrites-A*/ AppendTreeNodeSibling(yymsp[-1].minor.yy392, yymsp[0].minor.yy392); }
 #line 2842 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 55: /* const_def ::= CONST IDENTIFIER EQ expr SEMICOLON */
-#line 359 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 396 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ConstantDef,def,yymsp[-4].minor.yy0);
 	def->NodeName = yymsp[-3].minor.yy0.Name();
@@ -2855,7 +2855,7 @@ static void yy_reduce(
   yymsp[-4].minor.yy419 = yylhsminor.yy419;
         break;
       case 56: /* enum_def ::= ENUM IDENTIFIER enum_type LBRACE opt_enum_list RBRACE opt_semicolon */
-#line 376 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 413 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(Enum,def,yymsp[-6].minor.yy0);
 	def->NodeName = yymsp[-5].minor.yy0.Name();
@@ -2886,7 +2886,7 @@ static void yy_reduce(
 			// Compute implicit values by adding one to the preceding value.
 			assert(prev->Value != NULL);
 			// If the preceding node is a constant, then we can do this now.
-			if (prev->Value->Operation == PEX_ConstValue && prev->Value->Type->IsA(RUNTIME_CLASS(PInt)))
+			if (prev->Value->Operation == PEX_ConstValue && prev->Value->Type->isInt())
 			{
 				NEW_INTCONST_NODE(cval, prev->Value->Type, static_cast<ZCC_ExprConstant *>(prev->Value)->IntVal + 1, node);
 				node->Value = cval;
@@ -2919,35 +2919,35 @@ static void yy_reduce(
   yymsp[-6].minor.yy245 = yylhsminor.yy245;
         break;
       case 57: /* enum_type ::= */
-#line 435 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 472 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy0.Int = ZCC_IntAuto; yymsp[1].minor.yy0.SourceLoc = stat->sc->GetMessageLine(); }
 #line 2925 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 58: /* enum_type ::= COLON int_type */
 {  yy_destructor(yypParser,14,&yymsp[-1].minor);
-#line 436 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 473 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-1].minor.yy0 = yymsp[0].minor.yy0; /*yymsp[-1].minor.yy0-overwrites-yymsp[0].minor.yy0*/ }
 #line 2931 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
 }
         break;
       case 59: /* enum_list ::= error */
-#line 438 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 475 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy419 = NULL; }
 #line 2937 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 60: /* enum_list ::= enum_list COMMA enumerator */
-#line 440 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 477 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-2].minor.yy419 = yymsp[-2].minor.yy419; /*X-overwrites-A*/ AppendTreeNodeSibling(yymsp[-2].minor.yy419, yymsp[0].minor.yy419); }
 #line 2942 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,50,&yymsp[-1].minor);
         break;
       case 61: /* opt_enum_list ::= */
-#line 442 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 479 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy419 = NULL; }
 #line 2948 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 62: /* enumerator ::= IDENTIFIER */
-#line 446 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 483 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ConstantDef,node,yymsp[0].minor.yy0);
 	node->NodeName = yymsp[0].minor.yy0.Name();
@@ -2959,7 +2959,7 @@ static void yy_reduce(
   yymsp[0].minor.yy419 = yylhsminor.yy419;
         break;
       case 63: /* enumerator ::= IDENTIFIER EQ expr */
-#line 454 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 491 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ConstantDef,node,yymsp[-2].minor.yy0);
 	node->NodeName = yymsp[-2].minor.yy0.Name();
@@ -2972,7 +2972,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy419 = yylhsminor.yy419;
         break;
       case 64: /* states_def ::= STATES states_opts scanner_mode LBRACE states_body RBRACE */
-#line 479 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 516 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(States,def,yymsp[-5].minor.yy0);
 	def->Flags = yymsp[-4].minor.yy311;
@@ -2985,42 +2985,42 @@ static void yy_reduce(
   yymsp[-5].minor.yy86 = yylhsminor.yy86;
         break;
       case 65: /* states_opts ::= */
-#line 486 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 523 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy311 = nullptr; }
 #line 2991 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 66: /* states_opts ::= LPAREN states_opt RPAREN */
 {  yy_destructor(yypParser,45,&yymsp[-2].minor);
-#line 487 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 524 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-2].minor.yy311 = yymsp[-1].minor.yy311; /*yymsp[-2].minor.yy311-overwrites-yymsp[-1].minor.yy311*/ }
 #line 2997 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,62,&yymsp[0].minor);
 }
         break;
       case 69: /* scanner_mode ::= */
-#line 516 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 553 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { stat->sc->SetStateMode(true); }
 #line 3004 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 70: /* states_body ::= */
-#line 518 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 555 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy188 = NULL; }
 #line 3009 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 71: /* states_body ::= error */
-#line 519 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 556 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy188 = NULL; }
 #line 3014 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 72: /* states_body ::= states_body state_line */
       case 73: /*states_body ::= states_body state_label */ yytestcase(yyruleno==73);
       case 74: /*states_body ::= states_body state_flow */ yytestcase(yyruleno==74);
-#line 520 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 557 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { SAFE_APPEND(yymsp[-1].minor.yy188,yymsp[0].minor.yy188); }
 #line 3021 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 75: /* state_label ::= NWS COLON */
-#line 525 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 562 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(StateLabel, label, yymsp[-1].minor.yy0);
 	label->Label = yymsp[-1].minor.yy0.Name();
@@ -3031,31 +3031,31 @@ static void yy_reduce(
   yymsp[-1].minor.yy188 = yylhsminor.yy188;
         break;
       case 76: /* state_flow_type ::= STOP */
-#line 533 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 570 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { NEW_AST_NODE(StateStop, flow, yymsp[0].minor.yy0); yylhsminor.yy188 = flow; }
 #line 3037 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy188 = yylhsminor.yy188;
         break;
       case 77: /* state_flow_type ::= WAIT */
-#line 534 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 571 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { NEW_AST_NODE(StateWait, flow, yymsp[0].minor.yy0); yylhsminor.yy188 = flow; }
 #line 3043 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy188 = yylhsminor.yy188;
         break;
       case 78: /* state_flow_type ::= FAIL */
-#line 535 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 572 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { NEW_AST_NODE(StateFail, flow, yymsp[0].minor.yy0); yylhsminor.yy188 = flow; }
 #line 3049 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy188 = yylhsminor.yy188;
         break;
       case 79: /* state_flow_type ::= LOOP */
-#line 536 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 573 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { NEW_AST_NODE(StateLoop, flow, yymsp[0].minor.yy0); yylhsminor.yy188 = flow; }
 #line 3055 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy188 = yylhsminor.yy188;
         break;
       case 80: /* state_flow_type ::= GOTO dottable_id state_goto_offset */
-#line 538 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 575 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(StateGoto, flow, yymsp[-2].minor.yy0);
 	flow->Label = yymsp[-1].minor.yy311;
@@ -3067,7 +3067,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy188 = yylhsminor.yy188;
         break;
       case 81: /* state_flow_type ::= GOTO IDENTIFIER SCOPE dottable_id state_goto_offset */
-#line 547 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 584 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(StateGoto, flow, yymsp[-4].minor.yy0);
 	flow->Label = yymsp[-1].minor.yy311;
@@ -3083,7 +3083,7 @@ static void yy_reduce(
   yymsp[-4].minor.yy188 = yylhsminor.yy188;
         break;
       case 82: /* state_flow_type ::= GOTO SUPER SCOPE dottable_id state_goto_offset */
-#line 559 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 596 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(StateGoto, flow, yymsp[-4].minor.yy0);
 	flow->Label = yymsp[-1].minor.yy311;
@@ -3099,19 +3099,19 @@ static void yy_reduce(
   yymsp[-4].minor.yy188 = yylhsminor.yy188;
         break;
       case 83: /* state_goto_offset ::= */
-#line 570 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 607 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy184 = NULL; }
 #line 3105 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 84: /* state_goto_offset ::= ADD expr */
 {  yy_destructor(yypParser,34,&yymsp[-1].minor);
-#line 571 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 608 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-1].minor.yy184 = yymsp[0].minor.yy184; /*yymsp[-1].minor.yy184-overwrites-yymsp[0].minor.yy184*/ }
 #line 3111 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
 }
         break;
       case 85: /* state_line ::= NWS NWS expr state_opts state_action */
-#line 574 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 611 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(StateLine, line, yymsp[-4].minor.yy0);
 	line->Sprite = stat->Strings.Alloc(FName(yymsp[-4].minor.yy0.Name()).GetChars());
@@ -3131,42 +3131,42 @@ static void yy_reduce(
   yymsp[-4].minor.yy188 = yylhsminor.yy188;
         break;
       case 86: /* state_opts ::= */
-#line 590 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 627 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { StateOpts opts; opts.Zero(); yymsp[1].minor.yy72 = opts; }
 #line 3137 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 87: /* state_opts ::= state_opts BRIGHT */
-#line 591 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 628 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-1].minor.yy72.Bright = true; yymsp[-1].minor.yy72 = yymsp[-1].minor.yy72; /*X-overwrites-A*/ }
 #line 3142 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,80,&yymsp[0].minor);
         break;
       case 88: /* state_opts ::= state_opts FAST */
-#line 592 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 629 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-1].minor.yy72.Fast = true; yymsp[-1].minor.yy72 = yymsp[-1].minor.yy72; /*X-overwrites-A*/ }
 #line 3148 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,81,&yymsp[0].minor);
         break;
       case 89: /* state_opts ::= state_opts SLOW */
-#line 593 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 630 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-1].minor.yy72.Slow = true; yymsp[-1].minor.yy72 = yymsp[-1].minor.yy72; /*X-overwrites-A*/ }
 #line 3154 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,82,&yymsp[0].minor);
         break;
       case 90: /* state_opts ::= state_opts NODELAY */
-#line 594 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 631 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-1].minor.yy72.NoDelay = true; yymsp[-1].minor.yy72 = yymsp[-1].minor.yy72; /*X-overwrites-A*/ }
 #line 3160 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,83,&yymsp[0].minor);
         break;
       case 91: /* state_opts ::= state_opts CANRAISE */
-#line 595 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 632 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-1].minor.yy72.CanRaise = true; yymsp[-1].minor.yy72 = yymsp[-1].minor.yy72; /*X-overwrites-A*/ }
 #line 3166 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,84,&yymsp[0].minor);
         break;
       case 92: /* state_opts ::= state_opts OFFSET LPAREN expr COMMA expr RPAREN */
-#line 596 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 633 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-6].minor.yy72.Offset = yymsp[-3].minor.yy184; AppendTreeNodeSibling(yymsp[-3].minor.yy184, yymsp[-1].minor.yy184); yymsp[-6].minor.yy72 = yymsp[-6].minor.yy72; /*X-overwrites-A*/ }
 #line 3172 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,85,&yymsp[-5].minor);
@@ -3175,7 +3175,7 @@ static void yy_reduce(
   yy_destructor(yypParser,62,&yymsp[0].minor);
         break;
       case 93: /* state_opts ::= state_opts LIGHT LPAREN light_list RPAREN */
-#line 597 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 634 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-4].minor.yy72 = yymsp[-4].minor.yy72; /*X-overwrites-A*/ yymsp[-4].minor.yy72.Lights = yymsp[-1].minor.yy273; }
 #line 3181 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,86,&yymsp[-3].minor);
@@ -3184,7 +3184,7 @@ static void yy_reduce(
         break;
       case 94: /* light_list ::= STRCONST */
       case 257: /*string_constant ::= STRCONST */ yytestcase(yyruleno==257);
-#line 602 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 639 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ExprConstant, strconst, yymsp[0].minor.yy0);
 	strconst->Operation = PEX_ConstValue;
@@ -3196,7 +3196,7 @@ static void yy_reduce(
   yymsp[0].minor.yy273 = yylhsminor.yy273;
         break;
       case 95: /* light_list ::= light_list COMMA STRCONST */
-#line 611 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 648 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ExprConstant, strconst, yymsp[0].minor.yy0);
 	strconst->Operation = PEX_ConstValue;
@@ -3209,7 +3209,7 @@ static void yy_reduce(
   yy_destructor(yypParser,50,&yymsp[-1].minor);
         break;
       case 96: /* state_action ::= LBRACE statement_list scanner_mode RBRACE */
-#line 622 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 659 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(CompoundStmt,stmt,yymsp[-3].minor.yy0);
 	stmt->Content = yymsp[-2].minor.yy367;
@@ -3221,7 +3221,7 @@ static void yy_reduce(
         break;
       case 97: /* state_action ::= LBRACE scanner_mode RBRACE */
 {  yy_destructor(yypParser,65,&yymsp[-2].minor);
-#line 628 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 665 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	yymsp[-2].minor.yy392 = NULL;
 }
@@ -3231,25 +3231,25 @@ static void yy_reduce(
         break;
       case 98: /* state_action ::= LBRACE error scanner_mode RBRACE */
 {  yy_destructor(yypParser,65,&yymsp[-3].minor);
-#line 631 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 668 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-3].minor.yy392 = NULL; }
 #line 3237 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,66,&yymsp[0].minor);
 }
         break;
       case 99: /* state_action ::= state_call scanner_mode SEMICOLON */
-#line 632 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 669 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-2].minor.yy392 = yymsp[-2].minor.yy31; /*X-overwrites-A*/ }
 #line 3244 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,49,&yymsp[0].minor);
         break;
       case 100: /* state_call ::= */
-#line 634 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 671 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy31 = NULL; }
 #line 3250 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 101: /* state_call ::= IDENTIFIER state_call_params */
-#line 636 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 673 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ExprFuncCall, expr, yymsp[-1].minor.yy0);
 	NEW_AST_NODE(ExprID, func, yymsp[-1].minor.yy0);
@@ -3265,13 +3265,13 @@ static void yy_reduce(
   yymsp[-1].minor.yy31 = yylhsminor.yy31;
         break;
       case 102: /* state_call_params ::= */
-#line 648 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 685 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy470 = NULL; }
 #line 3271 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 103: /* state_call_params ::= LPAREN func_expr_list RPAREN */
 {  yy_destructor(yypParser,45,&yymsp[-2].minor);
-#line 649 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 686 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-2].minor.yy470 = yymsp[-1].minor.yy470; /*yymsp[-2].minor.yy470-overwrites-yymsp[-1].minor.yy470*/ }
 #line 3277 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,62,&yymsp[0].minor);
@@ -3279,7 +3279,7 @@ static void yy_reduce(
         break;
       case 104: /* default_def ::= DEFAULT LBRACE RBRACE */
 {  yy_destructor(yypParser,63,&yymsp[-2].minor);
-#line 657 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 694 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(Default,stmt,yymsp[-1].minor.yy0);
 	stmt->Content = NULL;
@@ -3291,7 +3291,7 @@ static void yy_reduce(
         break;
       case 105: /* default_def ::= DEFAULT LBRACE default_statement_list RBRACE */
 {  yy_destructor(yypParser,63,&yymsp[-3].minor);
-#line 663 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 700 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(Default,stmt,yymsp[-2].minor.yy0);
 	stmt->Content = yymsp[-1].minor.yy367;
@@ -3303,7 +3303,7 @@ static void yy_reduce(
         break;
       case 106: /* default_def ::= DEFAULT LBRACE error RBRACE */
 {  yy_destructor(yypParser,63,&yymsp[-3].minor);
-#line 669 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 706 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(Default,stmt,yymsp[-2].minor.yy0);
 	stmt->Content = NULL;
@@ -3315,7 +3315,7 @@ static void yy_reduce(
         break;
       case 107: /* default_statement_list ::= default_statement */
       case 283: /*statement_list ::= statement */ yytestcase(yyruleno==283);
-#line 676 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 713 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	yymsp[0].minor.yy367 = yymsp[0].minor.yy367; /*X-overwrites-A*/
 }
@@ -3323,7 +3323,7 @@ static void yy_reduce(
         break;
       case 108: /* default_statement_list ::= default_statement_list default_statement */
       case 284: /*statement_list ::= statement_list statement */ yytestcase(yyruleno==284);
-#line 680 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 717 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	SAFE_APPEND(yymsp[-1].minor.yy367,yymsp[0].minor.yy367);
 }
@@ -3332,31 +3332,31 @@ static void yy_reduce(
       case 109: /* default_statement ::= SEMICOLON */
       case 266: /*statement ::= SEMICOLON */ yytestcase(yyruleno==266);
 {  yy_destructor(yypParser,49,&yymsp[0].minor);
-#line 685 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 722 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy367 = NULL; }
 #line 3338 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
 }
         break;
       case 110: /* default_statement ::= error SEMICOLON */
       case 272: /*statement ::= error SEMICOLON */ yytestcase(yyruleno==272);
-#line 686 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 723 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-1].minor.yy367 = NULL; }
 #line 3345 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,49,&yymsp[0].minor);
         break;
       case 111: /* default_statement ::= property_statement */
-#line 688 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 725 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy367 = yymsp[0].minor.yy447; /*X-overwrites-A*/ }
 #line 3351 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 112: /* default_statement ::= flag_statement */
-#line 689 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 726 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy367 = yymsp[0].minor.yy60; /*X-overwrites-A*/ }
 #line 3356 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 113: /* flag_statement ::= ADD dottable_id */
 {  yy_destructor(yypParser,34,&yymsp[-1].minor);
-#line 694 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 731 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(FlagStmt, type, yymsp[0].minor.yy311);
 	type->set = true;
@@ -3368,7 +3368,7 @@ static void yy_reduce(
         break;
       case 114: /* flag_statement ::= SUB dottable_id */
 {  yy_destructor(yypParser,33,&yymsp[-1].minor);
-#line 701 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 738 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(FlagStmt, type, yymsp[0].minor.yy311);
 	type->set = false;
@@ -3379,7 +3379,7 @@ static void yy_reduce(
 }
         break;
       case 115: /* property_statement ::= dottable_id expr_list SEMICOLON */
-#line 711 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 748 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(PropertyStmt,stmt,yymsp[-2].minor.yy311);
 	stmt->Prop = yymsp[-2].minor.yy311;
@@ -3391,7 +3391,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy447 = yylhsminor.yy447;
         break;
       case 116: /* property_statement ::= dottable_id SEMICOLON */
-#line 719 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 756 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(PropertyStmt,stmt,yymsp[-1].minor.yy311);
 	stmt->Prop = yymsp[-1].minor.yy311;
@@ -3403,103 +3403,103 @@ static void yy_reduce(
   yymsp[-1].minor.yy447 = yylhsminor.yy447;
         break;
       case 117: /* int_type ::= SBYTE */
-#line 731 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 768 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_SInt8; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3409 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 118: /* int_type ::= BYTE */
-#line 732 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 769 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_UInt8; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3415 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 119: /* int_type ::= SHORT */
-#line 733 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 770 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_SInt16; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3421 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 120: /* int_type ::= USHORT */
-#line 734 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 771 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_UInt16; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3427 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 121: /* int_type ::= INT */
-#line 735 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 772 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_SInt32; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3433 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 122: /* int_type ::= UINT */
-#line 736 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 773 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_UInt32; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3439 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 123: /* type_name1 ::= BOOL */
-#line 738 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 775 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Bool; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3445 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 124: /* type_name1 ::= FLOAT */
-#line 740 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 777 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_FloatAuto; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3451 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 125: /* type_name1 ::= DOUBLE */
-#line 741 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 778 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Float64; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3457 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 126: /* type_name1 ::= VECTOR2 */
-#line 743 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 780 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Vector2; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3463 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 127: /* type_name1 ::= VECTOR3 */
-#line 744 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 781 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Vector3; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3469 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 128: /* type_name1 ::= NAME */
-#line 745 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 782 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Name; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3475 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 129: /* type_name1 ::= SOUND */
-#line 746 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 783 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Sound; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3481 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 130: /* type_name1 ::= STATE */
-#line 747 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 784 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_State; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3487 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 131: /* type_name1 ::= COLOR */
-#line 748 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 785 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Color; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3493 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 132: /* type_name1 ::= LET */
-#line 749 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 786 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Let; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3499 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 133: /* type_name ::= type_name1 */
-#line 752 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 789 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(BasicType, type, yymsp[0].minor.yy0);
 	type->Type = (EZCCBuiltinType)yymsp[0].minor.yy0.Int;
@@ -3511,7 +3511,7 @@ static void yy_reduce(
   yymsp[0].minor.yy116 = yylhsminor.yy116;
         break;
       case 134: /* type_name ::= IDENTIFIER */
-#line 760 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 797 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(BasicType, type, yymsp[0].minor.yy0);
 	NEW_AST_NODE(Identifier, id, yymsp[0].minor.yy0);
@@ -3526,7 +3526,7 @@ static void yy_reduce(
         break;
       case 135: /* type_name ::= ATSIGN IDENTIFIER */
 {  yy_destructor(yypParser,102,&yymsp[-1].minor);
-#line 771 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 808 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(BasicType, type, yymsp[0].minor.yy0);
 	NEW_AST_NODE(Identifier, id, yymsp[0].minor.yy0);
@@ -3541,7 +3541,7 @@ static void yy_reduce(
         break;
       case 136: /* type_name ::= READONLY LT IDENTIFIER GT */
 {  yy_destructor(yypParser,103,&yymsp[-3].minor);
-#line 782 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 819 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(BasicType, type, yymsp[-1].minor.yy0);
 	NEW_AST_NODE(Identifier, id, yymsp[-1].minor.yy0);
@@ -3558,7 +3558,7 @@ static void yy_reduce(
         break;
       case 137: /* type_name ::= READONLY LT ATSIGN IDENTIFIER GT */
 {  yy_destructor(yypParser,103,&yymsp[-4].minor);
-#line 793 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 830 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(BasicType, type, yymsp[-1].minor.yy0);
 	NEW_AST_NODE(Identifier, id, yymsp[-1].minor.yy0);
@@ -3576,7 +3576,7 @@ static void yy_reduce(
         break;
       case 138: /* type_name ::= DOT dottable_id */
 {  yy_destructor(yypParser,44,&yymsp[-1].minor);
-#line 804 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 841 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(BasicType, type, yymsp[0].minor.yy311);
 	type->Type = ZCC_UserType;
@@ -3588,7 +3588,7 @@ static void yy_reduce(
 }
         break;
       case 139: /* aggregate_type ::= MAP LT type_or_array COMMA type_or_array GT */
-#line 828 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 865 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(MapType,map,yymsp[-5].minor.yy0);
 	map->KeyType = yymsp[-3].minor.yy130;
@@ -3602,7 +3602,7 @@ static void yy_reduce(
   yymsp[-5].minor.yy130 = yylhsminor.yy130;
         break;
       case 140: /* aggregate_type ::= ARRAY LT type_or_array GT */
-#line 836 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 873 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(DynArrayType,arr,yymsp[-3].minor.yy0);
 	arr->ElementType = yymsp[-1].minor.yy130;
@@ -3614,7 +3614,7 @@ static void yy_reduce(
   yymsp[-3].minor.yy130 = yylhsminor.yy130;
         break;
       case 141: /* aggregate_type ::= CLASS class_restrictor */
-#line 843 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 880 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ClassType,cls,yymsp[-1].minor.yy0);
 	cls->Restriction = yymsp[0].minor.yy311;
@@ -3625,42 +3625,42 @@ static void yy_reduce(
         break;
       case 143: /* class_restrictor ::= LT dottable_id GT */
 {  yy_destructor(yypParser,20,&yymsp[-2].minor);
-#line 849 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 886 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-2].minor.yy311 = yymsp[-1].minor.yy311; /*yymsp[-2].minor.yy311-overwrites-yymsp[-1].minor.yy311*/ }
 #line 3631 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,21,&yymsp[0].minor);
 }
         break;
       case 144: /* type ::= type_name */
-#line 851 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 888 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy130 = yymsp[0].minor.yy116; /*X-overwrites-A*/ yymsp[0].minor.yy130->ArraySize = NULL; }
 #line 3638 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 145: /* type ::= aggregate_type */
-#line 852 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 889 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy130 = yymsp[0].minor.yy130; /*X-overwrites-A*/ yymsp[0].minor.yy130->ArraySize = NULL; }
 #line 3643 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 146: /* type_or_array ::= type array_size */
-#line 855 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 892 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-1].minor.yy130 = yymsp[-1].minor.yy130; /*X-overwrites-A*/ yymsp[-1].minor.yy130->ArraySize = yymsp[0].minor.yy184; }
 #line 3648 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 147: /* type_list ::= type_list COMMA type_or_array */
-#line 858 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 895 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-2].minor.yy130 = yymsp[-2].minor.yy130; /*X-overwrites-A*/ AppendTreeNodeSibling(yymsp[-2].minor.yy130, yymsp[0].minor.yy130); }
 #line 3653 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,50,&yymsp[-1].minor);
         break;
       case 148: /* type_list_or_void ::= VOID */
 {  yy_destructor(yypParser,107,&yymsp[0].minor);
-#line 860 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 897 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy130 = NULL; }
 #line 3660 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
 }
         break;
       case 149: /* array_size_expr ::= LBRACKET opt_expr RBRACKET */
-#line 864 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 901 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	if (yymsp[-1].minor.yy184 == NULL)
 	{
@@ -3679,7 +3679,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 150: /* array_size ::= array_size array_size_expr */
-#line 879 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 916 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	AppendTreeNodeSibling(yymsp[-1].minor.yy184, yymsp[0].minor.yy184);
 	yymsp[-1].minor.yy184 = yymsp[-1].minor.yy184; /*X-overwrites-A*/
@@ -3687,7 +3687,7 @@ static void yy_reduce(
 #line 3688 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 151: /* declarator ::= decl_flags type_list_or_void variables_or_function */
-#line 888 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 925 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	if (yymsp[0].minor.yy372.FuncName == NAME_None && yymsp[0].minor.yy372.VarNames == NULL)
 	{ // An error. yymsp[-2].minor.yy491 message was already printed.
@@ -3741,7 +3741,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy401 = yylhsminor.yy401;
         break;
       case 152: /* variables_or_function ::= IDENTIFIER LPAREN func_params RPAREN func_const opt_func_body */
-#line 940 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 977 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	VarOrFun fun;
 
@@ -3759,7 +3759,7 @@ static void yy_reduce(
   yymsp[-5].minor.yy372 = yylhsminor.yy372;
         break;
       case 153: /* variables_or_function ::= variable_list SEMICOLON */
-#line 952 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 989 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	VarOrFun var;
 
@@ -3776,7 +3776,7 @@ static void yy_reduce(
   yymsp[-1].minor.yy372 = yylhsminor.yy372;
         break;
       case 154: /* variables_or_function ::= error SEMICOLON */
-#line 964 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1001 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	VarOrFun bad;
 	bad.VarNames = NULL;
@@ -3790,7 +3790,7 @@ static void yy_reduce(
 #line 3791 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 155: /* variable_name ::= IDENTIFIER */
-#line 981 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1018 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(VarName,var,yymsp[0].minor.yy0);
 	var->Name = ENamedName(yymsp[0].minor.yy0.Int);
@@ -3801,7 +3801,7 @@ static void yy_reduce(
   yymsp[0].minor.yy393 = yylhsminor.yy393;
         break;
       case 156: /* variable_name ::= IDENTIFIER array_size */
-#line 988 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1025 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(VarName,var,yymsp[-1].minor.yy0);
 	var->Name = ENamedName(yymsp[-1].minor.yy0.Int);
@@ -3812,7 +3812,7 @@ static void yy_reduce(
   yymsp[-1].minor.yy393 = yylhsminor.yy393;
         break;
       case 157: /* variable_list ::= variable_list COMMA variable_name */
-#line 997 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1034 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	AppendTreeNodeSibling(yymsp[-2].minor.yy393, yymsp[0].minor.yy393);
 	yymsp[-2].minor.yy393 = yymsp[-2].minor.yy393; /*X-overwrites-A*/
@@ -3821,12 +3821,12 @@ static void yy_reduce(
   yy_destructor(yypParser,50,&yymsp[-1].minor);
         break;
       case 158: /* decl_flags ::= */
-#line 1003 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1040 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy491 = NULL; }
 #line 3827 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 159: /* decl_flags ::= decl_flags decl_flag */
-#line 1005 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1042 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	if (yymsp[-1].minor.yy491 == nullptr)
 	{
@@ -3846,7 +3846,7 @@ static void yy_reduce(
   yymsp[-1].minor.yy491 = yylhsminor.yy491;
         break;
       case 160: /* decl_flags ::= decl_flags ACTION states_opts */
-#line 1023 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1060 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	if (yymsp[-2].minor.yy491 == nullptr)
 	{
@@ -3867,7 +3867,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy491 = yylhsminor.yy491;
         break;
       case 161: /* decl_flags ::= decl_flags DEPRECATED LPAREN STRCONST RPAREN */
-#line 1041 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1078 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { 
 	if (yymsp[-4].minor.yy491 == nullptr)
 	{
@@ -3890,7 +3890,7 @@ static void yy_reduce(
   yymsp[-4].minor.yy491 = yylhsminor.yy491;
         break;
       case 162: /* decl_flags ::= decl_flags VERSION LPAREN STRCONST RPAREN */
-#line 1059 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1096 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { 
 	if (yymsp[-4].minor.yy491 == nullptr)
 	{
@@ -3913,133 +3913,133 @@ static void yy_reduce(
   yymsp[-4].minor.yy491 = yylhsminor.yy491;
         break;
       case 163: /* decl_flag ::= NATIVE */
-#line 1076 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1113 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Native; yylhsminor.yy0.SourceLoc =  yymsp[0].minor.yy0.SourceLoc; }
 #line 3919 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 164: /* decl_flag ::= STATIC */
-#line 1077 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1114 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Static; yylhsminor.yy0.SourceLoc =  yymsp[0].minor.yy0.SourceLoc; }
 #line 3925 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 165: /* decl_flag ::= PRIVATE */
-#line 1078 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1115 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Private; yylhsminor.yy0.SourceLoc =  yymsp[0].minor.yy0.SourceLoc; }
 #line 3931 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 166: /* decl_flag ::= PROTECTED */
-#line 1079 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1116 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Protected; yylhsminor.yy0.SourceLoc =  yymsp[0].minor.yy0.SourceLoc; }
 #line 3937 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 167: /* decl_flag ::= LATENT */
-#line 1080 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1117 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Latent; yylhsminor.yy0.SourceLoc =  yymsp[0].minor.yy0.SourceLoc; }
 #line 3943 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 168: /* decl_flag ::= FINAL */
-#line 1081 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1118 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Final; yylhsminor.yy0.SourceLoc =  yymsp[0].minor.yy0.SourceLoc; }
 #line 3949 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 169: /* decl_flag ::= META */
-#line 1082 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1119 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Meta; yylhsminor.yy0.SourceLoc =  yymsp[0].minor.yy0.SourceLoc; }
 #line 3955 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 170: /* decl_flag ::= TRANSIENT */
-#line 1083 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1120 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Transient; yylhsminor.yy0.SourceLoc =  yymsp[0].minor.yy0.SourceLoc; }
 #line 3961 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 171: /* decl_flag ::= READONLY */
-#line 1084 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1121 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_ReadOnly; yylhsminor.yy0.SourceLoc =  yymsp[0].minor.yy0.SourceLoc; }
 #line 3967 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 172: /* decl_flag ::= VIRTUAL */
-#line 1085 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1122 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Virtual; yylhsminor.yy0.SourceLoc =  yymsp[0].minor.yy0.SourceLoc; }
 #line 3973 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 173: /* decl_flag ::= OVERRIDE */
-#line 1086 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1123 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Override; yylhsminor.yy0.SourceLoc =  yymsp[0].minor.yy0.SourceLoc; }
 #line 3979 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 174: /* decl_flag ::= VARARG */
-#line 1087 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1124 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_VarArg; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3985 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 175: /* decl_flag ::= UI */
-#line 1088 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1125 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_UIFlag; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3991 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 176: /* decl_flag ::= PLAY */
-#line 1089 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1126 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_Play; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 3997 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 177: /* decl_flag ::= CLEARSCOPE */
-#line 1090 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1127 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_ClearScope; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 4003 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 178: /* decl_flag ::= VIRTUALSCOPE */
-#line 1091 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1128 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_VirtualScope; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 4009 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 179: /* func_const ::= */
-#line 1093 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1130 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy0.Int = 0; yymsp[1].minor.yy0.SourceLoc = stat->sc->GetMessageLine(); }
 #line 4015 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 180: /* func_const ::= CONST */
-#line 1094 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1131 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = ZCC_FuncConst; yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc; }
 #line 4020 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 181: /* opt_func_body ::= SEMICOLON */
 {  yy_destructor(yypParser,49,&yymsp[0].minor);
-#line 1096 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1133 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy215 = NULL; }
 #line 4027 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
 }
         break;
       case 182: /* func_params ::= */
-#line 1103 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1140 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy49 = NULL; }
 #line 4033 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 183: /* func_params ::= VOID */
 {  yy_destructor(yypParser,107,&yymsp[0].minor);
-#line 1104 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1141 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy49 = NULL; }
 #line 4039 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
 }
         break;
       case 184: /* func_params ::= func_param_list COMMA ELLIPSIS */
-#line 1108 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1145 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(FuncParamDecl,parm,stat->sc->GetMessageLine());
 	parm->Type = nullptr;
@@ -4054,13 +4054,13 @@ static void yy_reduce(
   yy_destructor(yypParser,126,&yymsp[0].minor);
         break;
       case 185: /* func_param_list ::= func_param_list COMMA func_param */
-#line 1119 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1156 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-2].minor.yy49 = yymsp[-2].minor.yy49; /*X-overwrites-A*/ AppendTreeNodeSibling(yymsp[-2].minor.yy49, yymsp[0].minor.yy49); }
 #line 4060 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,50,&yymsp[-1].minor);
         break;
       case 186: /* func_param ::= func_param_flags type IDENTIFIER */
-#line 1122 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1159 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(FuncParamDecl,parm,yymsp[-2].minor.yy0.SourceLoc ? yymsp[-2].minor.yy0.SourceLoc : yymsp[-1].minor.yy130->SourceLoc);
 	parm->Type = yymsp[-1].minor.yy130;
@@ -4073,7 +4073,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy49 = yylhsminor.yy49;
         break;
       case 187: /* func_param ::= func_param_flags type IDENTIFIER EQ expr */
-#line 1132 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1169 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(FuncParamDecl,parm,yymsp[-4].minor.yy0.SourceLoc ? yymsp[-4].minor.yy0.SourceLoc : yymsp[-3].minor.yy130->SourceLoc);
 	parm->Type = yymsp[-3].minor.yy130;
@@ -4087,30 +4087,30 @@ static void yy_reduce(
   yymsp[-4].minor.yy49 = yylhsminor.yy49;
         break;
       case 188: /* func_param_flags ::= */
-#line 1141 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1178 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy0.Int = 0; yymsp[1].minor.yy0.SourceLoc = 0; }
 #line 4093 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 189: /* func_param_flags ::= func_param_flags IN */
-#line 1142 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1179 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = yymsp[-1].minor.yy0.Int | ZCC_In; yylhsminor.yy0.SourceLoc =  yymsp[0].minor.yy0.SourceLoc; }
 #line 4098 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[-1].minor.yy0 = yylhsminor.yy0;
         break;
       case 190: /* func_param_flags ::= func_param_flags OUT */
-#line 1143 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1180 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = yymsp[-1].minor.yy0.Int | ZCC_Out; yylhsminor.yy0.SourceLoc =  yymsp[0].minor.yy0.SourceLoc; }
 #line 4104 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[-1].minor.yy0 = yylhsminor.yy0;
         break;
       case 191: /* func_param_flags ::= func_param_flags OPTIONAL */
-#line 1144 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1181 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yylhsminor.yy0.Int = yymsp[-1].minor.yy0.Int | ZCC_Optional; yylhsminor.yy0.SourceLoc =  yymsp[0].minor.yy0.SourceLoc; }
 #line 4110 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yymsp[-1].minor.yy0 = yylhsminor.yy0;
         break;
       case 192: /* primary ::= IDENTIFIER */
-#line 1160 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1197 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ExprID, expr, yymsp[0].minor.yy0);
 	expr->Operation = PEX_ID;
@@ -4122,7 +4122,7 @@ static void yy_reduce(
   yymsp[0].minor.yy184 = yylhsminor.yy184;
         break;
       case 193: /* primary ::= SUPER */
-#line 1168 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1205 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(Expression, expr, yymsp[0].minor.yy0);
 	expr->Operation = PEX_Super;
@@ -4133,13 +4133,13 @@ static void yy_reduce(
   yymsp[0].minor.yy184 = yylhsminor.yy184;
         break;
       case 194: /* primary ::= constant */
-#line 1174 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1211 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy184 = yymsp[0].minor.yy273; /*X-overwrites-A*/ }
 #line 4139 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 195: /* primary ::= LPAREN expr COMMA expr COMMA expr RPAREN */
 {  yy_destructor(yypParser,45,&yymsp[-6].minor);
-#line 1176 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1213 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(VectorValue, expr, yymsp[-5].minor.yy184);
 	expr->Operation = PEX_Vector;
@@ -4157,7 +4157,7 @@ static void yy_reduce(
         break;
       case 196: /* primary ::= LPAREN expr COMMA expr RPAREN */
 {  yy_destructor(yypParser,45,&yymsp[-4].minor);
-#line 1186 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1223 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(VectorValue, expr, yymsp[-3].minor.yy184);
 	expr->Operation = PEX_Vector;
@@ -4174,7 +4174,7 @@ static void yy_reduce(
         break;
       case 197: /* primary ::= LPAREN expr RPAREN */
 {  yy_destructor(yypParser,45,&yymsp[-2].minor);
-#line 1196 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1233 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	yymsp[-2].minor.yy184 = yymsp[-1].minor.yy184; /*yymsp[-2].minor.yy184-overwrites-yymsp[-1].minor.yy184*/
 }
@@ -4183,7 +4183,7 @@ static void yy_reduce(
 }
         break;
       case 198: /* primary ::= primary LPAREN func_expr_list RPAREN */
-#line 1201 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1238 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ExprFuncCall, expr, yymsp[-3].minor.yy184);
 	expr->Operation = PEX_FuncCall;
@@ -4199,7 +4199,7 @@ static void yy_reduce(
         break;
       case 199: /* primary ::= LPAREN CLASS LT IDENTIFIER GT RPAREN LPAREN func_expr_list RPAREN */
 {  yy_destructor(yypParser,45,&yymsp[-8].minor);
-#line 1210 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1247 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ClassCast, expr, yymsp[-5].minor.yy0);
 	expr->Operation = PEX_ClassCast;
@@ -4217,7 +4217,7 @@ static void yy_reduce(
 }
         break;
       case 200: /* primary ::= primary LBRACKET expr RBRACKET */
-#line 1218 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1255 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ExprBinary, expr, yymsp[-1].minor.yy184);
 	expr->Operation = PEX_ArrayAccess;
@@ -4232,7 +4232,7 @@ static void yy_reduce(
   yymsp[-3].minor.yy184 = yylhsminor.yy184;
         break;
       case 201: /* primary ::= primary DOT IDENTIFIER */
-#line 1227 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1264 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ExprMemberAccess, expr, yymsp[0].minor.yy0);
 	expr->Operation = PEX_MemberAccess;
@@ -4246,7 +4246,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 202: /* primary ::= primary ADDADD */
-#line 1236 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1273 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	UNARY_EXPR(yymsp[-1].minor.yy184,PEX_PostInc);
 	yylhsminor.yy184 = expr1;
@@ -4256,7 +4256,7 @@ static void yy_reduce(
   yymsp[-1].minor.yy184 = yylhsminor.yy184;
         break;
       case 203: /* primary ::= primary SUBSUB */
-#line 1241 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1278 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	UNARY_EXPR(yymsp[-1].minor.yy184,PEX_PostDec);
 	yylhsminor.yy184 = expr1;
@@ -4267,12 +4267,12 @@ static void yy_reduce(
         break;
       case 204: /* unary_expr ::= SUB unary_expr */
 {  yy_destructor(yypParser,33,&yymsp[-1].minor);
-#line 1257 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1294 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	ZCC_ExprConstant *con = static_cast<ZCC_ExprConstant *>(yymsp[0].minor.yy184);
-	if (yymsp[0].minor.yy184->Operation == PEX_ConstValue && (con->Type->IsA(RUNTIME_CLASS(PInt)) || con->Type->IsA(RUNTIME_CLASS(PFloat))))
+	if (yymsp[0].minor.yy184->Operation == PEX_ConstValue && (con->Type->isInt() || con->Type->isFloat()))
 	{ // For constants, manipulate the child node directly, and don't create a new node.
-		if (con->Type->IsA(RUNTIME_CLASS(PInt)))
+		if (con->Type->isInt())
 		{
 			con->IntVal = -con->IntVal;
 		}
@@ -4293,13 +4293,13 @@ static void yy_reduce(
         break;
       case 205: /* unary_expr ::= ADD unary_expr */
 {  yy_destructor(yypParser,34,&yymsp[-1].minor);
-#line 1278 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1315 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	// Even though this is really a no-op, we still need to make a node for
 	// it so we can type check that it is being applied to something numeric.
 	// But we can do that right now for constant numerals.
 	ZCC_ExprConstant *con = static_cast<ZCC_ExprConstant *>(yymsp[0].minor.yy184);
-	if (yymsp[0].minor.yy184->Operation != PEX_ConstValue || (!con->Type->IsA(RUNTIME_CLASS(PInt)) && !con->Type->IsA(RUNTIME_CLASS(PFloat))))
+	if (yymsp[0].minor.yy184->Operation != PEX_ConstValue || (!con->Type->isInt() && !con->Type->isFloat()))
 	{
 		UNARY_EXPR(yymsp[0].minor.yy184,PEX_AntiNegate);
 		yymsp[-1].minor.yy184 = expr1;
@@ -4314,7 +4314,7 @@ static void yy_reduce(
         break;
       case 206: /* unary_expr ::= SUBSUB unary_expr */
 {  yy_destructor(yypParser,43,&yymsp[-1].minor);
-#line 1294 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1331 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	UNARY_EXPR(yymsp[0].minor.yy184,PEX_PreDec);
 	yymsp[-1].minor.yy184 = expr1;
@@ -4324,7 +4324,7 @@ static void yy_reduce(
         break;
       case 207: /* unary_expr ::= ADDADD unary_expr */
 {  yy_destructor(yypParser,42,&yymsp[-1].minor);
-#line 1299 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1336 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	UNARY_EXPR(yymsp[0].minor.yy184,PEX_PreInc);
 	yymsp[-1].minor.yy184 = expr1;
@@ -4334,7 +4334,7 @@ static void yy_reduce(
         break;
       case 208: /* unary_expr ::= TILDE unary_expr */
 {  yy_destructor(yypParser,130,&yymsp[-1].minor);
-#line 1304 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1341 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	UNARY_EXPR(yymsp[0].minor.yy184,PEX_BitNot);
 	yymsp[-1].minor.yy184 = expr1;
@@ -4344,7 +4344,7 @@ static void yy_reduce(
         break;
       case 209: /* unary_expr ::= BANG unary_expr */
 {  yy_destructor(yypParser,131,&yymsp[-1].minor);
-#line 1309 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1346 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	UNARY_EXPR(yymsp[0].minor.yy184,PEX_BoolNot);
 	yymsp[-1].minor.yy184 = expr1;
@@ -4354,7 +4354,7 @@ static void yy_reduce(
         break;
       case 210: /* unary_expr ::= SIZEOF unary_expr */
 {  yy_destructor(yypParser,132,&yymsp[-1].minor);
-#line 1314 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1351 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	UNARY_EXPR(yymsp[0].minor.yy184,PEX_SizeOf);
 	yymsp[-1].minor.yy184 = expr1;
@@ -4364,7 +4364,7 @@ static void yy_reduce(
         break;
       case 211: /* unary_expr ::= ALIGNOF unary_expr */
 {  yy_destructor(yypParser,133,&yymsp[-1].minor);
-#line 1319 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1356 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	UNARY_EXPR(yymsp[0].minor.yy184,PEX_AlignOf);
 	yymsp[-1].minor.yy184 = expr1;
@@ -4373,7 +4373,7 @@ static void yy_reduce(
 }
         break;
       case 212: /* expr ::= expr ADD expr */
-#line 1332 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1369 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_Add);
 	yylhsminor.yy184 = expr2;
@@ -4383,7 +4383,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 213: /* expr ::= expr SUB expr */
-#line 1337 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1374 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_Sub);
 	yylhsminor.yy184 = expr2;
@@ -4393,7 +4393,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 214: /* expr ::= expr MUL expr */
-#line 1342 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1379 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_Mul);
 	yylhsminor.yy184 = expr2;
@@ -4403,7 +4403,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 215: /* expr ::= expr DIV expr */
-#line 1347 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1384 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_Div);
 	yylhsminor.yy184 = expr2;
@@ -4413,7 +4413,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 216: /* expr ::= expr MOD expr */
-#line 1352 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1389 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_Mod);
 	yylhsminor.yy184 = expr2;
@@ -4423,7 +4423,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 217: /* expr ::= expr POW expr */
-#line 1357 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1394 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_Pow);
 	yylhsminor.yy184 = expr2;
@@ -4433,7 +4433,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 218: /* expr ::= expr CROSSPROD expr */
-#line 1362 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1399 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_CrossProduct);
 	yylhsminor.yy184 = expr2;
@@ -4443,7 +4443,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 219: /* expr ::= expr DOTPROD expr */
-#line 1367 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1404 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_DotProduct);
 	yylhsminor.yy184 = expr2;
@@ -4453,7 +4453,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 220: /* expr ::= expr LSH expr */
-#line 1372 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1409 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_LeftShift);
 	yylhsminor.yy184 = expr2;
@@ -4463,7 +4463,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 221: /* expr ::= expr RSH expr */
-#line 1377 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1414 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_RightShift);
 	yylhsminor.yy184 = expr2;
@@ -4473,7 +4473,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 222: /* expr ::= expr URSH expr */
-#line 1382 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1419 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_URightShift);
 	yylhsminor.yy184 = expr2;
@@ -4483,7 +4483,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 223: /* expr ::= expr DOTDOT expr */
-#line 1387 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1424 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_Concat);
 	yylhsminor.yy184 = expr2;
@@ -4493,7 +4493,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 224: /* expr ::= expr LT expr */
-#line 1393 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1430 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_LT);
 	yylhsminor.yy184 = expr2;
@@ -4503,7 +4503,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 225: /* expr ::= expr GT expr */
-#line 1398 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1435 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_GT);
 	yylhsminor.yy184 = expr2;
@@ -4513,7 +4513,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 226: /* expr ::= expr LTEQ expr */
-#line 1403 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1440 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_LTEQ);
 	yylhsminor.yy184 = expr2;
@@ -4523,7 +4523,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 227: /* expr ::= expr GTEQ expr */
-#line 1408 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1445 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_GTEQ);
 	yylhsminor.yy184 = expr2;
@@ -4533,7 +4533,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 228: /* expr ::= expr LTGTEQ expr */
-#line 1413 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1450 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_LTGTEQ);
 	yylhsminor.yy184 = expr2;
@@ -4543,7 +4543,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 229: /* expr ::= expr IS expr */
-#line 1418 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1455 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_Is);
 	yylhsminor.yy184 = expr2;
@@ -4553,7 +4553,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 230: /* expr ::= expr EQEQ expr */
-#line 1424 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1461 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_EQEQ);
 	yylhsminor.yy184 = expr2;
@@ -4563,7 +4563,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 231: /* expr ::= expr NEQ expr */
-#line 1429 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1466 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_NEQ);
 	yylhsminor.yy184 = expr2;
@@ -4573,7 +4573,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 232: /* expr ::= expr APPROXEQ expr */
-#line 1434 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1471 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_APREQ);
 	yylhsminor.yy184 = expr2;
@@ -4583,7 +4583,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 233: /* expr ::= expr AND expr */
-#line 1440 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1477 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_BitAnd);
 	yylhsminor.yy184 = expr2;
@@ -4593,7 +4593,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 234: /* expr ::= expr XOR expr */
-#line 1445 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1482 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_BitXor);
 	yylhsminor.yy184 = expr2;
@@ -4603,7 +4603,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 235: /* expr ::= expr OR expr */
-#line 1450 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1487 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_BitOr);
 	yylhsminor.yy184 = expr2;
@@ -4613,7 +4613,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 236: /* expr ::= expr ANDAND expr */
-#line 1455 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1492 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_BoolAnd);
 	yylhsminor.yy184 = expr2;
@@ -4623,7 +4623,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 237: /* expr ::= expr OROR expr */
-#line 1460 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1497 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_BoolOr);
 	yylhsminor.yy184 = expr2;
@@ -4633,7 +4633,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 238: /* expr ::= expr EQ expr */
-#line 1465 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1502 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_Assign);
 	yylhsminor.yy184 = expr2;
@@ -4643,7 +4643,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 239: /* expr ::= expr ADDEQ expr */
-#line 1470 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1507 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_AddAssign);
 	yylhsminor.yy184 = expr2;
@@ -4653,7 +4653,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 240: /* expr ::= expr SUBEQ expr */
-#line 1475 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1512 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_SubAssign);
 	yylhsminor.yy184 = expr2;
@@ -4663,7 +4663,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 241: /* expr ::= expr MULEQ expr */
-#line 1480 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1517 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_MulAssign);
 	yylhsminor.yy184 = expr2;
@@ -4673,7 +4673,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 242: /* expr ::= expr DIVEQ expr */
-#line 1485 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1522 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_DivAssign);
 	yylhsminor.yy184 = expr2;
@@ -4683,7 +4683,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 243: /* expr ::= expr MODEQ expr */
-#line 1490 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1527 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_ModAssign);
 	yylhsminor.yy184 = expr2;
@@ -4693,7 +4693,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 244: /* expr ::= expr LSHEQ expr */
-#line 1495 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1532 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_LshAssign);
 	yylhsminor.yy184 = expr2;
@@ -4703,7 +4703,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 245: /* expr ::= expr RSHEQ expr */
-#line 1500 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1537 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_RshAssign);
 	yylhsminor.yy184 = expr2;
@@ -4713,7 +4713,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 246: /* expr ::= expr URSHEQ expr */
-#line 1505 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1542 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_URshAssign);
 	yylhsminor.yy184 = expr2;
@@ -4723,7 +4723,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 247: /* expr ::= expr ANDEQ expr */
-#line 1510 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1547 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_AndAssign);
 	yylhsminor.yy184 = expr2;
@@ -4733,7 +4733,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 248: /* expr ::= expr OREQ expr */
-#line 1515 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1552 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_OrAssign);
 	yylhsminor.yy184 = expr2;
@@ -4743,7 +4743,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 249: /* expr ::= expr XOREQ expr */
-#line 1520 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1557 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_XorAssign);
 	yylhsminor.yy184 = expr2;
@@ -4753,7 +4753,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 250: /* expr ::= expr SCOPE expr */
-#line 1527 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1564 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	BINARY_EXPR(yymsp[-2].minor.yy184,yymsp[0].minor.yy184,PEX_Scope);
 	yylhsminor.yy184 = expr2;
@@ -4763,7 +4763,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy184 = yylhsminor.yy184;
         break;
       case 251: /* expr ::= expr QUESTION expr COLON expr */
-#line 1535 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1572 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ExprTrinary, expr, yymsp[-4].minor.yy184);
 	expr->Operation = PEX_Trinary;
@@ -4779,7 +4779,7 @@ static void yy_reduce(
   yymsp[-4].minor.yy184 = yylhsminor.yy184;
         break;
       case 252: /* expr_list ::= expr_list COMMA expr */
-#line 1551 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1588 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	yymsp[-2].minor.yy184 = yymsp[-2].minor.yy184;	/*X-overwrites-A*/
 	AppendTreeNodeSibling(yymsp[-2].minor.yy184, yymsp[0].minor.yy184);
@@ -4788,7 +4788,7 @@ static void yy_reduce(
   yy_destructor(yypParser,50,&yymsp[-1].minor);
         break;
       case 253: /* func_expr_list ::= func_expr_list COMMA func_expr_item */
-#line 1567 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1604 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	// Omitted parameters still need to appear as nodes in the list.
 	if (yymsp[-2].minor.yy470 == NULL)
@@ -4811,14 +4811,14 @@ static void yy_reduce(
 #line 4812 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 254: /* func_expr_item ::= */
-#line 1588 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1625 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	yymsp[1].minor.yy470 = NULL;
 }
 #line 4819 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 255: /* named_expr ::= IDENTIFIER COLON expr */
-#line 1594 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1631 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(FuncParm, parm, yymsp[-2].minor.yy0);
 	parm->Value = yymsp[0].minor.yy184;
@@ -4830,7 +4830,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy470 = yylhsminor.yy470;
         break;
       case 256: /* named_expr ::= expr */
-#line 1601 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1638 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(FuncParm, parm, yymsp[0].minor.yy184);
 	parm->Value = yymsp[0].minor.yy184;
@@ -4841,7 +4841,7 @@ static void yy_reduce(
   yymsp[0].minor.yy470 = yylhsminor.yy470;
         break;
       case 258: /* string_constant ::= string_constant STRCONST */
-#line 1622 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1659 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ExprConstant, strconst, yymsp[-1].minor.yy273);
 	strconst->Operation = PEX_ConstValue;
@@ -4853,7 +4853,7 @@ static void yy_reduce(
   yymsp[-1].minor.yy273 = yylhsminor.yy273;
         break;
       case 259: /* constant ::= INTCONST */
-#line 1632 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1669 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_INTCONST_NODE(intconst, TypeSInt32, yymsp[0].minor.yy0.Int, yymsp[0].minor.yy0);
 	yylhsminor.yy273 = intconst;
@@ -4862,7 +4862,7 @@ static void yy_reduce(
   yymsp[0].minor.yy273 = yylhsminor.yy273;
         break;
       case 260: /* constant ::= UINTCONST */
-#line 1637 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1674 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_INTCONST_NODE(intconst, TypeUInt32, yymsp[0].minor.yy0.Int, yymsp[0].minor.yy0);
 	yylhsminor.yy273 = intconst;
@@ -4871,7 +4871,7 @@ static void yy_reduce(
   yymsp[0].minor.yy273 = yylhsminor.yy273;
         break;
       case 261: /* constant ::= FLOATCONST */
-#line 1642 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1679 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ExprConstant, floatconst, yymsp[0].minor.yy0);
 	floatconst->Operation = PEX_ConstValue;
@@ -4883,7 +4883,7 @@ static void yy_reduce(
   yymsp[0].minor.yy273 = yylhsminor.yy273;
         break;
       case 262: /* constant ::= NAMECONST */
-#line 1650 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1687 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ExprConstant, floatconst, yymsp[0].minor.yy0);
 	floatconst->Operation = PEX_ConstValue;
@@ -4895,7 +4895,7 @@ static void yy_reduce(
   yymsp[0].minor.yy273 = yylhsminor.yy273;
         break;
       case 263: /* constant ::= FALSE */
-#line 1658 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1695 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_INTCONST_NODE(boolconst, TypeBool, false, yymsp[0].minor.yy0);
 	yylhsminor.yy273 = boolconst;
@@ -4904,7 +4904,7 @@ static void yy_reduce(
   yymsp[0].minor.yy273 = yylhsminor.yy273;
         break;
       case 264: /* constant ::= TRUE */
-#line 1663 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1700 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_INTCONST_NODE(boolconst, TypeBool, true, yymsp[0].minor.yy0);
 	yylhsminor.yy273 = boolconst;
@@ -4913,7 +4913,7 @@ static void yy_reduce(
   yymsp[0].minor.yy273 = yylhsminor.yy273;
         break;
       case 265: /* constant ::= NULLPTR */
-#line 1668 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1705 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ExprConstant, nullptrconst, yymsp[0].minor.yy0);
 	nullptrconst->Operation = PEX_ConstValue;
@@ -4925,41 +4925,41 @@ static void yy_reduce(
   yymsp[0].minor.yy273 = yylhsminor.yy273;
         break;
       case 267: /* statement ::= labeled_statement */
-#line 1682 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1719 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy367 = yymsp[0].minor.yy304; /*X-overwrites-A*/ }
 #line 4931 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 268: /* statement ::= compound_statement */
-#line 1683 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1720 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy367 = yymsp[0].minor.yy215; /*X-overwrites-A*/ }
 #line 4936 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 269: /* statement ::= expression_statement SEMICOLON */
-#line 1684 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1721 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-1].minor.yy367 = yymsp[-1].minor.yy124; /*X-overwrites-A*/ }
 #line 4941 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,49,&yymsp[0].minor);
         break;
       case 270: /* statement ::= assign_statement SEMICOLON */
-#line 1688 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1725 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-1].minor.yy367 = yymsp[-1].minor.yy263; /*X-overwrites-A*/ }
 #line 4947 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,49,&yymsp[0].minor);
         break;
       case 271: /* statement ::= local_var SEMICOLON */
-#line 1689 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1726 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-1].minor.yy367 = yymsp[-1].minor.yy164; /*X-overwrites-A*/ }
 #line 4953 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,49,&yymsp[0].minor);
         break;
       case 273: /* statement ::= staticarray_statement */
-#line 1691 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1728 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy367 = yymsp[0].minor.yy82; /*X-overwrites-A*/ }
 #line 4959 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 274: /* staticarray_statement ::= STATICCONST type IDENTIFIER LBRACKET RBRACKET EQ LBRACE expr_list RBRACE SEMICOLON */
 {  yy_destructor(yypParser,141,&yymsp[-9].minor);
-#line 1698 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1735 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(StaticArrayStatement, stmt, yymsp[-8].minor.yy130);
 	stmt->Type = yymsp[-8].minor.yy130;
@@ -4978,7 +4978,7 @@ static void yy_reduce(
         break;
       case 275: /* staticarray_statement ::= STATICCONST type LBRACKET RBRACKET IDENTIFIER EQ LBRACE expr_list RBRACE SEMICOLON */
 {  yy_destructor(yypParser,141,&yymsp[-9].minor);
-#line 1707 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1744 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(StaticArrayStatement, stmt, yymsp[-8].minor.yy130);
 	stmt->Type = yymsp[-8].minor.yy130;
@@ -4996,7 +4996,7 @@ static void yy_reduce(
 }
         break;
       case 276: /* jump_statement ::= CONTINUE SEMICOLON */
-#line 1720 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1757 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ContinueStmt, stmt, yymsp[-1].minor.yy0);
 	yylhsminor.yy367 = stmt;
@@ -5006,7 +5006,7 @@ static void yy_reduce(
   yymsp[-1].minor.yy367 = yylhsminor.yy367;
         break;
       case 277: /* jump_statement ::= BREAK SEMICOLON */
-#line 1725 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1762 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(BreakStmt, stmt, yymsp[-1].minor.yy0);
 	yylhsminor.yy367 = stmt;
@@ -5016,7 +5016,7 @@ static void yy_reduce(
   yymsp[-1].minor.yy367 = yylhsminor.yy367;
         break;
       case 278: /* jump_statement ::= RETURN SEMICOLON */
-#line 1730 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1767 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ReturnStmt, stmt, yymsp[-1].minor.yy0);
 	stmt->Values = NULL;
@@ -5027,7 +5027,7 @@ static void yy_reduce(
   yymsp[-1].minor.yy367 = yylhsminor.yy367;
         break;
       case 279: /* jump_statement ::= RETURN expr_list SEMICOLON */
-#line 1736 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1773 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ReturnStmt, stmt, yymsp[-2].minor.yy0);
 	stmt->Values = yymsp[-1].minor.yy184;
@@ -5038,7 +5038,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy367 = yylhsminor.yy367;
         break;
       case 280: /* compound_statement ::= LBRACE RBRACE */
-#line 1748 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1785 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(CompoundStmt,stmt,yymsp[-1].minor.yy0);
 	stmt->Content = NULL;
@@ -5049,7 +5049,7 @@ static void yy_reduce(
   yymsp[-1].minor.yy215 = yylhsminor.yy215;
         break;
       case 281: /* compound_statement ::= LBRACE statement_list RBRACE */
-#line 1754 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1791 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(CompoundStmt,stmt,yymsp[-2].minor.yy0);
 	stmt->Content = yymsp[-1].minor.yy367;
@@ -5060,7 +5060,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy215 = yylhsminor.yy215;
         break;
       case 282: /* compound_statement ::= LBRACE error RBRACE */
-#line 1760 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1797 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(CompoundStmt,stmt,yymsp[-2].minor.yy0);
 	stmt->Content = NULL;
@@ -5071,7 +5071,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy215 = yylhsminor.yy215;
         break;
       case 285: /* expression_statement ::= expr */
-#line 1780 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1817 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(ExpressionStmt, stmt, yymsp[0].minor.yy184);
 	stmt->Expression = yymsp[0].minor.yy184;
@@ -5081,7 +5081,7 @@ static void yy_reduce(
   yymsp[0].minor.yy124 = yylhsminor.yy124;
         break;
       case 286: /* iteration_statement ::= while_or_until LPAREN expr RPAREN statement */
-#line 1792 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1829 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(IterationStmt, iter, yymsp[-4].minor.yy0);
 	if (yymsp[-4].minor.yy0.Int == ZCC_UNTIL)
@@ -5104,7 +5104,7 @@ static void yy_reduce(
   yymsp[-4].minor.yy367 = yylhsminor.yy367;
         break;
       case 287: /* iteration_statement ::= DO statement while_or_until LPAREN expr RPAREN */
-#line 1810 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1847 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(IterationStmt, iter, yymsp[-5].minor.yy0);
 	if (yymsp[-3].minor.yy0.Int == ZCC_UNTIL)
@@ -5127,7 +5127,7 @@ static void yy_reduce(
   yymsp[-5].minor.yy367 = yylhsminor.yy367;
         break;
       case 288: /* iteration_statement ::= FOR LPAREN for_init SEMICOLON opt_expr SEMICOLON for_bump RPAREN statement */
-#line 1828 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1865 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(IterationStmt, iter, yymsp[-8].minor.yy0);
 	iter->LoopCondition = yymsp[-4].minor.yy184;
@@ -5151,7 +5151,7 @@ static void yy_reduce(
   yymsp[-8].minor.yy367 = yylhsminor.yy367;
         break;
       case 289: /* while_or_until ::= WHILE */
-#line 1845 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1882 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	yylhsminor.yy0.Int = ZCC_WHILE;
 	yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc;
@@ -5160,7 +5160,7 @@ static void yy_reduce(
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 290: /* while_or_until ::= UNTIL */
-#line 1850 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1887 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	yylhsminor.yy0.Int = ZCC_UNTIL;
 	yylhsminor.yy0.SourceLoc = yymsp[0].minor.yy0.SourceLoc;
@@ -5169,40 +5169,40 @@ static void yy_reduce(
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 291: /* for_init ::= local_var */
-#line 1856 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1893 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy367 = yymsp[0].minor.yy164 /*X-overwrites-A*/; }
 #line 5175 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 292: /* for_init ::= for_bump */
-#line 1857 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1894 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy367 = yymsp[0].minor.yy367 /*X-overwrites-A*/; }
 #line 5180 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 293: /* for_bump ::= */
-#line 1860 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1897 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[1].minor.yy367 = NULL; }
 #line 5185 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 294: /* for_bump ::= expression_statement */
-#line 1861 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1898 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[0].minor.yy367 = yymsp[0].minor.yy124; /*X-overwrites-A*/ }
 #line 5190 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 295: /* for_bump ::= for_bump COMMA expression_statement */
-#line 1862 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1899 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { yymsp[-2].minor.yy367 = yymsp[-2].minor.yy367; /*X-overwrites-A*/ AppendTreeNodeSibling(yymsp[-2].minor.yy367, yymsp[0].minor.yy124); }
 #line 5195 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
   yy_destructor(yypParser,50,&yymsp[-1].minor);
         break;
       case 296: /* selection_statement ::= if_front */
-#line 1876 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1913 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	yymsp[0].minor.yy367 = yymsp[0].minor.yy312; /*X-overwrites-A*/
 }
 #line 5203 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
         break;
       case 297: /* selection_statement ::= if_front ELSE statement */
-#line 1880 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1917 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	yymsp[-2].minor.yy312->FalsePath = yymsp[0].minor.yy367;
 	yymsp[-2].minor.yy367 = yymsp[-2].minor.yy312; /*X-overwrites-A*/
@@ -5211,7 +5211,7 @@ static void yy_reduce(
   yy_destructor(yypParser,150,&yymsp[-1].minor);
         break;
       case 298: /* if_front ::= IF LPAREN expr RPAREN statement */
-#line 1886 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1923 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(IfStmt,stmt,yymsp[-4].minor.yy0);
 	stmt->Condition = yymsp[-2].minor.yy184;
@@ -5225,7 +5225,7 @@ static void yy_reduce(
   yymsp[-4].minor.yy312 = yylhsminor.yy312;
         break;
       case 299: /* selection_statement ::= SWITCH LPAREN expr RPAREN statement */
-#line 1897 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1934 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(SwitchStmt,stmt,yymsp[-4].minor.yy0);
 	stmt->Condition = yymsp[-2].minor.yy184;
@@ -5238,7 +5238,7 @@ static void yy_reduce(
   yymsp[-4].minor.yy367 = yylhsminor.yy367;
         break;
       case 300: /* labeled_statement ::= CASE expr COLON */
-#line 1909 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1946 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(CaseStmt,stmt,yymsp[-2].minor.yy0);
 	stmt->Condition = yymsp[-1].minor.yy184;
@@ -5249,7 +5249,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy304 = yylhsminor.yy304;
         break;
       case 301: /* labeled_statement ::= DEFAULT COLON */
-#line 1915 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1952 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(CaseStmt,stmt,yymsp[-1].minor.yy0);
 	stmt->Condition = NULL;
@@ -5261,7 +5261,7 @@ static void yy_reduce(
         break;
       case 302: /* assign_statement ::= LBRACKET expr_list RBRACKET EQ expr */
 {  yy_destructor(yypParser,46,&yymsp[-4].minor);
-#line 1928 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1965 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(AssignStmt,stmt,yymsp[-3].minor.yy184);
 	stmt->AssignOp = ZCC_EQ;
@@ -5275,7 +5275,7 @@ static void yy_reduce(
 }
         break;
       case 303: /* local_var ::= type variable_list_with_init */
-#line 1941 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1978 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(LocalVarStmt,vardef,yymsp[-1].minor.yy130);
 	vardef->Type = yymsp[-1].minor.yy130;
@@ -5286,7 +5286,7 @@ static void yy_reduce(
   yymsp[-1].minor.yy164 = yylhsminor.yy164;
         break;
       case 304: /* var_init ::= IDENTIFIER */
-#line 1950 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1987 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { 
 	NEW_AST_NODE(VarInit,var,yymsp[0].minor.yy0);
 	var->Name = ENamedName(yymsp[0].minor.yy0.Int);
@@ -5299,7 +5299,7 @@ static void yy_reduce(
   yymsp[0].minor.yy161 = yylhsminor.yy161;
         break;
       case 305: /* var_init ::= IDENTIFIER array_size */
-#line 1960 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1997 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	NEW_AST_NODE(VarInit,var,yymsp[-1].minor.yy0);
 	var->Name = ENamedName(yymsp[-1].minor.yy0.Int);
@@ -5312,7 +5312,7 @@ static void yy_reduce(
   yymsp[-1].minor.yy161 = yylhsminor.yy161;
         break;
       case 306: /* var_init ::= IDENTIFIER EQ expr */
-#line 1970 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 2007 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { 
 	NEW_AST_NODE(VarInit,var,yymsp[-2].minor.yy0);
 	var->Name = ENamedName(yymsp[-2].minor.yy0.Int);
@@ -5326,7 +5326,7 @@ static void yy_reduce(
   yymsp[-2].minor.yy161 = yylhsminor.yy161;
         break;
       case 307: /* var_init ::= IDENTIFIER EQ LBRACE expr_list RBRACE */
-#line 1980 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 2017 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { 
 	NEW_AST_NODE(VarInit,var,yymsp[-4].minor.yy0);
 	var->Name = ENamedName(yymsp[-4].minor.yy0.Int);
@@ -5342,7 +5342,7 @@ static void yy_reduce(
   yymsp[-4].minor.yy161 = yylhsminor.yy161;
         break;
       case 308: /* var_init ::= IDENTIFIER array_size EQ LBRACE expr_list RBRACE */
-#line 1990 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 2027 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { 
 	NEW_AST_NODE(VarInit,var,yymsp[-5].minor.yy0);
 	var->Name = ENamedName(yymsp[-5].minor.yy0.Int);
@@ -5359,7 +5359,7 @@ static void yy_reduce(
         break;
       case 309: /* var_init ::= IDENTIFIER EQ LBRACE error RBRACE */
 {  yy_destructor(yypParser,54,&yymsp[-4].minor);
-#line 2000 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 2037 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 { 
 	yymsp[-4].minor.yy161 = NULL;
 }
@@ -5370,7 +5370,7 @@ static void yy_reduce(
 }
         break;
       case 310: /* variable_list_with_init ::= variable_list_with_init COMMA var_init */
-#line 2008 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 2045 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 	AppendTreeNodeSibling(yymsp[-2].minor.yy161, yymsp[0].minor.yy161);
 	yymsp[-2].minor.yy161 = yymsp[-2].minor.yy161; /*X-overwrites-A*/
@@ -5379,7 +5379,7 @@ static void yy_reduce(
   yy_destructor(yypParser,50,&yymsp[-1].minor);
         break;
       case 311: /* translation_unit ::= translation_unit EOF */
-#line 140 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 177 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 }
 #line 5386 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
@@ -5387,7 +5387,7 @@ static void yy_reduce(
         break;
       case 313: /* opt_semicolon ::= SEMICOLON */
 {  yy_destructor(yypParser,49,&yymsp[0].minor);
-#line 152 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 189 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 }
 #line 5394 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
@@ -5395,14 +5395,14 @@ static void yy_reduce(
         break;
       case 315: /* opt_comma ::= COMMA */
 {  yy_destructor(yypParser,50,&yymsp[0].minor);
-#line 155 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 192 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 }
 #line 5402 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
 }
         break;
       case 321: /* state_flow ::= state_flow_type scanner_mode SEMICOLON */
-#line 531 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 568 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 }
 #line 5409 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
@@ -5410,7 +5410,7 @@ static void yy_reduce(
         break;
       case 331: /* primary ::= LPAREN error RPAREN */
 {  yy_destructor(yypParser,45,&yymsp[-2].minor);
-#line 1199 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 1236 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 {
 }
 #line 5417 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
@@ -5486,7 +5486,7 @@ static void yy_parse_failed(
   /* Here code is inserted which will be executed whenever the
   ** parser fails */
 /************ Begin %parse_failure code ***************************************/
-#line 110 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 147 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
  /**failed = true;*/ 
 #line 5492 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
 /************ End %parse_failure code *****************************************/
@@ -5505,7 +5505,7 @@ static void yy_syntax_error(
   ZCCParseARG_FETCH;
 #define TOKEN yyminor
 /************ Begin %syntax_error code ****************************************/
-#line 83 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 120 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
 
 	FString unexpected, expecting;
 
@@ -5560,7 +5560,7 @@ static void yy_accept(
   /* Here code is inserted which will be executed whenever the
   ** parser accepts */
 /*********** Begin %parse_accept code *****************************************/
-#line 109 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
+#line 146 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.lemon"
  DPrintf(DMSG_SPAMMY, "Input accepted\n"); 
 #line 5566 ".\\jni\\Doom\\gzdoom\\src\\scripting\\zscript\\zcc-parse.c"
 /*********** End %parse_accept code *******************************************/

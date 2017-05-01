@@ -62,6 +62,7 @@
 #include "r_data/colormaps.h"
 #include "g_levellocals.h"
 #include "textures.h"
+#include "vm.h"
 
 CUSTOM_CVAR(Int, uiscale, 0, CVAR_ARCHIVE | CVAR_NOINITCALL)
 {
@@ -185,9 +186,9 @@ void DCanvas::DrawTextureParms(FTexture *img, DrawParms &parms)
 void DCanvas::SetClipRect(int x, int y, int w, int h)
 {
 	clipleft = clamp(x, 0, GetWidth());
-	clipwidth = clamp(w, 0, GetWidth() - x);
+	clipwidth = clamp(w, -1, GetWidth() - x);
 	cliptop = clamp(y, 0, GetHeight());
-	clipheight = clamp(h, 0, GetHeight() - y);
+	clipheight = clamp(h, -1, GetHeight() - y);
 }
 
 DEFINE_ACTION_FUNCTION(_Screen, SetClipRect)
