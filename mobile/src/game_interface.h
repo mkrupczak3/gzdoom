@@ -24,6 +24,7 @@ typedef enum
 	TS_GAME,
 	TS_MAP,
 	TS_CONSOLE,
+    TS_Y_N,
 	TS_CUSTOM
 } touchscreemode_t;
 

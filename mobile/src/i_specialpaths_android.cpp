@@ -46,7 +46,7 @@ FString GetUserFile (const char *file)
 	FString path;
 	struct stat info;
 
-	path = NicePath("./gzdoom2/");
+	path = NicePath("./gzdoom_dev/config");
 
 	if (stat (path, &info) == -1)
 	{
@@ -78,7 +78,7 @@ FString M_GetCachePath(bool create)
 {
 	// Don't use GAME_DIR and such so that ZDoom and its child ports can
 	// share the node cache.
-	FString path = NicePath("~/.config/zdoom/cache");
+	FString path = NicePath("./gzdoom_dev/cache");
 	if (create)
 	{
 		CreatePath(path);
@@ -151,7 +151,7 @@ FString M_GetConfigPath(bool for_reading)
 
 FString M_GetScreenshotsPath()
 {
-	return NicePath("~/" GAME_DIR "/screenshots/");
+	return NicePath("./gzdoom_dev/screenshots/");
 }
 
 //===========================================================================
@@ -164,5 +164,5 @@ FString M_GetScreenshotsPath()
 
 FString M_GetSavegamesPath()
 {
-	return NicePath("~/" GAME_DIR);
+	return NicePath("./gzdoom_dev/saves");
 }

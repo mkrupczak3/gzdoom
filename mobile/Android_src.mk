@@ -6,7 +6,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := gzdoom_dev
 
 #-DNO_FMOD
-LOCAL_CFLAGS   := -D__MOBILE__ -D__STDINT_LIMITS
+LOCAL_CFLAGS   := -D__MOBILE__ -DGZDOOM -D__STDINT_LIMITS
 LOCAL_CPPFLAGS :=  -DHAVE_FLUIDSYNTH -std=c++14  -DONLY_GPL -DHAVE_JWZGLES -DUSE_GLES   -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 #-std=gnu++1y -DHAVE_FLUIDSYNTH
 
@@ -194,7 +194,6 @@ PCH_SOURCES = \
 	p_3dmidtex.cpp \
 	p_acs.cpp \
 	p_actionfunctions.cpp \
-	p_buildmap.cpp \
 	p_ceiling.cpp \
 	p_conversation.cpp \
 	p_doors.cpp \

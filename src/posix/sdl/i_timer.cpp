@@ -182,7 +182,7 @@ void I_SelectTimer()
 {
 	SEMAPHORE_INIT(timerWait, 0, 0)
 #ifndef __sun
-	signal(SIGALRM, I_HandleAlarm);
+	// EB signal(SIGALRM, I_HandleAlarm); //__ANDROID__
 #else
 	struct sigaction alrmaction;
 	sigaction(SIGALRM, NULL, &alrmaction);
@@ -194,7 +194,8 @@ void I_SelectTimer()
 	itv.it_interval.tv_sec = itv.it_value.tv_sec = 0;
 	itv.it_interval.tv_usec = itv.it_value.tv_usec = 1000000/TICRATE;
 
-	if (setitimer(ITIMER_REAL, &itv, NULL) != 0)
+	// EB if (setitimer(ITIMER_REAL, &itv, NULL) != 0) __ANDROID__
+	if (1)
 	{
 		I_GetTime = I_GetTimePolled;
 		I_FreezeTime = I_FreezeTimePolled;

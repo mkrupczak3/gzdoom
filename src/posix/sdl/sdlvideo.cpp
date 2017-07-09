@@ -518,6 +518,7 @@ void SDLFB::ResetSDLRenderer ()
 		ScaleWithAspect (w, h, Width, Height);
 		SDL_RenderSetLogicalSize (Renderer, w, h);
 	}
+
 }
 
 void SDLFB::SetVSync (bool vsync)
