@@ -656,6 +656,15 @@ DEFINE_PROPERTY(floatbobphase, I, Actor)
 //==========================================================================
 //
 //==========================================================================
+DEFINE_PROPERTY(floatbobstrength, F, Actor)
+{
+	PROP_DOUBLE_PARM(id, 0);
+	defaults->FloatBobStrength = id;
+}
+
+//==========================================================================
+//
+//==========================================================================
 DEFINE_PROPERTY(args, Iiiii, Actor)
 {
 	for (int i = 0; i < PROP_PARM_COUNT; i++)
@@ -989,6 +998,7 @@ DEFINE_PROPERTY(clearflags, 0, Actor)
 	defaults->flags5 = 0;
 	defaults->flags6 = 0;
 	defaults->flags7 = 0;
+	defaults->flags8 = 0;
 }
 
 //==========================================================================

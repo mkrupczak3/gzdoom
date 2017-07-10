@@ -116,6 +116,7 @@
 #include "r_utility.h"
 #include "vm.h"
 #include "types.h"
+#include "r_data/r_vanillatrans.h"
 
 EXTERN_CVAR(Bool, hud_althud)
 void DrawHUD();
@@ -132,6 +133,7 @@ extern void M_SetDefaultMode ();
 extern void G_NewInit ();
 extern void SetupPlayerClasses ();
 extern void HUD_InitHud();
+void gl_PatchMenu();	// remove modern OpenGL options on old hardware.
 void DeinitMenus();
 const FIWADInfo *D_FindIWAD(TArray<FString> &wadfiles, const char *iwad, const char *basewad);
 
@@ -148,7 +150,7 @@ void ParseGLDefs();
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 void D_DoomLoop ();
-static const char *BaseFileSearch (const char *file, const char *ext, bool lookfirstinprogdir=false);
+const char *BaseFileSearch (const char *file, const char *ext, bool lookfirstinprogdir=false);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -668,6 +670,8 @@ void D_Display ()
 	cycles.Reset();
 	cycles.Clock();
 
+	r_UseVanillaTransparency = UseVanillaTransparency(); // [SP] Cache UseVanillaTransparency() call
+
 	if (players[consoleplayer].camera == NULL)
 	{
 		players[consoleplayer].camera = players[consoleplayer].mo;
@@ -682,6 +686,13 @@ void D_Display ()
 	// [RH] change the screen mode if needed
 	if (setmodeneeded)
 	{
+		int oldrenderer;
+		extern int currentrenderer;
+		EXTERN_CVAR(Int, vid_renderer)
+		oldrenderer = vid_renderer; // [SP] Save pending vid_renderer setting (hack)
+		if (currentrenderer != vid_renderer)
+			vid_renderer = currentrenderer;
+
 		// Change screen mode.
 		if (Video->SetResolution (NewWidth, NewHeight, NewBits))
 		{
@@ -700,6 +711,7 @@ void D_Display ()
 			// Reset the mouse cursor in case the bit depth changed
 			vid_cursor.Callback();
 		}
+		vid_renderer = oldrenderer; // [SP] Restore pending vid_renderer setting
 	}
 
 	// change the view size if needed
@@ -1684,7 +1696,7 @@ static void D_AddDirectory (TArray<FString> &wadfiles, const char *dir)
 //
 //==========================================================================
 
-static const char *BaseFileSearch (const char *file, const char *ext, bool lookfirstinprogdir)
+const char *BaseFileSearch (const char *file, const char *ext, bool lookfirstinprogdir)
 {
 	static char wad[PATH_MAX];
 
@@ -2597,6 +2609,9 @@ void D_DoomMain (void)
 			D_CheckNetGame ();
 		}
 
+		// [SP] Force vanilla transparency auto-detection to re-detect our game lumps now
+		UpdateVanillaTransparency();
+
 		// [RH] Lock any cvars that should be locked now that we're
 		// about to begin the game.
 		FBaseCVar::EnableNoSet ();
@@ -2631,6 +2646,7 @@ void D_DoomMain (void)
 			}
 
 			V_Init2();
+			gl_PatchMenu();
 			UpdateJoystickMenu(NULL);
 
 			v = Args->CheckValue ("-loadgame");

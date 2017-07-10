@@ -80,14 +80,20 @@ public:
 
 	static const uint32_t SkySubsectorDepth = 0x7fffffff;
 
+	line_t *LastPortalLine = nullptr;
+
 private:
 	void ClearBuffers();
 	void RenderPortals(int portalDepth);
 	void RenderSectors();
-	void RenderSubsector(subsector_t *sub);
+	void RenderSubsector(subsector_t *sub, uint32_t ceilingSubsectorDepth, uint32_t floorSubsectorDepth);
 	void RenderLine(subsector_t *sub, seg_t *line, sector_t *frontsector, uint32_t subsectorDepth);
 	void RenderSprite(AActor *thing, double sortDistance, const DVector2 &left, const DVector2 &right);
 	void RenderSprite(AActor *thing, double sortDistance, DVector2 left, DVector2 right, double t1, double t2, void *node);
+
+	void RenderPolySubsector(subsector_t *sub, uint32_t subsectorDepth, sector_t *frontsector);
+	void RenderPolyNode(void *node, uint32_t subsectorDepth, sector_t *frontsector);
+	static int PointOnSide(const DVector2 &pos, const node_t *node);
 
 	TriMatrix WorldToClip;
 	PolyClipPlane PortalPlane;

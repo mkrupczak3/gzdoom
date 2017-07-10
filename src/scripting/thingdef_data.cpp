@@ -323,6 +323,8 @@ static FFlagDef ActorFlagDefs[]=
 	DEFINE_FLAG(MF7, NOINFIGHTSPECIES, AActor, flags7),
 	DEFINE_FLAG(MF7, FORCEINFIGHTING, AActor, flags7),
 
+	DEFINE_FLAG(MF8, FRIGHTENING, AActor, flags8),
+
 	// Effect flags
 	DEFINE_FLAG(FX, VISIBILITYPULSE, AActor, effects),
 	DEFINE_FLAG2(FX_ROCKET, ROCKETTRAIL, AActor, effects),
@@ -343,6 +345,8 @@ static FFlagDef ActorFlagDefs[]=
 	DEFINE_FLAG(RF, YFLIP, AActor, renderflags),
 	DEFINE_FLAG(RF, INTERPOLATEANGLES, AActor, renderflags),
 	DEFINE_FLAG(RF, DONTINTERPOLATE, AActor, renderflags),
+	DEFINE_FLAG(RF, SPRITEFLIP, AActor, renderflags),
+	DEFINE_FLAG(RF, ZDOOMTRANS, AActor, renderflags),
 
 	// Bounce flags
 	DEFINE_FLAG2(BOUNCE_Walls, BOUNCEONWALLS, AActor, BounceFlags),
@@ -484,12 +488,12 @@ static FFlagDef PlayerPawnFlagDefs[] =
 static FFlagDef DynLightFlagDefs[] =
 {
 	// PlayerPawn flags
-	DEFINE_FLAG(MF4, SUBTRACTIVE, ADynamicLight, flags4),
-	DEFINE_FLAG(MF4, ADDITIVE, ADynamicLight, flags4),
-	DEFINE_FLAG(MF4, DONTLIGHTSELF, ADynamicLight, flags4),
-	DEFINE_FLAG(MF4, ATTENUATE, ADynamicLight, flags4),
-	DEFINE_FLAG(MF4, NOSHADOWMAP, ADynamicLight, flags4),
-	DEFINE_FLAG(MF4, DONTLIGHTACTORS, ADynamicLight, flags4),
+	DEFINE_FLAG(LF, SUBTRACTIVE, ADynamicLight, lightflags),
+	DEFINE_FLAG(LF, ADDITIVE, ADynamicLight, lightflags),
+	DEFINE_FLAG(LF, DONTLIGHTSELF, ADynamicLight, lightflags),
+	DEFINE_FLAG(LF, ATTENUATE, ADynamicLight, lightflags),
+	DEFINE_FLAG(LF, NOSHADOWMAP, ADynamicLight, lightflags),
+	DEFINE_FLAG(LF, DONTLIGHTACTORS, ADynamicLight, lightflags),
 };
 
 static FFlagDef PowerSpeedFlagDefs[] =

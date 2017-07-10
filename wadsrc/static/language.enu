@@ -711,6 +711,8 @@ OB_IRONLICH = "%o was devastated by an ironlich.";
 OB_IRONLICHHIT = "%o got up-close and personal with an ironlich.";
 OB_BONEKNIGHT = "%o was axed by an undead warrior.";
 OB_BONEKNIGHTHIT = "%o was slain by an undead warrior.";
+OB_MINOTAUR = "%o was blasted into cinders by a Maulotaur.";
+OB_MINOTAURHIT = "%o was pulped by a Maulotaur.";
 OB_MUMMY = "%o was smashed by a golem.";
 OB_MUMMYLEADER = "%o was shrieked to death by a nitrogolem.";
 OB_SNAKE = "%o was rattled by an ophidian.";
@@ -1814,7 +1816,9 @@ DSPLYMNU_ATTACHEDSURFACES		= "Use attached surfaces"; // Not used
 DSPLYMNU_SKYMODE				= "Sky render mode";
 DSPLYMNU_LINEARSKY				= "Linear skies";
 DSPLYMNU_GZDFULLBRIGHT			= "Fullbright overrides sector color";
+DSPLYMNU_SCALEFUZZ				= "Scale fuzz effect";
 DSPLYMNU_DRAWFUZZ				= "Use fuzz effect";
+DSPLYMNU_OLDTRANS				= "Classic Transparency";
 DSPLYMNU_TRANSSOUL				= "Lost Soul translucency";
 DSPLYMNU_FAKECONTRAST			= "Use fake contrast";
 DSPLYMNU_ROCKETTRAILS			= "Rocket Trails";
@@ -2137,6 +2141,7 @@ SNDMNU_MODREPLAYER		= "Module replayer options";
 OPENALMNU_TITLE				= "OPENAL OPTIONS";
 OPENALMNU_PLAYBACKDEVICE	= "Playback device";
 OPENALMNU_ENABLEEFX			= "Enable EFX";
+OPENALMNU_RESAMPLER			= "Resampler";
 
 // Advanced Sound Options
 ADVSNDMNU_TITLE				= "ADVANCED SOUND OPTIONS";
@@ -2360,10 +2365,17 @@ OPTVAL_EVERYTHING			= "Everything";
 OPTVAL_FULLSCREENONLY		= "Fullscreen only";
 OPTVAL_GL 					= "OpenGL";
 OPTVAL_D3D					= "Direct3D";
+OPTVAL_SDL					= "SDL";
+OPTVAL_COCOA				= "Cocoa";
 OPTVAL_HWPOLY				= "OpenGL-Accelerated";
 OPTVAL_SWDOOM				= "Doom Software Renderer";
 OPTVAL_DEDICATED			= "High-Performance";
 OPTVAL_INTEGRATED			= "Power-Saving";
+OPTVAL_VANILLA				= "Vanilla";
+OPTVAL_VTFZDOOM				= "ZDoom (Forced)";
+OPTVAL_VTFVANILLA			= "Vanilla (Forced)";
+OPTVAL_VTAZDOOM				= "Auto (ZDoom Preferred)";
+OPTVAL_VTAVANILLA			= "Auto (Vanilla Preferred)";
 
 // Colors
 C_BRICK					= "\cabrick";
@@ -2671,7 +2683,7 @@ GLTEXMNU_SORTDRAWLIST 	= "Sort draw lists by texture";
 
 // Dynamic Light Options
 GLLIGHTMNU_TITLE 			= "DYNAMIC LIGHTS";
-GLLIGHTMNU_LIGHTSENABLED 	= "Dynamic Lights enabled";
+GLLIGHTMNU_LIGHTSENABLED 	= "Dynamic Lights (OpenGL)";
 GLLIGHTMNU_LIGHTDEFS		= "Enable light definitions";
 GLLIGHTMNU_CLIPLIGHTS 		= "Clip lights";
 GLLIGHTMNU_LIGHTSPRITES 	= "Lights affect sprites";
@@ -2805,5 +2817,14 @@ TCMNU_TRUECOLOR				= "True color output";
 TCMNU_MINFILTER				= "Linear filter when downscaling";
 TCMNU_MAGFILTER				= "Linear filter when upscaling";
 TCMNU_MIPMAP					= "Use mipmapped textures";
-TCMNU_DYNLIGHTS				= "Dynamic lights";
+TCMNU_DYNLIGHTS				= "Dynamic lights (Software)";
 
+// SVE strings:
+
+TAG_TALISMANRED = "Red Talisman";
+TAG_TALISMANGREEN = "Green Talisman";
+TAG_TALISMANBLUE = "Blue Talisman";
+MSG_TALISMANRED = "You have a feeling that it wasn't to be touched...";
+MSG_TALISMANGREEN = "Whatever it is, it doesn't belong in this world...";
+MSG_TALISMANBLUE = "It must do something...";
+MSG_TALISMANPOWER = "You have super strength!";

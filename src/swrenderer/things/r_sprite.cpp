@@ -65,6 +65,7 @@
 #include "swrenderer/r_memory.h"
 #include "swrenderer/r_renderthread.h"
 #include "a_dynlight.h"
+#include "r_data/r_vanillatrans.h"
 
 EXTERN_CVAR(Bool, r_fullbrightignoresectorcolor)
 EXTERN_CVAR(Bool, gl_light_sprites)
@@ -145,6 +146,10 @@ namespace swrenderer
 		// [RH] Flip for mirrors
 		renderflags ^= renderportal->MirrorFlags & RF_XFLIP;
 
+		// [SP] SpriteFlip
+		if (thing->renderflags & RF_SPRITEFLIP)
+			renderflags ^= RF_XFLIP;
+
 		// calculate edges of the shape
 		const double thingxscalemul = spriteScale.X / tex->Scale.X;
 
@@ -208,6 +213,11 @@ namespace swrenderer
 		if (thing->flags5 & MF5_BRIGHT)
 			vis->renderflags |= RF_FULLBRIGHT; // kg3D
 		vis->RenderStyle = thing->RenderStyle;
+		if (r_UseVanillaTransparency)
+		{
+			if (thing->renderflags & RF_ZDOOMTRANS)
+				vis->RenderStyle = LegacyRenderStyles[STYLE_Normal];
+		}
 		vis->FillColor = thing->fillcolor;
 		vis->Translation = thing->Translation;		// [RH] thing translation table
 		vis->FakeFlatStat = fakeside;
@@ -245,7 +255,7 @@ namespace swrenderer
 			while (node != nullptr)
 			{
 				ADynamicLight *light = node->lightsource;
-				if (light->visibletoplayer && !(light->flags2&MF2_DORMANT) && (!(light->flags4&MF4_DONTLIGHTSELF) || light->target != thing) && !(light->flags4&MF4_DONTLIGHTACTORS))
+				if (light->visibletoplayer && !(light->flags2&MF2_DORMANT) && (!(light->lightflags&LF_DONTLIGHTSELF) || light->target != thing) && !(light->lightflags&LF_DONTLIGHTACTORS))
 				{
 					float lx = (float)(light->X() - thing->X());
 					float ly = (float)(light->Y() - thing->Y());

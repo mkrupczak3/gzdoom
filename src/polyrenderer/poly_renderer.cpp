@@ -40,6 +40,7 @@
 
 EXTERN_CVAR(Bool, r_shadercolormaps)
 EXTERN_CVAR(Int, screenblocks)
+EXTERN_CVAR(Float, r_visibility)
 void InitGLRMapinfoData();
 
 /////////////////////////////////////////////////////////////////////////////
@@ -115,13 +116,14 @@ void PolyRenderer::RenderActorView(AActor *actor, bool dontmaplines)
 	
 	DontMapLines = dontmaplines;
 	
+	R_SetupFrame(Viewpoint, Viewwindow, actor);
 	P_FindParticleSubsectors();
 	PO_LinkToSubsectors();
-	R_SetupFrame(Viewpoint, Viewwindow, actor);
 
 	if (APART(R_OldBlend)) NormalLight.Maps = realcolormaps.Maps;
 	else NormalLight.Maps = realcolormaps.Maps + NUMCOLORMAPS * 256 * R_OldBlend;
 
+	Light.SetVisibility(Viewwindow, r_visibility);
 
 	PolyCameraLight::Instance()->SetCamera(Viewpoint, RenderTarget, actor);
 	//Viewport->SetupFreelook();
@@ -159,8 +161,6 @@ void PolyRenderer::ClearBuffers()
 	PolyStencilBuffer::Instance()->Clear(RenderTarget->GetWidth(), RenderTarget->GetHeight(), 0);
 	PolySubsectorGBuffer::Instance()->Resize(RenderTarget->GetPitch(), RenderTarget->GetHeight());
 	NextStencilValue = 0;
-	SeenLinePortals.clear();
-	SeenMirrors.clear();
 }
 
 void PolyRenderer::SetSceneViewport()
@@ -215,14 +215,4 @@ void PolyRenderer::SetupPerspectiveMatrix()
 		TriMatrix::translate((float)-Viewpoint.Pos.X, (float)-Viewpoint.Pos.Y, (float)-Viewpoint.Pos.Z);
 
 	WorldToClip = TriMatrix::perspective(fovy, ratio, 5.0f, 65535.0f) * worldToView;
-}
-
-bool PolyRenderer::InsertSeenLinePortal(FLinePortal *portal)
-{
-	return SeenLinePortals.insert(portal).second;
-}
-
-bool PolyRenderer::InsertSeenMirror(line_t *mirrorLine)
-{
-	return SeenMirrors.insert(mirrorLine).second;
 }

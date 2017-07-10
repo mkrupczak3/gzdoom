@@ -390,10 +390,8 @@ namespace swrenderer
 
 	void RenderOpaquePass::AddPolyobjs(subsector_t *sub)
 	{
-		if (sub->BSP == nullptr || sub->BSP->bDirty)
-		{
-			sub->BuildPolyBSP();
-		}
+		Thread->PreparePolyObject(sub);
+
 		if (sub->BSP->Nodes.Size() == 0)
 		{
 			RenderSubsector(&sub->BSP->Subsectors[0]);
@@ -779,11 +777,17 @@ namespace swrenderer
 
 	void RenderOpaquePass::RenderScene()
 	{
+		if (Thread->MainThread)
+			WallCycles.Clock();
+
 		SeenSpriteSectors.clear();
 		SeenActors.clear();
 
 		InSubsector = nullptr;
 		RenderBSPNode(level.HeadNode());	// The head node is the last node output.
+
+		if (Thread->MainThread)
+			WallCycles.Unclock();
 	}
 
 	//
@@ -897,7 +901,7 @@ namespace swrenderer
 
 					if ((sprite.renderflags & RF_SPRITETYPEMASK) == RF_WALLSPRITE)
 					{
-						RenderWallSprite::Project(Thread, thing, sprite.pos, sprite.picnum, sprite.spriteScale, sprite.renderflags, thingShade, foggy, thingColormap);
+						RenderWallSprite::Project(Thread, thing, sprite.pos, sprite.tex, sprite.spriteScale, sprite.renderflags, thingShade, foggy, thingColormap);
 					}
 					else if (sprite.voxel)
 					{
@@ -1006,18 +1010,24 @@ namespace swrenderer
 				auto &viewpoint = Thread->Viewport->viewpoint;
 				DAngle sprangle = thing->GetSpriteAngle((sprite.pos - viewpoint.Pos).Angle(), viewpoint.TicFrac);
 				bool flipX;
-				FTextureID tex = sprdef->GetSpriteFrame(thing->frame, -1, sprangle, &flipX);
-				if (!tex.isValid()) return false;
 
-				if (flipX)
+				FTextureID tex = sprdef->GetSpriteFrame(thing->frame, -1, sprangle, &flipX, !!(thing->renderflags & RF_SPRITEFLIP));
+				if (tex.isValid())
 				{
-					sprite.renderflags ^= RF_XFLIP;
+					if (flipX)
+					{
+						sprite.renderflags ^= RF_XFLIP;
+					}
+					sprite.tex = TexMan[tex];	// Do not animate the rotation
 				}
-				sprite.tex = TexMan[tex];	// Do not animate the rotation
+
 				if (r_drawvoxels)
 				{
 					sprite.voxel = SpriteFrames[sprdef->spriteframes + thing->frame].Voxel;
 				}
+
+				if (sprite.voxel == nullptr && !tex.isValid())
+					return false;
 			}
 
 			if (sprite.voxel == nullptr && (sprite.tex == nullptr || sprite.tex->UseType == FTexture::TEX_Null))

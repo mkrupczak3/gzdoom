@@ -282,6 +282,7 @@ DEFINE_FIELD(AActor, Floorclip)
 DEFINE_FIELD(AActor, DamageType)
 DEFINE_FIELD(AActor, DamageTypeReceived)
 DEFINE_FIELD(AActor, FloatBobPhase)
+DEFINE_FIELD(AActor, FloatBobStrength)
 DEFINE_FIELD(AActor, RipperLevel)
 DEFINE_FIELD(AActor, RipLevelMin)
 DEFINE_FIELD(AActor, RipLevelMax)
@@ -407,6 +408,7 @@ void AActor::Serialize(FSerializer &arc)
 		A("flags5", flags5)
 		A("flags6", flags6)
 		A("flags7", flags7)
+		A("flags8", flags8)
 		A("weaponspecial", weaponspecial)
 		A("special1", special1)
 		A("special2", special2)
@@ -442,6 +444,7 @@ void AActor::Serialize(FSerializer &arc)
 		("inventory", Inventory)
 		A("inventoryid", InventoryID)
 		A("floatbobphase", FloatBobPhase)
+		A("floatbobstrength", FloatBobStrength)
 		A("translation", Translation)
 		A("bloodcolor", BloodColor)
 		A("bloodtranslation", BloodTranslation)
@@ -3823,28 +3826,22 @@ DEFINE_ACTION_FUNCTION(AActor, PlayActiveSound)
 
 bool AActor::IsOkayToAttack (AActor *link)
 {
-	if (!(player							// Original AActor::IsOkayToAttack was only for players
-	//	|| (flags  & MF_FRIENDLY)			// Maybe let friendly monsters use the function as well?
-		|| (flags5 & MF5_SUMMONEDMONSTER)	// AMinotaurFriend has its own version, generalized to other summoned monsters
-		|| (flags2 & MF2_SEEKERMISSILE)))	// AHolySpirit and AMageStaffFX2 as well, generalized to other seeker missiles
-	{	// Normal monsters and other actors always return false.
-		return false;
-	}
 	// Standard things to eliminate: an actor shouldn't attack itself,
 	// or a non-shootable, dormant, non-player-and-non-monster actor.
 	if (link == this)									return false;
 	if (!(link->player||(link->flags3 & MF3_ISMONSTER)))return false;
 	if (!(link->flags & MF_SHOOTABLE))					return false;
 	if (link->flags2 & MF2_DORMANT)						return false;
+	if (link->flags7 & MF7_NEVERTARGET)					return false; // NEVERTARGET means just that.
 
 	// An actor shouldn't attack friendly actors. The reference depends
 	// on the type of actor: for a player's actor, itself; for a projectile,
 	// its target; and for a summoned minion, its tracer.
-	AActor * Friend = NULL;
-	if (player)											Friend = this;
-	else if (flags5 & MF5_SUMMONEDMONSTER)				Friend = tracer;
+	AActor * Friend;
+	if (flags5 & MF5_SUMMONEDMONSTER)					Friend = tracer;
 	else if (flags2 & MF2_SEEKERMISSILE)				Friend = target;
 	else if ((flags & MF_FRIENDLY) && FriendPlayer)		Friend = players[FriendPlayer-1].mo;
+	else												Friend = this;
 
 	// Friend checks
 	if (link == Friend)									return false;
@@ -3880,7 +3877,7 @@ bool AActor::IsOkayToAttack (AActor *link)
 void AActor::SetShade (uint32_t rgb)
 {
 	PalEntry *entry = (PalEntry *)&rgb;
-	fillcolor = rgb | (ColorMatcher.Pick (entry->r, entry->g, entry->b) << 24);
+	fillcolor = (rgb & 0xffffff) | (ColorMatcher.Pick (entry->r, entry->g, entry->b) << 24);
 }
 
 void AActor::SetShade (int r, int g, int b)
@@ -4103,6 +4100,7 @@ void AActor::Tick ()
 			CheckPortalTransition(false);
 			LinkToWorld(&ctx);
 		}
+		flags8 &= ~MF8_INSCROLLSEC;
 	}
 	else
 	{
@@ -4255,11 +4253,15 @@ void AActor::Tick ()
 
 		// [RH] Consider carrying sectors here
 		DVector2 cumm(0, 0);
-		if ((level.Scrolls.Size() != 0 || player != NULL) && !(flags & MF_NOCLIP) && !(flags & MF_NOSECTOR))
+
+		if ((((flags8 & MF8_INSCROLLSEC) && level.Scrolls.Size() > 0) || player != NULL) && !(flags & MF_NOCLIP) && !(flags & MF_NOSECTOR))
 		{
 			double height, waterheight;	// killough 4/4/98: add waterheight
 			const msecnode_t *node;
 			int countx, county;
+
+			// Clear the flag for the next frame.
+			flags8 &= ~MF8_INSCROLLSEC;
 
 			// killough 3/7/98: Carry things on floor
 			// killough 3/20/98: use new sector list which reflects true members
@@ -5084,6 +5086,8 @@ AActor *AActor::StaticSpawn (PClassActor *type, const DVector3 &pos, replace_t a
 	{
 		level.total_secrets++;
 	}
+	// force scroller check in the first tic.
+	actor->flags8 |= MF8_INSCROLLSEC;
 	return actor;
 }
 
@@ -5817,7 +5821,7 @@ AActor *P_SpawnMapThing (FMapThing *mthing, int position)
 		}
 
 		mask = G_SkillProperty(SKILLP_SpawnFilter);
-		if (!(mthing->SkillFilter & mask))
+		if (!(mthing->SkillFilter & mask) && !mentry->NoSkillFlags)
 		{
 			return NULL;
 		}
@@ -6058,7 +6062,8 @@ AActor *P_SpawnMapThing (FMapThing *mthing, int position)
 	if (mthing->score)
 		mobj->Score = mthing->score;
 	if (mthing->fillcolor)
-		mobj->fillcolor = mthing->fillcolor;
+		mobj->fillcolor = (mthing->fillcolor & 0xffffff) | (ColorMatcher.Pick((mthing->fillcolor & 0xff0000) >> 16,
+			(mthing->fillcolor & 0xff00) >> 8, (mthing->fillcolor & 0xff)) << 24);
 
 	mobj->CallBeginPlay ();
 	if (!(mobj->ObjectFlags & OF_EuthanizeMe))
@@ -6713,6 +6718,8 @@ bool P_CheckMissileSpawn (AActor* th, double maxdist)
 			th->tics = 1;
 	}
 
+	DVector3 newpos = th->Pos();
+
 	if (maxdist > 0)
 	{
 		// move a little forward so an angle can be computed if it immediately explodes
@@ -6726,7 +6733,7 @@ bool P_CheckMissileSpawn (AActor* th, double maxdist)
 			advance *= 0.5f;
 		}
 		while (advance.XY().LengthSquared() >= maxsquared);
-		th->SetXYZ(th->Pos() + advance);
+		newpos += advance;
 	}
 
 	FCheckPosition tm(!!(th->flags2 & MF2_RIP));
@@ -6750,7 +6757,9 @@ bool P_CheckMissileSpawn (AActor* th, double maxdist)
 	bool MBFGrenade = (!(th->flags & MF_MISSILE) || (th->BounceFlags & BOUNCE_MBF));
 
 	// killough 3/15/98: no dropoff (really = don't care for missiles)
-	if (!(P_TryMove (th, th->Pos(), false, NULL, tm, true)))
+	auto oldf2 = th->flags2;
+	th->flags2 &= ~(MF2_MCROSS|MF2_PCROSS);	// The following check is not supposed to activate missile triggers.
+	if (!(P_TryMove (th, newpos, false, NULL, tm, true)))
 	{
 		// [RH] Don't explode ripping missiles that spawn inside something
 		if (th->BlockingMobj == NULL || !(th->flags2 & MF2_RIP) || (th->BlockingMobj->flags5 & MF5_DONTRIP))
@@ -6773,6 +6782,7 @@ bool P_CheckMissileSpawn (AActor* th, double maxdist)
 			return false;
 		}
 	}
+	th->flags2 = oldf2;
 	th->ClearInterpolation();
 	return true;
 }
@@ -7986,7 +7996,7 @@ double AActor::GetBobOffset(double ticfrac) const
 	{
 		return 0;
 	}
-	return BobSin(FloatBobPhase + level.maptime + ticfrac);
+	return BobSin(FloatBobPhase + level.maptime + ticfrac) * FloatBobStrength;
 }
 
 DEFINE_ACTION_FUNCTION(AActor, GetBobOffset)
@@ -8127,7 +8137,7 @@ DEFINE_ACTION_FUNCTION(AActor, Vel3DFromAngle)
 	PARAM_FLOAT(speed);
 	PARAM_ANGLE(angle);
 	PARAM_ANGLE(pitch);
-	self->Vel3DFromAngle(pitch, angle, speed);
+	self->Vel3DFromAngle(angle, pitch, speed);
 	return 0;
 }
 
@@ -8400,6 +8410,9 @@ void PrintMiscActorInfo(AActor *query)
 		Printf("\n   flags7: %x", query->flags7.GetValue());
 		for (flagi = 0; flagi <= 31; flagi++)
 			if (query->flags7 & ActorFlags7::FromInt(1<<flagi)) Printf(" %s", FLAG_NAME(1<<flagi, flags7));
+		Printf("\n   flags8: %x", query->flags8.GetValue());
+		for (flagi = 0; flagi <= 31; flagi++)
+			if (query->flags8 & ActorFlags8::FromInt(1<<flagi)) Printf(" %s", FLAG_NAME(1<<flagi, flags8));
 		Printf("\nBounce flags: %x\nBounce factors: f:%f, w:%f", 
 			query->BounceFlags.GetValue(), query->bouncefactor,
 			query->wallbouncefactor);
