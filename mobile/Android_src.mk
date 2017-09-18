@@ -55,7 +55,7 @@ $(GZDOOM_TOP_PATH)/mobile/src
 
 
 ANDROID_SRC_FILES = \
-    ../mobile/src/game_interface.cpp \
+    ../../common_interface/gzdoom_game_interface.cpp \
     ../../common_interface/touch_interface.cpp \
     ../../common_interface/android_jni.cpp \
     ../mobile/src/i_specialpaths_android.cpp
