@@ -148,7 +148,17 @@ void FHardwareTexture::Resize(int width, int height, unsigned char *src_data, un
 	}
 }
 
-
+#ifdef __MOBILE__
+static void BGRAtoRGBA(unsigned char * buffer, int numPixels)
+{
+    uint32_t *temp = (uint32_t *)buffer;
+    for( int n = 0; n < numPixels; n++ )
+    {
+        //temp[n] = ((temp[n] & 0x0000FF00) << 16 ) | ((temp[n] & 0xFF000000) >> 16 ) | (temp[n] & 0x00FF00FF);
+        temp[n] = ((temp[n] & 0x000000FF) << 16 ) | ((temp[n] & 0x00FF0000) >> 16 ) | (temp[n] & 0xFF00FF00);
+    }
+}
+#endif
 
 //===========================================================================
 // 
@@ -208,6 +218,7 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 		}
 	}
 #ifdef __MOBILE__
+    BGRAtoRGBA( buffer, rw * rh ); // TODO, Check if device can handle GL_BGRA anyway
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rw, rh, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 #else
     glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, GL_BGRA, GL_UNSIGNED_BYTE, buffer);

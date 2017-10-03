@@ -228,8 +228,9 @@ bool GLPortal::Start(bool usestencil, bool doquery)
 				glDepthFunc(GL_LESS);
 				// glColorMask(1, 1, 1, 1);
 				gl_RenderState.SetEffect(EFF_NONE);
+#ifndef __MOBILE__ // Makes stuff see through...
 				glDepthRange(0, 1);
-
+#endif
 				GLuint sampleCount;
 
 				if (QueryObject)
@@ -383,7 +384,9 @@ void GLPortal::End(bool usestencil)
 
 			// second step: restore the depth buffer to the previous values and reset the stencil
 			glDepthFunc(GL_LEQUAL);
+#ifndef __MOBILE__ // Makes stuff see through...
 			glDepthRange(0, 1);
+#endif
 			glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 			glStencilFunc(GL_EQUAL, recursion, ~0);		// draw sky into stencil
 			DrawPortalStencil();
@@ -1268,7 +1271,9 @@ void GLEEHorizonPortal::DrawContents()
 void GLPortal::Initialize()
 {
 	assert(0 == QueryObject);
+#ifndef __MOBILE__
 	glGenQueries(1, &QueryObject);
+#endif
 }
 
 void GLPortal::Shutdown()

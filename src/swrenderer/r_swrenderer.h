@@ -30,10 +30,12 @@ struct FSoftwareRenderer : public FRenderer
 	void OnModeSet() override;
 	void SetClearColor(int color) override;
 	void Init() override;
-	void RenderTextureView (FCanvasTexture *tex, AActor *viewpoint, int fov) override;
+	void RenderTextureView (FCanvasTexture *tex, AActor *viewpoint, double fov) override;
 
 	void PreprocessLevel() override;
 	void CleanLevelData() override;
+
+	uint32_t GetCaps() override;
 
 private:
 	void PrecacheTexture(FTexture *tex, int cache);

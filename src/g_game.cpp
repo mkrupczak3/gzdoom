@@ -1204,7 +1204,7 @@ void G_Ticker ()
 			}
 
 			// check for turbo cheats
-			if (turbo > 100.f && cmd->ucmd.forwardmove > TURBOTHRESHOLD &&
+			if (multiplayer && turbo > 100.f && cmd->ucmd.forwardmove > TURBOTHRESHOLD &&
 				!(gametic&31) && ((gametic>>5)&(MAXPLAYERS-1)) == i )
 			{
 				Printf ("%s is turbo!\n", players[i].userinfo.GetName());
@@ -1774,6 +1774,8 @@ void G_DoReborn (int playernum, bool freshbot)
 	}
 	else
 	{
+		bool isUnfriendly = players[playernum].mo && !(players[playernum].mo->flags & MF_FRIENDLY);
+
 		// respawn at the start
 		// first disassociate the corpse
 		if (players[playernum].mo)
@@ -1783,7 +1785,7 @@ void G_DoReborn (int playernum, bool freshbot)
 		}
 
 		// spawn at random spot if in deathmatch
-		if (deathmatch)
+		if (deathmatch || isUnfriendly)
 		{
 			G_DeathMatchSpawnPlayer (playernum);
 			return;
@@ -2202,7 +2204,7 @@ static void PutSaveWads (FSerializer &arc)
 	const char *name;
 
 	// Name of IWAD
-	name = Wads.GetWadName (FWadCollection::IWAD_FILENUM);
+	name = Wads.GetWadName (Wads.GetIwadNum());
 	arc.AddString("Game WAD", name);
 
 	// Name of wad the map resides in
