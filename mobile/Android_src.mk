@@ -237,6 +237,7 @@ PCH_SOURCES = \
 	portal.cpp \
 	r_utility.cpp \
 	r_sky.cpp \
+	r_videoscale.cpp \
 	s_advsound.cpp \
 	s_environment.cpp \
 	s_playlist.cpp \
@@ -310,6 +311,7 @@ PCH_SOURCES = \
 	gl/shaders/gl_tonemapshader.cpp \
 	gl/shaders/gl_lensshader.cpp \
 	gl/shaders/gl_fxaashader.cpp \
+	gl/shaders/gl_postprocessshader.cpp \
 	gl/stereo3d/gl_stereo3d.cpp \
 	gl/stereo3d/gl_stereo_cvars.cpp \
 	gl/stereo3d/gl_stereo_leftright.cpp \
@@ -493,7 +495,9 @@ LOCAL_LDLIBS := -ldl -llog -lOpenSLES -lz -lGLESv1_CM
 LOCAL_LDLIBS +=  -lEGL
 LOCAL_STATIC_LIBRARIES := fluidsynth-static SDL2_net libjpeg lzma_dev gdtoa_dev dumb_dev gme_dev bzip2_dev
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 jwzgles_shared
-#fmod
+
+LOCAL_STATIC_LIBRARIES += license_static
+
 include $(BUILD_SHARED_LIBRARY)
 
 
