@@ -184,6 +184,7 @@ void Mac_I_FatalError(const char* errortext);
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"Gzdoom", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "Gzdoom", __VA_ARGS__))
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR,"Gzdoom", __VA_ARGS__))
+#include "LogWritter.h"
 #endif
 
 void I_FatalError (const char *error, ...)
@@ -207,6 +208,7 @@ void I_FatalError (const char *error, ...)
 
 #ifdef __ANDROID__
         LOGI("FATAL ERROR: %s", errortext);
+        LogWritter_Write(errortext);
 #endif
 		// Record error to log (if logging)
 		if (Logfile)
@@ -237,6 +239,7 @@ void I_Error (const char *error, ...)
 
 #ifdef __ANDROID__
         LOGI("ERROR: %s", errortext);
+        LogWritter_Write(errortext);
 #endif
 
     throw CRecoverableError (errortext);

@@ -53,6 +53,11 @@ extern int currentrenderer;
 
 static void CollectExtensions()
 {
+
+#ifdef __MOBILE__ //None for now..
+	return;
+#endif
+
 	const char *extension;
 
 	int max = 0;
@@ -85,9 +90,6 @@ static void CollectExtensions()
 		for (int i = 0; i < max; i++)
 		{
 			extension = (const char*)glGetStringi(GL_EXTENSIONS, i);
-#ifdef __MOBILE__
-			extension = "";
-#endif
 			m_Extensions.Push(FString(extension));
 		}
 	}

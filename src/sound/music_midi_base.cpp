@@ -243,12 +243,21 @@ CCMD (snd_listmididevices)
 
 CUSTOM_CVAR(Int, snd_mididevice, DEF_MIDIDEV, CVAR_ARCHIVE|CVAR_GLOBALCONFIG)
 {
+#ifdef __ANDROID__ //Limit to fluidsynth, gus, opl
+	if (self < -5)
+		self = -3;
+	else if (self > -3)
+		self = -5;
+	else
+		MIDIDeviceChanged(self);
+#else
 	if (self < -6)
 		self = -6;
 	else if (self > -2)
 		self = -2;
 	else
 		MIDIDeviceChanged(self);
+#endif
 }
 
 void I_BuildMIDIMenuList (FOptionValues *opt)

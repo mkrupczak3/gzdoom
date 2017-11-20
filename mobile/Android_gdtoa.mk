@@ -7,7 +7,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := gdtoa_dev
 
-LOCAL_CFLAGS :=   -O2  
+LOCAL_CFLAGS :=
 
 LOCAL_LDLIBS += -llog
 

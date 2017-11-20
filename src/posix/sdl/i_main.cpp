@@ -191,6 +191,7 @@ void I_ShutdownJoysticks();
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"JNITouchControlsUtils", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "JNITouchControlsUtils", __VA_ARGS__))
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR,"JNITouchControlsUtils", __VA_ARGS__))
+#include "LogWritter.h"
 
 int main_android (int argc, char **argv)
 {
@@ -276,6 +277,7 @@ int main (int argc, char **argv)
 			fprintf (stderr, "%s\n", error.GetMessage ());
 #ifdef __ANDROID__
         LOGI("FATAL ERROR: %s",  error.GetMessage ());
+        LogWritter_Write(error.GetMessage ());
 #endif
 #ifdef __APPLE__
 		Mac_I_FatalError(error.GetMessage());

@@ -6,10 +6,9 @@ include $(CLEAR_VARS)
 LOCAL_MODULE    := gzdoom_dev
 
 #-DNO_FMOD
-LOCAL_CFLAGS   := -D__MOBILE__ -DGZDOOM -D__STDINT_LIMITS
-LOCAL_CPPFLAGS :=  -DHAVE_FLUIDSYNTH -std=c++14  -DONLY_GPL -DHAVE_JWZGLES -DUSE_GLES   -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
+LOCAL_CFLAGS   := -D__MOBILE__ -DGZDOOM -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
+LOCAL_CPPFLAGS :=  -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14  -DONLY_GPL -DHAVE_JWZGLES -DUSE_GLES   -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 #-std=gnu++1y -DHAVE_FLUIDSYNTH
-
 
 ifeq ($(BUILD_SERIAL),1)
 LOCAL_CPPFLAGS += -DANTI_HACK 
@@ -41,6 +40,8 @@ LOCAL_C_INCLUDES := \
  $(TOP_DIR)/fluidsynth/include_from_prboom \
  $(SDL_INCLUDE_PATHS) \
 $(TOP_DIR)/openal/include/AL \
+$(TOP_DIR)/libsndfile-android/jni/ \
+$(TOP_DIR)/libmpg123 \
 $(TOP_DIR)/FMOD_studio/api/lowlevel/inc \
 $(TOP_DIR)/jpeg8d \
 $(TOP_DIR)/Clibs_OpenTouch \
@@ -493,7 +494,11 @@ LOCAL_SRC_FILES = \
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES -lz -lGLESv1_CM
 
 LOCAL_LDLIBS +=  -lEGL
-LOCAL_STATIC_LIBRARIES := fluidsynth-static SDL2_net libjpeg lzma_dev gdtoa_dev dumb_dev gme_dev bzip2_dev
+
+# This is stop a linker warning for mp123 lib failing build
+LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
+
+LOCAL_STATIC_LIBRARIES := sndfile mpg123 fluidsynth-static SDL2_net libjpeg lzma_dev gdtoa_dev dumb_dev gme_dev bzip2_dev logwritter
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 jwzgles_shared
 
 LOCAL_STATIC_LIBRARIES += license_static

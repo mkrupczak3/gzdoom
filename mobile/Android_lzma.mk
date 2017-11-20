@@ -7,7 +7,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := lzma_dev
 
-LOCAL_CFLAGS =  -O2 -Wall -fomit-frame-pointer -D_7ZIP_ST
+LOCAL_CFLAGS = -Wall -fomit-frame-pointer -D_7ZIP_ST
 
 
 LOCAL_LDLIBS += -llog

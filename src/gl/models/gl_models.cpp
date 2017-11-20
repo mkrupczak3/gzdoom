@@ -96,10 +96,17 @@ void gl_FlushModels()
 //===========================================================================
 
 FModelVertexBuffer::FModelVertexBuffer(bool needindex, bool singleframe)
+#ifdef __MOBILE__
+	: FVertexBuffer(false)
+#else
 	: FVertexBuffer(singleframe || !gl.legacyMode)
+#endif
+
 {
 	vbo_ptr = nullptr;
 	ibo_id = 0;
+	ibo_mem = nullptr;
+
 	if (needindex)
 	{
 		glGenBuffers(1, &ibo_id);	// The index buffer can always be a real buffer.
@@ -148,6 +155,12 @@ FModelVertexBuffer::~FModelVertexBuffer()
 	{
 		delete[] vbo_ptr;
 	}
+#ifdef __MOBILE__
+    if (ibo_mem == nullptr)
+    {
+        free( ibo_mem );
+    }
+#endif
 }
 
 //===========================================================================
@@ -201,12 +214,32 @@ unsigned int *FModelVertexBuffer::LockIndexBuffer(unsigned int size)
 {
 	if (ibo_id != 0)
 	{
+#ifdef __MOBILE__ // MapBuffer not available, so allocate memory instead and upload at the end
+
+        if( ibo_mem == nullptr )
+        {
+            ibo_size = size * sizeof(unsigned int);
+            ibo_mem = (char*)malloc(ibo_size);
+        }
+        else
+        {
+            if(size * sizeof(unsigned int) > ibo_size )
+            {
+                ibo_size = size * sizeof(unsigned int);
+                ibo_mem = (char*)realloc(ibo_mem,ibo_size);
+            }
+        }
+
+        return (unsigned int*)ibo_mem;
+#else
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * sizeof(unsigned int), NULL, GL_STATIC_DRAW);
+
 		if (!gl.legacyMode)
 			return (unsigned int*)glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, size * sizeof(unsigned int), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 		else
 			return (unsigned int*)glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY);
+#endif
 	}
 	else
 	{
@@ -224,8 +257,13 @@ void FModelVertexBuffer::UnlockIndexBuffer()
 {
 	if (ibo_id > 0)
 	{
+#ifdef __MOBILE__
+	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, ibo_size, ibo_mem, GL_STATIC_DRAW);
+#else
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
-		glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+	    glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+#endif
 	}
 }
 

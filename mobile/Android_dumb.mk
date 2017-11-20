@@ -7,7 +7,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := dumb_dev
 
-LOCAL_CFLAGS :=   -O2  -DNEED_ITOA
+LOCAL_CFLAGS := -DNEED_ITOA
 
 LOCAL_LDLIBS += -llog
 

@@ -845,6 +845,7 @@ void AddToConsole (int printlevel, const char *text)
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"Gzdoom", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "Gzdoom", __VA_ARGS__))
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR,"Gzdoom", __VA_ARGS__))
+#include "LogWritter.h"
 #endif
 
 /* Adds a string to the console and also to the notify buffer */
@@ -852,6 +853,7 @@ int PrintString (int printlevel, const char *outline)
 {
 #ifdef __ANDROID__
 	LOGI("PrintString: %s",outline);
+	LogWritter_Write(outline);
 #endif
 
 	if (printlevel < msglevel || *outline == '\0')

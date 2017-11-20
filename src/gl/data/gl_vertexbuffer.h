@@ -299,7 +299,10 @@ class FModelVertexBuffer : public FVertexBuffer
 	int mIndexFrame[2];
 	FModelVertex *vbo_ptr;
 	uint32_t ibo_id;
-
+#ifdef __MOBILE__
+    char *ibo_mem;
+    unsigned int ibo_size;
+#endif
 public:
 
 	FModelVertexBuffer(bool needindex, bool singleframe);

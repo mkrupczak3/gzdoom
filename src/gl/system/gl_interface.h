@@ -67,6 +67,7 @@ struct RenderContext
 	char * vendorstring;
 	bool legacyMode;
 	bool es;
+    bool npot;
 
 	int MaxLights() const
 	{
