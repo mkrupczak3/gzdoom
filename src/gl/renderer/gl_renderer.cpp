@@ -386,7 +386,7 @@ void FGLRenderer::DrawTexture(FTexture *img, DCanvas::DrawParms &parms)
 	glEnable(GL_SCISSOR_TEST);
 	int space = (static_cast<OpenGLFrameBuffer*>(screen)->GetTrueHeight()-screen->GetHeight())/2;
 	glScissor(parms.lclip, btm - parms.dclip + space, parms.rclip - parms.lclip, parms.dclip - parms.uclip);
-	
+
 	gl_SetRenderStyle(parms.style, !parms.masked, false);
 	if (img->bHasCanvas)
 	{

@@ -283,6 +283,9 @@ bool SDLGLVideo::SetupPixelFormat(bool allowsoftware, int multisample)
 	SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE,  8 );
 	SDL_GL_SetAttribute( SDL_GL_ALPHA_SIZE,  8 );
 	SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE,  24 );
+#ifdef __ANDROID__
+    SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16 ); // Defaults to 24 which is not needed and fails on old Tegras
+#endif
 	SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE,  8 );
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER,  1 );
 	if (multisample > 0) {

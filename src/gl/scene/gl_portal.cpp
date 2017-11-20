@@ -224,8 +224,9 @@ bool GLPortal::Start(bool usestencil, bool doquery)
 				gl_RenderState.EnableTexture(true);
 				glDepthFunc(GL_LESS);
 				// glColorMask(1, 1, 1, 1);
+#ifndef __MOBILE__ // Makes stuff see through...
 				glDepthRange(0, 1);
-
+#endif
 				GLuint sampleCount;
 
 				glGetQueryObjectuiv(QueryObject, GL_QUERY_RESULT_ARB, &sampleCount);
@@ -370,7 +371,9 @@ void GLPortal::End(bool usestencil)
 
 			// second step: restore the depth buffer to the previous values and reset the stencil
 			glDepthFunc(GL_LEQUAL);
+#ifndef __MOBILE__ // Makes stuff see through...
 			glDepthRange(0,1);
+#endif
 			glStencilOp(GL_KEEP,GL_KEEP,GL_DECR);
 			glStencilFunc(GL_EQUAL,recursion,~0);		// draw sky into stencil
 			DrawPortalStencil();
@@ -411,7 +414,9 @@ void GLPortal::End(bool usestencil)
 
 		glColor4f(1,1,1,1);
 		glDepthFunc(GL_LEQUAL);
+#ifndef __MOBILE__ // Makes stuff see through...
 		glDepthRange(0, 1);
+#endif
 		{
 			ScopedColorMask colorMask(0, 0, 0, 0); 
 			// glColorMask(0,0,0,0);						// no graphics
@@ -941,7 +946,7 @@ int GLMirrorPortal::ClipPoint(fixed_t x, fixed_t y)
 // are 2 problems with it:
 //
 // 1. Setting this up completely negates any performance gains.
-// 2. It doesn't work with a 360° field of view (as when you are looking up.)
+// 2. It doesn't work with a 360ï¿½ field of view (as when you are looking up.)
 //
 //
 // So the brute force mechanism is just as good.

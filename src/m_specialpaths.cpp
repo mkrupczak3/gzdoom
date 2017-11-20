@@ -472,9 +472,19 @@ FString GetUserFile (const char *file)
 {
 	FString path;
 	struct stat info;
-
+#ifdef __ANDROID__
+    path = "./gzdoom_1.9/";
+    if (stat (path, &info) == -1)
+    {
+        if (mkdir (path, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
+        {
+            I_FatalError ("Failed to create ~/.config directory:\n%s", strerror(errno));
+        }
+    }
+    return path + file;
+#else
 	path = NicePath("~/" GAME_DIR "/");
-
+#endif
 	if (stat (path, &info) == -1)
 	{
 		struct stat extrainfo;
@@ -538,6 +548,9 @@ FString M_GetCachePath(bool create)
 	// Don't use GAME_DIR and such so that ZDoom and its child ports can
 	// share the node cache.
 	FString path = NicePath("~/.config/zdoom/cache");
+#ifdef __ANDROID__
+    path = "./gzdoom_1.9/";
+#endif
 	if (create)
 	{
 		CreatePath(path);
@@ -610,7 +623,11 @@ FString M_GetConfigPath(bool for_reading)
 
 FString M_GetScreenshotsPath()
 {
+#ifdef __ANDROID__
+	return NicePath("./gzdoom_1.9/screenshots/");
+#else
 	return NicePath("~/" GAME_DIR "/screenshots/");
+#endif
 }
 
 //===========================================================================
@@ -623,7 +640,11 @@ FString M_GetScreenshotsPath()
 
 FString M_GetSavegamesPath()
 {
+#ifdef __ANDROID__
+    return NicePath("./gzdoom_1.9/saves");
+#else
 	return NicePath("~/" GAME_DIR);
+#endif
 }
 
 #endif

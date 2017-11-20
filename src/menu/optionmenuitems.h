@@ -381,7 +381,6 @@ IMPLEMENT_ABSTRACT_CLASS(DEnterKey)
 // // Edit a key binding, Action is the CCMD to bind
 //
 //=============================================================================
-
 class FOptionMenuItemControl : public FOptionMenuItem
 {
 	FKeyBindings *mBindings;

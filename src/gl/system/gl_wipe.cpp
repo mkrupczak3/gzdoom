@@ -274,8 +274,13 @@ bool OpenGLFrameBuffer::Wiper_Crossfade::Run(int ticks, OpenGLFrameBuffer *fb)
 {
 	Clock += ticks;
 
+#ifdef __MOBILE__
+	float ur = (float)fb->GetWidth() / (float)FHardwareTexture::GetTexDimension(fb->GetWidth());
+	float vb = (float)fb->GetHeight() / (float)FHardwareTexture::GetTexDimension(fb->GetHeight());
+#else
 	float ur = fb->GetWidth() / FHardwareTexture::GetTexDimension(fb->GetWidth());
 	float vb = fb->GetHeight() / FHardwareTexture::GetTexDimension(fb->GetHeight());
+#endif
 
 	gl_RenderState.SetTextureMode(TM_OPAQUE);
 	gl_RenderState.EnableAlphaTest(false);
@@ -341,9 +346,13 @@ OpenGLFrameBuffer::Wiper_Melt::Wiper_Melt()
 
 bool OpenGLFrameBuffer::Wiper_Melt::Run(int ticks, OpenGLFrameBuffer *fb)
 {
+#ifdef __MOBILE__
+	float ur = (float)fb->GetWidth() / (float)FHardwareTexture::GetTexDimension(fb->GetWidth());
+	float vb = (float)fb->GetHeight() / (float)FHardwareTexture::GetTexDimension(fb->GetHeight());
+#else
 	float ur = fb->GetWidth() / FHardwareTexture::GetTexDimension(fb->GetWidth());
 	float vb = fb->GetHeight() / FHardwareTexture::GetTexDimension(fb->GetHeight());
-
+#endif
 	// Draw the new screen on the bottom.
 	gl_RenderState.SetTextureMode(TM_OPAQUE);
 	gl_RenderState.Apply();
@@ -484,9 +493,13 @@ bool OpenGLFrameBuffer::Wiper_Burn::Run(int ticks, OpenGLFrameBuffer *fb)
 		}
 	}
 
+#ifdef __MOBILE__
+	float ur = (float)fb->GetWidth() / (float)FHardwareTexture::GetTexDimension(fb->GetWidth());
+	float vb = (float)fb->GetHeight() / (float)FHardwareTexture::GetTexDimension(fb->GetHeight());
+#else
 	float ur = fb->GetWidth() / FHardwareTexture::GetTexDimension(fb->GetWidth());
 	float vb = fb->GetHeight() / FHardwareTexture::GetTexDimension(fb->GetHeight());
-
+#endif
 
 	// Put the initial screen back to the buffer.
 	gl_RenderState.SetTextureMode(TM_OPAQUE);

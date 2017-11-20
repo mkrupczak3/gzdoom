@@ -222,7 +222,9 @@ void OpenGLFrameBuffer::Swap()
 {
 	Finish.Reset();
 	Finish.Clock();
+#ifndef __ANDROID__
 	glFinish();
+#endif
 	if (needsetgamma) 
 	{
 		//DoSetGamma();

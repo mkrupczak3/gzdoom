@@ -17,6 +17,54 @@ static void* AppleGLGetProcAddress (const char *name)
 }
 #endif /* __APPLE__ */
 
+#ifdef __MOBILE__
+#include <dlfcn.h>
+#include <android/log.h>
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"JNITouchControlsUtils", __VA_ARGS__))
+
+static void CATCH(int a, int b, int c, int d, int e)
+{
+	LOGI("CAUGHT BAD");
+}
+
+static void* PosixGetProcAddressMobile (const GLubyte* name)
+{
+  static void* h = NULL;
+  static void* gpa = NULL;
+
+  if (h == NULL)
+  {
+    if ((h = dlopen("libjwzgles_shared.so", RTLD_LAZY | RTLD_LOCAL)) == NULL)
+    {
+        LOGI("ERROR loading libjwzgles_shared");
+        return NULL;
+    }
+    //gpa = dlsym(h, "glXGetProcAddress");
+  }
+
+  char newName[64];
+  memset(newName,0,64);
+  sprintf(newName,"jwzgles_%s",name);
+
+  void * ret = 0;
+  if (gpa != NULL)
+    ret =  ((void*(*)(const GLubyte*))gpa)(newName);
+  else
+    ret =  dlsym(h, (const char*)newName);
+
+  if( !ret )
+  {
+    LOGI("Loading.. %s    FAIL", newName);
+    ret = CATCH;
+  }
+  else
+  {
+    LOGI("Loading.. %s    OK (%p)", newName, ret);
+  }
+  return ret;
+}
+#endif
+
 #if defined(__sgi) || defined (__sun)
 #include <dlfcn.h>
 #include <stdio.h>
@@ -75,7 +123,9 @@ static PROC WinGetProcAddress(const char *name)
 	#if defined(__APPLE__)
 		#define IntGetProcAddress(name) AppleGLGetProcAddress(name)
 	#else
-		#if defined(__sgi) || defined(__sun)
+		#if defined(__MOBILE__)
+    	    #define IntGetProcAddress(name) PosixGetProcAddressMobile((const GLubyte*)name)
+		#elif defined(__sgi) || defined(__sun)
 			#define IntGetProcAddress(name) SunGetProcAddress(name)
 		#else /* GLX */
 		    #include <GL/glx.h>
@@ -2048,7 +2098,13 @@ int ogl_LoadFunctions()
 {
 	int numFailed = 0;
 	ClearExtensionVars();
-	
+
+#ifdef __MOBILE__
+    void jwzgles_reset (void);
+    jwzgles_reset();
+#endif
+
+
 	_ptrc_glGetString = (const GLubyte * (CODEGEN_FUNCPTR *)(GLenum))IntGetProcAddress("glGetString");
 	if(!_ptrc_glGetString) return ogl_LOAD_FAILED;
 	

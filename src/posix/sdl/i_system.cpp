@@ -179,6 +179,15 @@ bool gameisdead;
 void Mac_I_FatalError(const char* errortext);
 #endif
 
+
+#ifdef __ANDROID__
+#include <android/log.h>
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"Gzdoom", __VA_ARGS__))
+#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "Gzdoom", __VA_ARGS__))
+#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR,"Gzdoom", __VA_ARGS__))
+#include "LogWritter.h"
+#endif
+
 void STACK_ARGS I_FatalError (const char *error, ...)
 {
     static bool alreadyThrown = false;
@@ -197,7 +206,11 @@ void STACK_ARGS I_FatalError (const char *error, ...)
 #ifdef __APPLE__
 		Mac_I_FatalError(errortext);
 #endif // __APPLE__		
-		
+
+#ifdef __ANDROID__
+        LOGI("FATAL ERROR: %s", errortext);
+        LogWritter_Write(errortext);
+#endif
 		// Record error to log (if logging)
 		if (Logfile)
 		{

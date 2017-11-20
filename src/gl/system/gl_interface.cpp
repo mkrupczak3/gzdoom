@@ -127,7 +127,7 @@ void gl_LoadExtensions()
 	// Don't even start if it's lower than 1.3
 	if (strcmp(version, "2.0") < 0) 
 	{
-		I_FatalError("Unsupported OpenGL version.\nAt least GL 2.0 is required to run " GAMENAME ".\n");
+		//I_FatalError("Unsupported OpenGL version.\nAt least GL 2.0 is required to run " GAMENAME ".\n");
 	}
 
 	// This loads any function pointers and flags that require a vaild render context to
@@ -136,6 +136,7 @@ void gl_LoadExtensions()
 	gl.shadermodel = 0;	// assume no shader support
 	gl.vendorstring=(char*)glGetString(GL_VENDOR);
 
+#ifndef __MOBILE__
 	if (CheckExtension("GL_ARB_texture_compression")) gl.flags|=RFL_TEXTURE_COMPRESSION;
 	if (CheckExtension("GL_EXT_texture_compression_s3tc")) gl.flags|=RFL_TEXTURE_COMPRESSION_S3TC;
 	if (strstr(gl.vendorstring, "NVIDIA")) gl.flags|=RFL_NVIDIA;
@@ -176,7 +177,12 @@ void gl_LoadExtensions()
 	{
 		gl.flags|=RFL_FRAMEBUFFER;
 	}
-
+#else
+    gl.flags = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE,&gl.max_texturesize);
+    gl.npot = true;
+	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+#endif
 }
 
 //==========================================================================
