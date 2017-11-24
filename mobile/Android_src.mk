@@ -491,14 +491,14 @@ LOCAL_SRC_FILES = \
 	zzautozend.cpp
 
 
-LOCAL_LDLIBS := -ldl -llog -lOpenSLES -lz -lGLESv1_CM
+LOCAL_LDLIBS := -ldl -llog -lOpenSLES -lGLESv1_CM
 
 LOCAL_LDLIBS +=  -lEGL
 
 # This is stop a linker warning for mp123 lib failing build
 LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
 
-LOCAL_STATIC_LIBRARIES := sndfile mpg123 fluidsynth-static SDL2_net libjpeg lzma_dev gdtoa_dev dumb_dev gme_dev bzip2_dev logwritter
+LOCAL_STATIC_LIBRARIES :=  sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_dev lzma_dev gdtoa_dev dumb_dev gme_dev bzip2_dev logwritter
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 jwzgles_shared
 
 LOCAL_STATIC_LIBRARIES += license_static
