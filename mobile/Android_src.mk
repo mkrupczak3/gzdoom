@@ -506,10 +506,10 @@ LOCAL_SRC_FILES = \
     $(PCH_SOURCES)
 
 
-LOCAL_LDLIBS := -ldl -llog -lOpenSLES -lz -lGLESv1_CM
+LOCAL_LDLIBS := -ldl -llog -lOpenSLES -lGLESv1_CM
 
 LOCAL_LDLIBS +=  -lEGL
-LOCAL_STATIC_LIBRARIES := fluidsynth-static SDL2_net libjpeg lzma_1.9 gdtoa_1.9 dumb_1.9 gme_1.9 bzip2_1.9 logwritter
+LOCAL_STATIC_LIBRARIES := fluidsynth-static SDL2_net libjpeg zlib_1.9 lzma_1.9 gdtoa_1.9 dumb_1.9 gme_1.9 bzip2_1.9 logwritter
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 jwzgles_shared fmod
 
 LOCAL_STATIC_LIBRARIES += license_static
