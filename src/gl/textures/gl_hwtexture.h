@@ -53,6 +53,18 @@ public:
 	static int GetTexDimension(int value)
 	{
 		if (value > gl.max_texturesize) return gl.max_texturesize;
+#ifdef __MOBILE__
+        if( gl.npot == true )
+        {
+            return value;
+        }
+        else
+        {
+            int i=1;
+            while (i<value) i+=i;
+            return i;
+         }
+#endif
 		return value;
 	}
 

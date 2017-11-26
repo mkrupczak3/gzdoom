@@ -53,7 +53,11 @@
 
 
 CVAR(Bool, gl_lights_additive, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
+#ifdef __MOBILE__
+CVAR(Bool, gl_legacy_mode, true, CVAR_GLOBALCONFIG | CVAR_NOSET)
+#else
 CVAR(Bool, gl_legacy_mode, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_NOSET)
+#endif
 
 //==========================================================================
 //

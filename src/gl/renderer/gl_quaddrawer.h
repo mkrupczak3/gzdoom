@@ -3,6 +3,40 @@
 
 #include "gl/data/gl_vertexbuffer.h"
 
+
+#ifdef NO_VBO
+
+class FQuadDrawer
+{
+	static FFlatVertex buffer[4];
+
+	void DoRender(int type);
+public:
+
+	FQuadDrawer()
+	{
+	}
+
+	void Set(int ndx, float x, float y, float z, float s, float t)
+	{
+		buffer[ndx].Set(x, y, z, s, t);
+	}
+	void Render(int type)
+	{
+	    glTexCoordPointer(2,GL_FLOAT, sizeof(FFlatVertex),&buffer[0].u);
+        glVertexPointer  (3,GL_FLOAT, sizeof(FFlatVertex),&buffer[0].x);
+
+		glEnableClientState (GL_VERTEX_ARRAY);
+		glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState (GL_COLOR_ARRAY);
+
+		glBindBuffer (GL_ARRAY_BUFFER, 0); // NO VBO
+        glDrawArrays (type, 0, 4);
+	}
+};
+
+#else
+
 class FQuadDrawer
 {
 	FFlatVertex *p;
@@ -40,5 +74,6 @@ public:
 	}
 };
 
+#endif
 
 #endif

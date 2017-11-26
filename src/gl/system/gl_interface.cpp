@@ -193,6 +193,9 @@ void gl_LoadExtensions()
 
 #ifdef __MOBILE__
         gl.glslversion = 0;
+        gl.lightmethod = LM_LEGACY;
+        gl.buffermethod = BM_LEGACY;
+        gl.npot = true;
 #else
 		// Don't even start if it's lower than 2.0 or no framebuffers are available (The framebuffer extension is needed for glGenerateMipmapsEXT!)
 		if ((gl_version < 2.0f || !CheckExtension("GL_EXT_framebuffer_object")) && gl_version < 3.0f)
