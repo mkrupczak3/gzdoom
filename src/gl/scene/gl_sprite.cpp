@@ -268,6 +268,13 @@ void GLSprite::Draw(int pass)
 	bool foglayer = false;
 	int rel = fullbright? 0 : getExtraLight();
 
+    if( RenderStyle.Flags & STYLEF_RedIsAlpha)
+    {
+      //  RenderStyle.Flags &= ~STYLEF_RedIsAlpha;
+        RenderStyle.SrcAlpha = STYLEALPHA_One;
+        RenderStyle.DestAlpha = STYLEALPHA_One;
+    }
+
 	if (pass==GLPASS_TRANSLUCENT)
 	{
 		// The translucent pass requires special setup for the various modes.
@@ -431,6 +438,7 @@ void GLSprite::Draw(int pass)
 
 		if (!modelframe)
 		{
+
 			gl_RenderState.Apply();
 
 			FVector3 v[4];

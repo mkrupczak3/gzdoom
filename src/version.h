@@ -97,7 +97,7 @@ const char *GetVersionString();
 #define GAMESIG "GZDOOM"
 
 #ifdef __ANDROID__
-#define BASEWAD "gzdoom_dev.pk3"
+#define BASEWAD "./res/gzdoom_dev.pk3"
 #else
 #define BASEWAD "gzdoom.pk3"
 #endif

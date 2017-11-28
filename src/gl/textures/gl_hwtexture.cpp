@@ -230,6 +230,7 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 	glBindTexture(GL_TEXTURE_2D, glTex->glTexID);
 	FGLDebug::LabelObject(GL_TEXTURE, glTex->glTexID, name);
 	lastbound[texunit] = glTex->glTexID;
+	LOGI("trans = %d", translation);
 
 	if (!buffer)
 	{
@@ -242,7 +243,7 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 		glTex->mipmapped = false;
 		buffer=(unsigned char *)calloc(4,rw * (rh+1));
 		deletebuffer=true;
-		//texheight=-h;	
+		//texheight=-h;
 	}
 	else
 	{
@@ -284,8 +285,30 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
         }
 	}
 #ifdef __MOBILE__
-    BGRAtoRGBA( buffer, rw * rh ); // TODO, Check if device can handle GL_BGRA anyway
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rw, rh, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+    if( translation == 9 ||  translation == 8 )
+    {
+        for(int y = 0; y < h; y++)
+            for( int x = 0; x < w; x++ )
+            {
+              unsigned int* b = &(((unsigned int *)buffer)[x + y * w]);
+                if( x == y )
+                    LOGI("%x", *b);
+              if((*b == 0xf7ffffff) )
+              {
+                *b = 0;
+              }
+
+            }
+
+        texformat = GL_RGBA;
+    }
+    else
+    {
+        texformat = GL_RGBA;
+        BGRAtoRGBA( buffer, rw * rh ); // TODO, Check if device can handle GL_BGRA anyway
+    }
+
+	glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 #else
     glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, GL_BGRA, GL_UNSIGNED_BYTE, buffer);
 #endif
