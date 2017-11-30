@@ -1021,6 +1021,21 @@ void FGLRenderer::RenderView (player_t* player)
 // Render the view to a savegame picture
 //
 //===========================================================================
+#ifdef __ANDROID__
+uint8_t * gles_convertRGB(uint8_t * data, int width, int height)
+{
+	uint8_t *src = data;
+	uint8_t *dst = data;
+
+	for (int i=0; i<width*height; i++) {
+		for (int j=0; j<3; j++)
+			*(dst++) = *(src++);
+		src++;
+	}
+
+	return dst;
+}
+#endif
 
 void FGLRenderer::WriteSavePic (player_t *player, FILE *file, int width, int height)
 {
@@ -1043,10 +1058,16 @@ void FGLRenderer::WriteSavePic (player_t *player, FILE *file, int width, int hei
 	screen->Begin2D(false);
 	DrawBlend(viewsector);
 	glFlush();
-
+#ifdef __MOBILE__ //Some androids do not like GL_RGB
+	uint8_t * scr = (uint8_t *)M_Malloc(width * height * 4);
+	glReadPixels(0,0,width, height,GL_RGBA,GL_UNSIGNED_BYTE,scr);
+	gles_convertRGB(scr,width,height);
+	M_CreatePNG (file, scr + ((height-1) * width * 3), NULL, SS_RGB, width, height, -width*3);
+#else
 	byte * scr = (byte *)M_Malloc(width * height * 3);
 	glReadPixels(0,0,width, height,GL_RGB,GL_UNSIGNED_BYTE,scr);
 	M_CreatePNG (file, scr + ((height-1) * width * 3), NULL, SS_RGB, width, height, -width*3);
+#endif
 	M_Free(scr);
 }
 
