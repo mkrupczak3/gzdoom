@@ -137,17 +137,17 @@ void gl_LoadExtensions()
 {
 	InitContext();
 	CollectExtensions();
-
+#ifndef __MOBILE__ // Not using this for now..
 	const char *glversion = (const char*)glGetString(GL_VERSION);
 	gl.es = false;
 
-#ifndef __MOBILE__ // Not using this for now..
+
 	if (glversion && strlen(glversion) > 10 && memcmp(glversion, "OpenGL ES ", 10) == 0)
 	{
 		glversion += 10;
 		gl.es = true;
 	}
-#endif
+
 	const char *version = Args->CheckValue("-glversion");
 
 	if (version == NULL)
@@ -164,6 +164,10 @@ void gl_LoadExtensions()
 	}
 
 	float gl_version = (float)strtod(version, NULL) + 0.01f;
+#else
+    float gl_version = 2;
+    gl.es = false;
+#endif
 
 	if (gl.es)
 	{
@@ -196,6 +200,7 @@ void gl_LoadExtensions()
         gl.lightmethod = LM_LEGACY;
         gl.buffermethod = BM_LEGACY;
         gl.npot = true;
+        gl.vendorstring = "ANDROID";
 #else
 		// Don't even start if it's lower than 2.0 or no framebuffers are available (The framebuffer extension is needed for glGenerateMipmapsEXT!)
 		if ((gl_version < 2.0f || !CheckExtension("GL_EXT_framebuffer_object")) && gl_version < 3.0f)
@@ -207,10 +212,10 @@ void gl_LoadExtensions()
 
 		// add 0.01 to account for roundoff errors making the number a tad smaller than the actual version
 		gl.glslversion = strtod((char*)glGetString(GL_SHADING_LANGUAGE_VERSION), NULL) + 0.01f;
-#endif
+
 
 		gl.vendorstring = (char*)glGetString(GL_VENDOR);
-
+#endif
 		// first test for optional features
 		if (CheckExtension("GL_ARB_texture_compression")) gl.flags |= RFL_TEXTURE_COMPRESSION;
 		if (CheckExtension("GL_EXT_texture_compression_s3tc")) gl.flags |= RFL_TEXTURE_COMPRESSION_S3TC;
@@ -348,8 +353,8 @@ void gl_PrintStartupLog()
 {
 	int v = 0;
 	if (!gl.legacyMode) glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &v);
-
-	Printf ("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
+/*
+ 	Printf ("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
 	Printf ("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
 	Printf ("GL_VERSION: %s (%s profile)\n", glGetString(GL_VERSION), (v & GL_CONTEXT_CORE_PROFILE_BIT)? "Core" : "Compatibility");
 	Printf ("GL_SHADING_LANGUAGE_VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
@@ -358,7 +363,7 @@ void gl_PrintStartupLog()
 	{
 		Printf(PRINT_LOG, " %s", m_Extensions[i].GetChars());
 	}
-
+*/
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &v);
 	Printf("\nMax. texture size: %d\n", v);
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &v);

@@ -271,8 +271,8 @@ void GLSprite::Draw(int pass)
     if( RenderStyle.Flags & STYLEF_RedIsAlpha)
     {
       //  RenderStyle.Flags &= ~STYLEF_RedIsAlpha;
-        RenderStyle.SrcAlpha = STYLEALPHA_One;
-        RenderStyle.DestAlpha = STYLEALPHA_One;
+      //  RenderStyle.SrcAlpha = STYLEALPHA_One;
+      //  RenderStyle.DestAlpha = STYLEALPHA_One;
     }
 
 	if (pass==GLPASS_TRANSLUCENT)
@@ -342,7 +342,7 @@ void GLSprite::Draw(int pass)
 		if (gl_lights && GLRenderer->mLightCount && mDrawer->FixedColormap == CM_DEFAULT && !fullbright)
 		{
 			if (modelframe && !particle)
-				gl_SetDynModelLight(gl_light_sprites ? actor : NULL, false);
+				gl_SetDynModelLight(gl_light_sprites ? actor : NULL);
 			else
 				gl_SetDynSpriteLight(gl_light_sprites ? actor : NULL, gl_light_particles ? particle : NULL);
 		}

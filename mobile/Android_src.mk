@@ -74,7 +74,6 @@ PLAT_SDL_SOURCES = \
 	posix/sdl/i_joystick.cpp \
 	posix/sdl/i_main.cpp \
 	posix/sdl/i_system.cpp \
-	posix/sdl/i_timer.cpp \
 	posix/sdl/sdlvideo.cpp \
 	posix/sdl/sdlglvideo.cpp \
 	posix/sdl/st_start.cpp \
@@ -88,7 +87,6 @@ FASTMATH_SOURCES = \
 	sound/oalsound.cpp \
 	sound/sndfile_decoder.cpp \
 	sound/mididevices/music_timiditypp_mididevice.cpp \
-	gl/data/gl_matrix.cpp \
 	gl/utility/gl_clock.cpp \
 	gl/renderer/gl_2ddrawer.cpp \
 	gl/hqnx/init.cpp \
@@ -117,6 +115,8 @@ FASTMATH_SOURCES = \
 	gl/dynlights/gl_dynlight1.cpp \
 	gl/system/gl_load.c \
 	gl/models/gl_models.cpp \
+	r_data/models/models.cpp \
+	r_data/matrix.cpp \
 
 
 PCH_SOURCES = \
@@ -170,6 +170,7 @@ PCH_SOURCES = \
 	hu_scores.cpp \
 	i_module.cpp \
 	i_net.cpp \
+	i_time.cpp \
 	info.cpp \
 	keysections.cpp \
 	lumpconfigfile.cpp \
@@ -251,7 +252,7 @@ PCH_SOURCES = \
 	stats.cpp \
 	stringtable.cpp \
 	teaminfo.cpp \
-	tempfiles.cpp \
+	umapinfo.cpp \
 	v_blend.cpp \
 	v_collection.cpp \
 	v_draw.cpp \
@@ -289,9 +290,6 @@ PCH_SOURCES = \
 	gl/dynlights/gl_lightbuffer.cpp \
 	gl/dynlights/gl_aabbtree.cpp \
 	gl/dynlights/gl_shadowmap.cpp \
-	gl/models/gl_models_md3.cpp \
-	gl/models/gl_models_md2.cpp \
-	gl/models/gl_voxels.cpp \
 	gl/renderer/gl_quaddrawer.cpp \
 	gl/renderer/gl_renderer.cpp \
 	gl/renderer/gl_renderstate.cpp \
@@ -302,6 +300,7 @@ PCH_SOURCES = \
 	gl/shaders/gl_shader.cpp \
 	gl/shaders/gl_texshader.cpp \
 	gl/shaders/gl_shaderprogram.cpp \
+	gl/shaders/gl_postprocessshader.cpp \
 	gl/shaders/gl_shadowmapshader.cpp \
 	gl/shaders/gl_presentshader.cpp \
 	gl/shaders/gl_present3dRowshader.cpp \
@@ -312,7 +311,6 @@ PCH_SOURCES = \
 	gl/shaders/gl_tonemapshader.cpp \
 	gl/shaders/gl_lensshader.cpp \
 	gl/shaders/gl_fxaashader.cpp \
-	gl/shaders/gl_postprocessshader.cpp \
 	gl/stereo3d/gl_stereo3d.cpp \
 	gl/stereo3d/gl_stereo_cvars.cpp \
 	gl/stereo3d/gl_stereo_leftright.cpp \
@@ -395,6 +393,9 @@ PCH_SOURCES = \
 	r_data/renderstyle.cpp \
 	r_data/r_interpolate.cpp \
 	r_data/r_vanillatrans.cpp \
+	r_data/models/models_md3.cpp \
+	r_data/models/models_md2.cpp \
+	r_data/models/models_voxel.cpp \
 	scripting/symbols.cpp \
 	scripting/types.cpp \
 	scripting/thingdef.cpp \
@@ -436,10 +437,10 @@ PCH_SOURCES = \
 	sound/musicformats/music_opl.cpp \
 	sound/musicformats/music_stream.cpp \
 	sound/oplsynth/fmopl.cpp \
+	sound/oplsynth/musicblock.cpp \
+	sound/oplsynth/oplio.cpp \
 	sound/oplsynth/dosbox/opl.cpp \
 	sound/oplsynth/OPL3.cpp \
-	sound/oplsynth/oplio.cpp \
-	sound/oplsynth/musicblock.cpp \
 	sound/oplsynth/nukedopl3.cpp \
 	sound/timidity/common.cpp \
 	sound/timidity/instrum.cpp \
@@ -469,6 +470,7 @@ LOCAL_SRC_FILES = \
     $(PCH_SOURCES) \
 	x86.cpp \
 	strnatcmp.c \
+	tmpfileplus.c \
 	zstring.cpp \
 	math/asin.c \
 	math/atan.c \
@@ -488,7 +490,7 @@ LOCAL_SRC_FILES = \
 	math/tan.c \
 	math/tanh.c \
 	math/fastsin.cpp \
-	zzautozend.cpp
+	zzautozend.cpp \
 
 
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES -lGLESv1_CM

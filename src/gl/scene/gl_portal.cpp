@@ -57,7 +57,6 @@
 #include "gl/textures/gl_material.h"
 #include "gl/utility/gl_clock.h"
 #include "gl/utility/gl_templates.h"
-#include "gl/utility/gl_geometric.h"
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -432,6 +431,7 @@ void GLPortal::End(bool usestencil)
 #ifndef __MOBILE__ // Makes stuff see through...
 		glDepthRange(0, 1);
 #endif
+#ifndef __ANDROID__ //Needed??
 		{
 			ScopedColorMask colorMask(0, 0, 0, 1); // mark portal in alpha channel but don't touch color
 			gl_RenderState.SetEffect(EFF_STENCIL);
@@ -443,6 +443,7 @@ void GLPortal::End(bool usestencil)
 			gl_RenderState.SetEffect(EFF_NONE);
 			gl_RenderState.EnableTexture(true);
 		}
+#endif
 		glDepthFunc(GL_LESS);
 	}
 	PortalAll.Unclock();
