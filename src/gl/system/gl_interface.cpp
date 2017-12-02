@@ -182,6 +182,9 @@ void gl_LoadExtensions()
     glGetIntegerv(GL_MAX_TEXTURE_SIZE,&gl.max_texturesize);
     gl.npot = false;
 	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    //This is needed to the fix the brutal doom white lines?!
+    glDisable(GL_CLIP_PLANE0);
+    glEnable(GL_CLIP_PLANE0);
 #endif
 }
 
