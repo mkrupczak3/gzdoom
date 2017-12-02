@@ -268,12 +268,12 @@ void GLSprite::Draw(int pass)
 	bool foglayer = false;
 	int rel = fullbright? 0 : getExtraLight();
 
-    if( RenderStyle.Flags & STYLEF_RedIsAlpha)
+#ifdef __MOBILE__ /// HACK fixes black foot steps in brutaldoom v21. Need to find proper fix
+    if( RenderStyle.Flags & STYLEF_RedIsAlpha )
     {
-      //  RenderStyle.Flags &= ~STYLEF_RedIsAlpha;
-      //  RenderStyle.SrcAlpha = STYLEALPHA_One;
-      //  RenderStyle.DestAlpha = STYLEALPHA_One;
+        RenderStyle.DestAlpha = STYLEALPHA_One;
     }
+#endif
 
 	if (pass==GLPASS_TRANSLUCENT)
 	{

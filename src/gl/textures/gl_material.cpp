@@ -240,11 +240,37 @@ unsigned char * FGLTexture::CreateTexBuffer(int translation, int & w, int & h, F
 	}
 	else
 	{
-		// When using translations everything must be mapped to the base palette.
-		// so use CopyTrueColorTranslated
-		tex->CopyTrueColorTranslated(&bmp, exx, exx, 0, GLTranslationPalette::GetPalette(translation));
-		isTransparent = 0;
-		// This is not conclusive for setting the texture's transparency info.
+#ifdef __MOBILE__
+        if( alphatrans )
+        {
+            //tex->CopyTrueColorRedToAlpha(&bmp, exx, exx);#
+            tex->CopyTrueColorPixels(&bmp, exx, exx);
+            uint32_t* pix = ( uint32_t *)bmp.GetPixels();
+            uint32_t w = bmp.GetWidth();
+            uint32_t h = bmp.GetHeight();
+            uint32_t pit = bmp.GetPitch();
+            LOGI("%d  %d  %d",w,h,pit);
+            for(int y = 0; y < h; y++ )
+            {
+                for(int x = 0; x < w; x++ )
+                {
+                    uint32_t p = *pix;
+                    p = (p & 0x00FFFFFF) | ((p & 0x00FF0000) << 8); // Copy red to alpha channel
+                    *pix = p;
+                    pix++;
+                }
+            }
+            isTransparent = 0;
+        }
+        else
+#endif
+        {
+		    // When using translations everything must be mapped to the base palette.
+		    // so use CopyTrueColorTranslated
+		    tex->CopyTrueColorTranslated(&bmp, exx, exx, 0, GLTranslationPalette::GetPalette(translation));
+		    isTransparent = 0;
+		    // This is not conclusive for setting the texture's transparency info.
+		}
 	}
 
 	// if we just want the texture for some checks there's no need for upsampling.

@@ -201,6 +201,10 @@ void gl_LoadExtensions()
         gl.buffermethod = BM_LEGACY;
         gl.npot = true;
         gl.vendorstring = "ANDROID";
+
+        //This is needed to the fix the brutal doom white lines?!
+        glDisable(GL_CLIP_PLANE0);
+        glEnable(GL_CLIP_PLANE0);
 #else
 		// Don't even start if it's lower than 2.0 or no framebuffers are available (The framebuffer extension is needed for glGenerateMipmapsEXT!)
 		if ((gl_version < 2.0f || !CheckExtension("GL_EXT_framebuffer_object")) && gl_version < 3.0f)
