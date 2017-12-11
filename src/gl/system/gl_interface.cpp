@@ -53,16 +53,12 @@ extern int currentrenderer;
 
 static void CollectExtensions()
 {
-
-#ifdef __MOBILE__ //None for now..
-	return;
-#endif
-
 	const char *extension;
 
 	int max = 0;
+#ifndef __MOBILE__
 	glGetIntegerv(GL_NUM_EXTENSIONS, &max);
-
+#endif
 	if (0 == max)
 	{
 		// Try old method to collect extensions
@@ -199,7 +195,16 @@ void gl_LoadExtensions()
         gl.glslversion = 0;
         gl.lightmethod = LM_LEGACY;
         gl.buffermethod = BM_LEGACY;
-        gl.npot = true;
+        if(CheckExtension("GL_OES_texture_npot"))
+        {
+            Printf("NPOT allowed");
+            gl.flags |= RFL_NPOT;
+        }
+        if(CheckExtension("GL_EXT_texture_format_BGRA8888"))
+        {
+            Printf("BGRA allowed");
+            gl.flags |= RFL_BGRA;
+        }
         gl.vendorstring = "ANDROID";
 
         //This is needed to the fix the brutal doom white lines?!
@@ -357,17 +362,18 @@ void gl_PrintStartupLog()
 {
 	int v = 0;
 	if (!gl.legacyMode) glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &v);
-/*
+#ifndef __MOBILE__
  	Printf ("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
 	Printf ("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
 	Printf ("GL_VERSION: %s (%s profile)\n", glGetString(GL_VERSION), (v & GL_CONTEXT_CORE_PROFILE_BIT)? "Core" : "Compatibility");
 	Printf ("GL_SHADING_LANGUAGE_VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+#endif
 	Printf (PRINT_LOG, "GL_EXTENSIONS:");
 	for (unsigned i = 0; i < m_Extensions.Size(); i++)
 	{
 		Printf(PRINT_LOG, " %s", m_Extensions[i].GetChars());
 	}
-*/
+
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &v);
 	Printf("\nMax. texture size: %d\n", v);
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &v);

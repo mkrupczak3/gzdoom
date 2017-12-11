@@ -214,7 +214,11 @@ static void GL_ResampleTexture (uint32_t *in, uint32_t inwidth, uint32_t inheigh
 //
 //===========================================================================
 
+#ifdef __MOBILE__
+unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int h, int texunit, bool mipmap, int translation, const FString &name, bool material)
+#else
 unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int h, int texunit, bool mipmap, int translation, const FString &name)
+#endif
 {
 	int rh,rw;
 	int texformat=TexFormat[gl_texture_format];
@@ -262,15 +266,15 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 				buffer=scaledbuffer;
 			}
 		}
-		/* Need to find a way to work out if 3d texture
-		else if (wrapparam==GL_REPEAT) // Need to make bigger by resampling, for 3d textures
+		// Need to find a way to work out if 3d texture
+		else if (material) // Need to make bigger by resampling, for 3d textures
         {
             unsigned int * scaledbuffer=(unsigned int *)calloc(4,rw * (rh+1));
             GL_ResampleTexture((unsigned  *)buffer,w,h,(unsigned *)scaledbuffer,rw,rh);
             deletebuffer=true;
             buffer=(unsigned char *)scaledbuffer;
         }
-        */
+
         else // Need to put into bigger texture, but DONT resample, for 2d images. Works because coordinates are scaled when rendering
         {
             unsigned int * scaledbuffer=(unsigned int *)calloc(4,rw * (rh+1));
@@ -284,11 +288,18 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
         }
 	}
 #ifdef __MOBILE__
+
+    if(!(gl.flags & RFL_BGRA))
     {
         texformat = GL_RGBA;
-        BGRAtoRGBA( buffer, rw * rh ); // TODO, Check if device can handle GL_BGRA anyway
+        BGRAtoRGBA( buffer, rw * rh );
     }
-	glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+    else
+    {
+        texformat = GL_BGRA;
+    }
+
+	glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, texformat, GL_UNSIGNED_BYTE, buffer);
 #else
     glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, GL_BGRA, GL_UNSIGNED_BYTE, buffer);
 #endif
@@ -301,22 +312,22 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 		glTex->mipmapped = true;
 	}
 #else
-        bool use_mipmapping = TexFilter[gl_texture_filter].mipmapping;
+    bool use_mipmapping = TexFilter[gl_texture_filter].mipmapping;
 
-	    if (mipmap && use_mipmapping)
-		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TexFilter[gl_texture_filter].minfilter);
-			if (gl_texture_filter_anisotropic)
-			{
-				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, gl_texture_filter_anisotropic);
-			}
-			glTex->mipmapped = true;
-		}
-		else
-		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TexFilter[gl_texture_filter].magfilter);
-		}
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, TexFilter[gl_texture_filter].magfilter);
+    if (mipmap && use_mipmapping)
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TexFilter[gl_texture_filter].minfilter);
+        if (gl_texture_filter_anisotropic)
+        {
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, gl_texture_filter_anisotropic);
+        }
+        glTex->mipmapped = true;
+    }
+    else
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TexFilter[gl_texture_filter].magfilter);
+    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, TexFilter[gl_texture_filter].magfilter);
 #endif
 
 	if (texunit != 0) glActiveTexture(GL_TEXTURE0);

@@ -434,8 +434,14 @@ void SDLFB::ResetSDLRenderer ()
 	UsingRenderer = !vid_forcesurface;
 	if (UsingRenderer)
 	{
+#ifdef __MOBILE__
+        Renderer = SDL_CreateRenderer (Screen, -1,SDL_RENDERER_ACCELERATED);
+#else
 		Renderer = SDL_CreateRenderer (Screen, -1,SDL_RENDERER_ACCELERATED|SDL_RENDERER_TARGETTEXTURE|
 										(vid_vsync ? SDL_RENDERER_PRESENTVSYNC : 0));
+#endif
+
+
 		if (!Renderer)
 			return;
 
@@ -491,7 +497,7 @@ void SDLFB::ResetSDLRenderer ()
 		int w, h;
 		SDL_GetWindowSize (Screen, &w, &h);
 		ScaleWithAspect (w, h, Width, Height);
-		SDL_RenderSetLogicalSize (Renderer, w, h);
+		//SDL_RenderSetLogicalSize (Renderer, w, h);
 	}
 
 }

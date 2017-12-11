@@ -353,7 +353,7 @@ const FHardwareTexture *FGLTexture::Bind(int texunit, int clampmode, int transla
 				}
 				tex->ProcessData(buffer, w, h, false);
 			}
-			if (!hwtex->CreateTexture(buffer, w, h, texunit, needmipmap, translation, "FGLTexture.Bind")) 
+			if (!hwtex->CreateTexture(buffer, w, h, texunit, needmipmap, translation, "FGLTexture.Bind",true))
 			{
 				// could not create texture
 				delete[] buffer;
