@@ -166,6 +166,8 @@ bool FMD3Model::Load(const char * path, int lumpnum, const char * buffer, int le
 		for (int i = 0; i < s->numSkins; i++)
 		{
 			// [BB] According to the MD3 spec, Name is supposed to include the full path.
+			// ... and since some tools seem to output backslashes, these need to be replaced with forward slashes to work.
+			FixPathSeperator(shader[i].Name);
 			s->skins[i] = LoadSkin("", shader[i].Name);
 			// [BB] Fall back and check if Name is relative.
 			if (!s->skins[i].isValid())
@@ -253,7 +255,11 @@ void FMD3Model::BuildVertexBuffer(FModelRenderer *renderer)
 
 		mVBuf = renderer->CreateVertexBuffer(true, numFrames == 1);
 		FModelVertex *vertptr = mVBuf->LockVertexBuffer(vbufsize);
-		unsigned int *indxptr = mVBuf->LockIndexBuffer(ibufsize);
+#ifdef __USE_SHORT_IDX__ // Some old devices can not use integer index type
+        unsigned short *indxptr = (unsigned short *)mVBuf->LockIndexBuffer(ibufsize/2+2);
+#else
+        unsigned int *indxptr = mVBuf->LockIndexBuffer(ibufsize);
+#endif
 
 		assert(vertptr != nullptr && indxptr != nullptr);
 
@@ -366,7 +372,11 @@ void FMD3Model::RenderFrame(FModelRenderer *renderer, FTexture * skin, int frame
 
 		renderer->SetMaterial(surfaceSkin, false, translation);
 		mVBuf->SetupFrame(renderer, surf->vindex + frameno * surf->numVertices, surf->vindex + frameno2 * surf->numVertices, surf->numVertices);
-		renderer->DrawElements(surf->numTriangles * 3, surf->iindex * sizeof(unsigned int));
+#ifdef __USE_SHORT_IDX__
+        renderer->DrawElements(surf->numTriangles * 3, surf->iindex * sizeof(unsigned short));
+#else
+        renderer->DrawElements(surf->numTriangles * 3, surf->iindex * sizeof(unsigned int));
+#endif
 	}
 	renderer->SetInterpolation(0.f);
 }

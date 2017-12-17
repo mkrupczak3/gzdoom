@@ -152,12 +152,16 @@ void FGLModelRenderer::DrawArrays(int start, int count)
 
 void FGLModelRenderer::DrawElements(int numIndices, size_t offset)
 {
+#ifdef __USE_SHORT_IDX__ // Some old devices can not use integer index type
+    glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, ( void*)(intptr_t)offset);
+#else
 	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, (void*)(intptr_t)offset);
+#endif
 }
 
 double FGLModelRenderer::GetTimeFloat()
 {
-	return (float)I_msTime() * (float)TICRATE / 1000.0f;
+	return (double)I_msTime() * (double)TICRATE / 1000.;
 }
 
 //===========================================================================
@@ -290,7 +294,6 @@ unsigned int *FModelVertexBuffer::LockIndexBuffer(unsigned int size)
 	if (ibo_id != 0)
 	{
 #ifdef __MOBILE__ // MapBuffer not available, so allocate memory instead and upload at the end
-
         if( ibo_mem == nullptr )
         {
             ibo_size = size * sizeof(unsigned int);

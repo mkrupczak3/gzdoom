@@ -2575,15 +2575,16 @@ int ogl_LoadFunctions()
 	_ptrc_glGetIntegerv = (void (CODEGEN_FUNCPTR *)(GLenum, GLint *))IntGetProcAddress("glGetIntegerv");
 	if(!_ptrc_glGetIntegerv) return ogl_LOAD_FAILED;
 	_ptrc_glGetStringi = (const GLubyte * (CODEGEN_FUNCPTR *)(GLenum, GLuint))IntGetProcAddress("glGetStringi");
-//#ifndef __MOBILE__
+#ifndef __MOBILE__
 	if (0 == ProcExtsFromExtList())
+#endif
 	{
 		_ptrc_glGetString = (const GLubyte * (CODEGEN_FUNCPTR *)(GLenum))IntGetProcAddress("glGetString");
 		if (!_ptrc_glGetString) return ogl_LOAD_FAILED;
 
 		ProcExtsFromExtString((const char *)_ptrc_glGetString(GL_EXTENSIONS));
 	}
-//#endif
+
 	numFailed = Load_Version_3_3();
 	
 	if(numFailed == 0)

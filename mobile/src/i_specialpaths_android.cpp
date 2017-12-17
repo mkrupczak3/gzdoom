@@ -40,6 +40,17 @@
 
 #include "version.h"	// for GAMENAME
 
+FString M_GetAppDataPath(bool create)
+{
+	// Don't use GAME_DIR and such so that ZDoom and its child ports can
+	// share the node cache.
+	FString path = NicePath("./gzdoom_dev/config/" GAMENAMELOWERCASE);
+	if (create)
+	{
+		CreatePath(path);
+	}
+	return path;
+}
 
 FString GetUserFile (const char *file)
 {

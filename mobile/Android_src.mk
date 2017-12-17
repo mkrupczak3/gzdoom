@@ -470,7 +470,7 @@ LOCAL_SRC_FILES = \
     $(PCH_SOURCES) \
 	x86.cpp \
 	strnatcmp.c \
-	tmpfileplus.c \
+	tmpfileplus.cpp \
 	zstring.cpp \
 	math/asin.c \
 	math/atan.c \

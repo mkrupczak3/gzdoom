@@ -80,6 +80,7 @@ namespace
 {
 	double sprite_distance_cull = 1e16;
 	double line_distance_cull = 1e16;
+	double model_distance_cull = 1e16;
 }
 
 CUSTOM_CVAR(Float, r_sprite_distance_cull, 0, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
@@ -103,6 +104,18 @@ CUSTOM_CVAR(Float, r_line_distance_cull, 0, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 	else
 	{
 		line_distance_cull = 1e16;
+	}
+}
+
+CUSTOM_CVAR(Float, r_model_distance_cull, 1024, 0/*CVAR_ARCHIVE | CVAR_GLOBALCONFIG*/) // Experimental for the moment until a good default is chosen 
+{
+	if (r_model_distance_cull > 0.0)
+	{
+		model_distance_cull = r_model_distance_cull * r_model_distance_cull;
+	}
+	else
+	{
+		model_distance_cull = 1e16;
 	}
 }
 
@@ -950,12 +963,16 @@ namespace swrenderer
 					{
 						RenderVoxel::Project(Thread, thing, sprite.pos, sprite.voxel, sprite.spriteScale, sprite.renderflags, fakeside, fakefloor, fakeceiling, sec, thingShade, foggy, thingColormap);
 					}
+					else if (!r_models)
+					{
+						RenderSprite::Project(Thread, thing, sprite.pos, sprite.tex, sprite.spriteScale, sprite.renderflags, fakeside, fakefloor, fakeceiling, sec, thingShade, foggy, thingColormap);
+					}
 					else
 					{
 						int spritenum = thing->sprite;
 						bool isPicnumOverride = thing->picnum.isValid();
 						FSpriteModelFrame *modelframe = isPicnumOverride ? nullptr : gl_FindModelFrame(thing->GetClass(), spritenum, thing->frame, !!(thing->flags & MF_DROPPED));
-						if (modelframe)
+						if (modelframe && (thing->Pos() - Thread->Viewport->viewpoint.Pos).LengthSquared() < model_distance_cull)
 						{
 							DVector3 pos = thing->InterpolatedPosition(Thread->Viewport->viewpoint.TicFrac);
 							RenderModel::Project(Thread, (float)pos.X, (float)pos.Y, (float)pos.Z, modelframe, thing);
