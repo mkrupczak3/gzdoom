@@ -5,7 +5,7 @@ LOCAL_PATH := $(call my-dir)/../dumb
 include $(CLEAR_VARS)
 
 
-LOCAL_MODULE    := dumb_dev
+LOCAL_MODULE    := dumb_3.2
 
 LOCAL_CFLAGS := -DNEED_ITOA
 

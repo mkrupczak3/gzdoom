@@ -5,7 +5,7 @@ LOCAL_PATH := $(call my-dir)/../game-music-emu
 include $(CLEAR_VARS)
 
 
-LOCAL_MODULE    := gme_dev
+LOCAL_MODULE    := gme_3.2
 
 LOCAL_CFLAGS :=
 

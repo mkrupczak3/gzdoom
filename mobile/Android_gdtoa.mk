@@ -5,7 +5,7 @@ LOCAL_PATH := $(call my-dir)/../gdtoa
 include $(CLEAR_VARS)
 
 
-LOCAL_MODULE    := gdtoa_dev
+LOCAL_MODULE    := gdtoa_3.2
 
 LOCAL_CFLAGS :=
 

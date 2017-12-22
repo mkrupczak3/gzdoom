@@ -3,11 +3,11 @@ LOCAL_PATH := $(call my-dir)/../src
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := gzdoom_dev
+LOCAL_MODULE    := gzdoom_3.2
 
 #-DNO_FMOD
-LOCAL_CFLAGS   := -DNO_VBO -D__MOBILE__ -DGZDOOM -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
-LOCAL_CPPFLAGS := -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14  -DONLY_GPL -DHAVE_JWZGLES -DUSE_GLES   -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
+LOCAL_CFLAGS   := -DNO_VBO -D__MOBILE__ -DGZDOOM -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_3.2\"
+LOCAL_CPPFLAGS := -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14  -DONLY_GPL -DHAVE_JWZGLES -DUSE_GLES  -Wno-incompatible-pointer-types -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 #-std=gnu++1y -DHAVE_FLUIDSYNTH
 
 ifeq ($(BUILD_SERIAL),1)
@@ -500,7 +500,7 @@ LOCAL_LDLIBS +=  -lEGL
 # This is stop a linker warning for mp123 lib failing build
 LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
 
-LOCAL_STATIC_LIBRARIES :=  sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_dev lzma_dev gdtoa_dev dumb_dev gme_dev bzip2_dev logwritter
+LOCAL_STATIC_LIBRARIES :=  sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_3.2 lzma_3.2 gdtoa_3.2 dumb_3.2 gme_3.2 bzip2_3.2 logwritter
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 jwzgles_shared
 
 LOCAL_STATIC_LIBRARIES += license_static
