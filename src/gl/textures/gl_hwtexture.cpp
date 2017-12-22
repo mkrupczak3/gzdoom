@@ -148,8 +148,62 @@ void FHardwareTexture::Resize(int width, int height, unsigned char *src_data, un
 	}
 }
 
+#ifdef __MOBILE__
+static void BGRAtoRGBA(unsigned char * buffer, int numPixels)
+{
+    uint32_t *temp = (uint32_t *)buffer;
+    for( int n = 0; n < numPixels; n++ )
+    {
+        //temp[n] = ((temp[n] & 0x0000FF00) << 16 ) | ((temp[n] & 0xFF000000) >> 16 ) | (temp[n] & 0x00FF00FF);
+        temp[n] = ((temp[n] & 0x000000FF) << 16 ) | ((temp[n] & 0x00FF0000) >> 16 ) | (temp[n] & 0xFF00FF00);
+    }
+}
+#endif
+#ifdef __MOBILE__
+static void GL_ResampleTexture (uint32_t *in, uint32_t inwidth, uint32_t inheight, uint32_t *out,  uint32_t outwidth, uint32_t outheight)
+{
+	//LOGI("GL_ResampleTexture %dx%d -> %dx%d",inwidth,inheight,outwidth,outheight);
 
+	int		i, j;
+	uint32_t	*inrow, *inrow2;
+	uint32_t	frac, fracstep;
+	uint32_t	p1[2048], p2[2048];
+	uint8_t		*pix1, *pix2, *pix3, *pix4;
 
+	fracstep = inwidth*0x10000/outwidth;
+
+	frac = fracstep>>2;
+	for (i=0 ; i<outwidth ; i++)
+	{
+		p1[i] = 4*(frac>>16);
+		frac += fracstep;
+	}
+	frac = 3*(fracstep>>2);
+	for (i=0 ; i<outwidth ; i++)
+	{
+		p2[i] = 4*(frac>>16);
+		frac += fracstep;
+	}
+
+	for (i=0 ; i<outheight ; i++, out += outwidth)
+	{
+		inrow = in + inwidth*(int)((i+0.25)*inheight/outheight);
+		inrow2 = in + inwidth*(int)((i+0.75)*inheight/outheight);
+		frac = fracstep >> 1;
+		for (j=0 ; j<outwidth ; j++)
+		{
+			pix1 = (uint8_t *)inrow + p1[j];
+			pix2 = (uint8_t *)inrow + p2[j];
+			pix3 = (uint8_t *)inrow2 + p1[j];
+			pix4 = (uint8_t *)inrow2 + p2[j];
+			((uint8_t *)(out+j))[0] = (pix1[0] + pix2[0] + pix3[0] + pix4[0])>>2;
+			((uint8_t *)(out+j))[1] = (pix1[1] + pix2[1] + pix3[1] + pix4[1])>>2;
+			((uint8_t *)(out+j))[2] = (pix1[2] + pix2[2] + pix3[2] + pix4[2])>>2;
+			((uint8_t *)(out+j))[3] = (pix1[3] + pix2[3] + pix3[3] + pix4[3])>>2;
+		}
+	}
+}
+#endif
 //===========================================================================
 // 
 //	Loads the texture image into the hardware
@@ -160,7 +214,11 @@ void FHardwareTexture::Resize(int width, int height, unsigned char *src_data, un
 //
 //===========================================================================
 
+#ifdef __MOBILE__
+unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int h, int texunit, bool mipmap, int translation, const FString &name, bool material)
+#else
 unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int h, int texunit, bool mipmap, int translation, const FString &name)
+#endif
 {
 	int rh,rw;
 	int texformat=TexFormat[gl_texture_format];
@@ -188,14 +246,16 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 		glTex->mipmapped = false;
 		buffer=(unsigned char *)calloc(4,rw * (rh+1));
 		deletebuffer=true;
-		//texheight=-h;	
+		//texheight=-h;
 	}
 	else
 	{
 		rw = GetTexDimension (w);
 		rh = GetTexDimension (h);
-
-		if (rw < w || rh < h)
+        if (rw == w && rh == h) // Same size, do nothing
+		{
+		}
+		else if (rw < w || rh < h)
 		{
 			// The texture is larger than what the hardware can handle so scale it down.
 			unsigned char * scaledbuffer=(unsigned char *)calloc(4,rw * (rh+1));
@@ -206,16 +266,69 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 				buffer=scaledbuffer;
 			}
 		}
+		// Need to find a way to work out if 3d texture
+		else if (material) // Need to make bigger by resampling, for 3d textures
+        {
+            unsigned int * scaledbuffer=(unsigned int *)calloc(4,rw * (rh+1));
+            GL_ResampleTexture((unsigned  *)buffer,w,h,(unsigned *)scaledbuffer,rw,rh);
+            deletebuffer=true;
+            buffer=(unsigned char *)scaledbuffer;
+        }
+
+        else // Need to put into bigger texture, but DONT resample, for 2d images. Works because coordinates are scaled when rendering
+        {
+            unsigned int * scaledbuffer=(unsigned int *)calloc(4,rw * (rh+1));
+            for(int y = 0; y < h; y++)
+                for( int x = 0; x < w; x++ )
+                {
+                    scaledbuffer[x + y * rw] = ((unsigned int *)buffer)[x + y * w];
+                }
+            deletebuffer=true;
+            buffer=(unsigned char *)scaledbuffer;
+        }
 	}
-	glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, GL_BGRA, GL_UNSIGNED_BYTE, buffer);
+#ifdef __MOBILE__
+
+    if(!(gl.flags & RFL_BGRA))
+    {
+        texformat = GL_RGBA;
+        BGRAtoRGBA( buffer, rw * rh );
+    }
+    else
+    {
+        texformat = GL_BGRA;
+    }
+
+	glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, texformat, GL_UNSIGNED_BYTE, buffer);
+#else
+    glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, GL_BGRA, GL_UNSIGNED_BYTE, buffer);
+#endif
 
 	if (deletebuffer) free(buffer);
-
+#ifndef __MOBILE__
 	if (mipmap && TexFilter[gl_texture_filter].mipmapping)
 	{
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glTex->mipmapped = true;
 	}
+#else
+    bool use_mipmapping = TexFilter[gl_texture_filter].mipmapping;
+
+    if (mipmap && use_mipmapping)
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TexFilter[gl_texture_filter].minfilter);
+        if (gl_texture_filter_anisotropic)
+        {
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, gl_texture_filter_anisotropic);
+        }
+        glTex->mipmapped = true;
+    }
+    else
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TexFilter[gl_texture_filter].magfilter);
+    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, TexFilter[gl_texture_filter].magfilter);
+#endif
 
 	if (texunit != 0) glActiveTexture(GL_TEXTURE0);
 	return glTex->glTexID;

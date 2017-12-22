@@ -151,7 +151,9 @@ void gl_GetRenderStyle(FRenderStyle style, bool drawopaque, bool allowcolorblend
 
 	if (allowcolorblending && srcblend == GL_SRC_ALPHA && dstblend == GL_ONE && blendequation == GL_FUNC_ADD)
 	{
+#ifndef __MOBILE__ // Not avaliable for gles1 :(
 		srcblend = GL_SRC_COLOR;
+#endif
 	}
 
 	*tm = texturemode;

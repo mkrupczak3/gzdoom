@@ -70,6 +70,8 @@
 #include "gl/utility/gl_convert.h"
 #include "gl/utility/gl_templates.h"
 
+#include "gl/renderer/gl_quaddrawer.h"
+
 //==========================================================================
 //
 // CVARs
@@ -103,7 +105,7 @@ angle_t GLSceneDrawer::FrustumAngle()
 {
 	float tilt = fabs(GLRenderer->mAngles.Pitch.Degrees);
 
-	// If the pitch is larger than this you can look all around at a FOV of 90°
+	// If the pitch is larger than this you can look all around at a FOV of 90Â°
 	if (tilt > 46.0f) return 0xffffffff;
 
 	// ok, this is a gross hack that barely works...
@@ -527,8 +529,17 @@ void gl_FillScreen()
 	gl_RenderState.AlphaFunc(GL_GEQUAL, 0.f);
 	gl_RenderState.EnableTexture(false);
 	gl_RenderState.Apply();
+#ifdef NO_VBO
+    FQuadDrawer qd;
+    qd.Set(0, 0, 0, 0, 0, 0);
+    qd.Set(1, 0, viewheight, 0, 0, 0);
+    qd.Set(2, viewwidth, 0, 0, 0, 0);
+    qd.Set(3, viewwidth, viewheight, 0, 0, 0);
+    qd.Render(GL_TRIANGLE_STRIP);
+#else
 	// The fullscreen quad is stored at index 4 in the main vertex buffer.
 	GLRenderer->mVBO->RenderArray(GL_TRIANGLE_STRIP, FFlatVertexBuffer::FULLSCREEN_INDEX, 4);
+#endif
 }
 
 //==========================================================================
@@ -934,6 +945,21 @@ void FGLRenderer::RenderView (player_t* player)
 // Render the view to a savegame picture
 //
 //===========================================================================
+#ifdef __ANDROID__
+uint8_t * gles_convertRGB(uint8_t * data, int width, int height)
+{
+	uint8_t *src = data;
+	uint8_t *dst = data;
+
+	for (int i=0; i<width*height; i++) {
+		for (int j=0; j<3; j++)
+			*(dst++) = *(src++);
+		src++;
+	}
+
+	return dst;
+}
+#endif
 
 void GLSceneDrawer::WriteSavePic (player_t *player, FileWriter *file, int width, int height)
 {
@@ -966,10 +992,16 @@ void GLSceneDrawer::WriteSavePic (player_t *player, FileWriter *file, int width,
 	}
 	GLRenderer->CopyToBackbuffer(&bounds, false);
 	glFlush();
-
+#ifdef __MOBILE__ //Some androids do not like GL_RGB
+	uint8_t * scr = (uint8_t *)M_Malloc(width * height * 4);
+	glReadPixels(0,0,width, height,GL_RGBA,GL_UNSIGNED_BYTE,scr);
+	gles_convertRGB(scr,width,height);
+    M_CreatePNG (file, scr + ((height-1) * width * 3), NULL, SS_RGB, width, height, -width * 3, Gamma);
+#else
 	uint8_t * scr = (uint8_t *)M_Malloc(width * height * 3);
 	glReadPixels(0,0,width, height,GL_RGB,GL_UNSIGNED_BYTE,scr);
 	M_CreatePNG (file, scr + ((height-1) * width * 3), NULL, SS_RGB, width, height, -width * 3, Gamma);
+#endif
 	M_Free(scr);
 }
 

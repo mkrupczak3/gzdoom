@@ -40,6 +40,54 @@ static void* PosixGetProcAddress (const GLubyte* name)
 }
 #endif /* __sgi || __sun || __unix__ */
 
+#ifdef __MOBILE__
+
+#include <android/log.h>
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"JNITouchControlsUtils", __VA_ARGS__))
+
+static void CATCH(int a, int b, int c, int d, int e)
+{
+	LOGI("CAUGHT BAD");
+}
+
+static void* PosixGetProcAddressMobile (const GLubyte* name)
+{
+  static void* h = NULL;
+  static void* gpa = NULL;
+
+  if (h == NULL)
+  {
+    if ((h = dlopen("libjwzgles_shared.so", RTLD_LAZY | RTLD_LOCAL)) == NULL)
+    {
+        LOGI("ERROR loading libjwzgles_shared");
+        return NULL;
+    }
+    //gpa = dlsym(h, "glXGetProcAddress");
+  }
+
+  char newName[64];
+  memset(newName,0,64);
+  sprintf(newName,"jwzgles_%s",name);
+
+  void * ret = 0;
+  if (gpa != NULL)
+    ret =  ((void*(*)(const GLubyte*))gpa)(newName);
+  else
+    ret =  dlsym(h, (const char*)newName);
+
+  if( !ret )
+  {
+    LOGI("Loading.. %s    FAIL", newName);
+    ret = CATCH;
+  }
+  else
+  {
+    LOGI("Loading.. %s    OK", newName);
+  }
+  return ret;
+}
+#endif
+
 #if defined(_WIN32)
 
 #ifdef APIENTRY
@@ -84,7 +132,9 @@ static PROC WinGetProcAddress(const char *name)
 	#if defined(__APPLE__)
 		#define IntGetProcAddress(name) AppleGLGetProcAddress(name)
 	#else
-		#if defined(__sgi) || defined(__sun) || defined(__unix__)
+	    #if defined(__MOBILE__)
+	        #define IntGetProcAddress(name) PosixGetProcAddressMobile((const GLubyte*)name)
+		#elif defined(__sgi) || defined(__sun) || defined(__unix__)
 			void* SDL_GL_GetProcAddress(const char* proc);
 			#define IntGetProcAddress(name) SDL_GL_GetProcAddress((const char*)name)
 			//#define IntGetProcAddress(name) PosixGetProcAddress((const GLubyte*)name)
@@ -2518,12 +2568,16 @@ int ogl_LoadFunctions()
 {
 	int numFailed = 0;
 	ClearExtensionVars();
-	
+#ifdef __MOBILE__
+    void jwzgles_reset (void);
+    jwzgles_reset();
+#endif
 	_ptrc_glGetIntegerv = (void (CODEGEN_FUNCPTR *)(GLenum, GLint *))IntGetProcAddress("glGetIntegerv");
 	if(!_ptrc_glGetIntegerv) return ogl_LOAD_FAILED;
 	_ptrc_glGetStringi = (const GLubyte * (CODEGEN_FUNCPTR *)(GLenum, GLuint))IntGetProcAddress("glGetStringi");
-
+#ifndef __MOBILE__
 	if (0 == ProcExtsFromExtList())
+#endif
 	{
 		_ptrc_glGetString = (const GLubyte * (CODEGEN_FUNCPTR *)(GLenum))IntGetProcAddress("glGetString");
 		if (!_ptrc_glGetString) return ogl_LOAD_FAILED;

@@ -268,6 +268,13 @@ void GLSprite::Draw(int pass)
 	bool foglayer = false;
 	int rel = fullbright? 0 : getExtraLight();
 
+#ifdef __MOBILE__ /// HACK fixes black foot steps in brutaldoom v21. Need to find proper fix
+    if( RenderStyle.Flags & STYLEF_RedIsAlpha )
+    {
+        RenderStyle.DestAlpha = STYLEALPHA_One;
+    }
+#endif
+
 	if (pass==GLPASS_TRANSLUCENT)
 	{
 		// The translucent pass requires special setup for the various modes.
@@ -430,6 +437,7 @@ void GLSprite::Draw(int pass)
 
 		if (!modelframe)
 		{
+
 			gl_RenderState.Apply();
 
 			FVector3 v[4];
@@ -457,7 +465,9 @@ void GLSprite::Draw(int pass)
 		}
 		else
 		{
+//#ifndef __MOBILE__	//Models crash because glUnmapbuffer is not availiable, need to fix
 			gl_RenderModel(this);
+//#endif
 		}
 	}
 

@@ -50,10 +50,12 @@
 
 #include <sys/types.h>
 #include <sys/wait.h>
+#ifndef __ANDROID__
 #ifndef __OpenBSD__
 #include <wordexp.h>
 #endif
 #include <glob.h>
+#endif
 #include <signal.h>
 
 int ChildQuit;
@@ -456,12 +458,17 @@ bool TimidityPPMIDIDevice::ValidateTimidity()
 
 bool TimidityPPMIDIDevice::LaunchTimidity ()
 {
+
+#ifdef __MOBILE__
+    return false;
+#elif _WIN32
+
 	if (ExeName.IsEmpty() || DiskName.IsEmpty())
 	{
 		return false;
 	}
 
-#ifdef _WIN32
+
 	DPrintf (DMSG_NOTIFY, "cmd: \x1cG%s\n", CommandLine.GetChars());
 
 	STARTUPINFO startup = { sizeof(startup), };

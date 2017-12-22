@@ -364,10 +364,18 @@ void FVoxelModel::BuildVertexBuffer(FModelRenderer *renderer)
 
 		mVBuf = renderer->CreateVertexBuffer(true, true);
 		FModelVertex *vertptr = mVBuf->LockVertexBuffer(mVertices.Size());
+#ifdef __USE_SHORT_IDX__
+		unsigned short *indxptr = (unsigned short *)mVBuf->LockIndexBuffer(mIndices.Size()/2+2);
+#else
 		unsigned int *indxptr = mVBuf->LockIndexBuffer(mIndices.Size());
+#endif
 
 		memcpy(vertptr, &mVertices[0], sizeof(FModelVertex)* mVertices.Size());
+#ifdef __USE_SHORT_IDX__
+		memcpy(indxptr, &mIndices[0], sizeof(unsigned short)* mIndices.Size());
+#else
 		memcpy(indxptr, &mIndices[0], sizeof(unsigned int)* mIndices.Size());
+#endif
 
 		mVBuf->UnlockVertexBuffer();
 		mVBuf->UnlockIndexBuffer();

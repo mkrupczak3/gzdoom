@@ -383,6 +383,7 @@ void GLPortal::End(bool usestencil)
 			// second step: restore the depth buffer to the previous values and reset the stencil
 			glDepthFunc(GL_LEQUAL);
 			glDepthRange(0, 1);
+
 			glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 			glStencilFunc(GL_EQUAL, recursion, ~0);		// draw sky into stencil
 			DrawPortalStencil();
@@ -426,6 +427,8 @@ void GLPortal::End(bool usestencil)
 		gl_RenderState.ResetColor();
 		glDepthFunc(GL_LEQUAL);
 		glDepthRange(0, 1);
+
+#ifndef __ANDROID__1 //Needed??
 		{
 			ScopedColorMask colorMask(0, 0, 0, 1); // mark portal in alpha channel but don't touch color
 			gl_RenderState.SetEffect(EFF_STENCIL);
@@ -437,6 +440,7 @@ void GLPortal::End(bool usestencil)
 			gl_RenderState.SetEffect(EFF_NONE);
 			gl_RenderState.EnableTexture(true);
 		}
+#endif
 		glDepthFunc(GL_LESS);
 	}
 	PortalAll.Unclock();
@@ -1073,7 +1077,7 @@ void GLLineToLinePortal::RenderAttached()
 // are 2 problems with it:
 //
 // 1. Setting this up completely negates any performance gains.
-// 2. It doesn't work with a 360° field of view (as when you are looking up.)
+// 2. It doesn't work with a 360ï¿½ field of view (as when you are looking up.)
 //
 //
 // So the brute force mechanism is just as good.
@@ -1265,7 +1269,9 @@ void GLEEHorizonPortal::DrawContents()
 void GLPortal::Initialize()
 {
 	assert(0 == QueryObject);
+#ifndef __MOBILE__
 	glGenQueries(1, &QueryObject);
+#endif
 }
 
 void GLPortal::Shutdown()

@@ -199,6 +199,42 @@ void GLWall::RenderWall(int textured)
 {
 	gl_RenderState.Apply();
 	gl_RenderState.ApplyLightIndex(dynlightindex);
+
+#ifdef NO_VBO
+    bool nosplit = !!(textured&RWF_NOSPLIT);
+    bool split = (gl_seamless && !nosplit && seg->sidedef != NULL && !(seg->sidedef->Flags & WALLF_POLYOBJ) && !(flags & GLWF_NOSPLIT));
+
+    static FFlatVertex vtx[100]; // Yes this is static. It's only used once, and I think it's faster as the address doesn't keep changing
+    FFlatVertex *ptr = &vtx[0];
+
+	ptr->Set(glseg.x1, zbottom[0], glseg.y1, tcs[LOLFT].u, tcs[LOLFT].v);
+    ptr++;
+    if (split && glseg.fracleft == 0) SplitLeftEdge(ptr);
+    ptr->Set(glseg.x1, ztop[0], glseg.y1, tcs[UPLFT].u, tcs[UPLFT].v);
+    ptr++;
+    if (split && !(flags & GLWF_NOSPLITUPPER)) SplitUpperEdge(ptr);
+    ptr->Set(glseg.x2, ztop[1], glseg.y2, tcs[UPRGT].u, tcs[UPRGT].v);
+    ptr++;
+    if (split && glseg.fracright == 1) SplitRightEdge(ptr);
+    ptr->Set(glseg.x2, zbottom[1], glseg.y2, tcs[LORGT].u, tcs[LORGT].v);
+    ptr++;
+    if (split && !(flags & GLWF_NOSPLITLOWER)) SplitLowerEdge(ptr);
+
+    // We can workout how many from the difference in pointers
+    vertcount = (ptr - &vtx[0]);
+
+    glTexCoordPointer(2,GL_FLOAT, sizeof(FFlatVertex),&vtx[0].u);
+    glVertexPointer  (3,GL_FLOAT, sizeof(FFlatVertex),&vtx[0].x);
+
+    glEnableClientState (GL_VERTEX_ARRAY);
+    glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState (GL_COLOR_ARRAY);
+
+    glBindBuffer (GL_ARRAY_BUFFER, 0); // NO VBO
+    glDrawArrays (GL_TRIANGLE_FAN, 0, vertcount);
+
+    vertexcount += vertcount;
+#else
 	if (gl.buffermethod != BM_DEFERRED)
 	{
 		MakeVertices(!!(textured&RWF_NOSPLIT));
@@ -218,6 +254,7 @@ void GLWall::RenderWall(int textured)
 	}
 	GLRenderer->mVBO->RenderArray(GL_TRIANGLE_FAN, vertindex, vertcount);
 	vertexcount += vertcount;
+#endif
 }
 
 //==========================================================================

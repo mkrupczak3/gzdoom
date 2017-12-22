@@ -56,8 +56,9 @@ static void CollectExtensions()
 	const char *extension;
 
 	int max = 0;
+#ifndef __MOBILE__
 	glGetIntegerv(GL_NUM_EXTENSIONS, &max);
-
+#endif
 	if (0 == max)
 	{
 		// Try old method to collect extensions
@@ -132,10 +133,11 @@ void gl_LoadExtensions()
 {
 	InitContext();
 	CollectExtensions();
-
+#ifndef __MOBILE__ // Not using this for now..
 	const char *glversion = (const char*)glGetString(GL_VERSION);
 	gl.es = false;
-	
+
+
 	if (glversion && strlen(glversion) > 10 && memcmp(glversion, "OpenGL ES ", 10) == 0)
 	{
 		glversion += 10;
@@ -158,6 +160,10 @@ void gl_LoadExtensions()
 	}
 
 	float gl_version = (float)strtod(version, NULL) + 0.01f;
+#else
+    float gl_version = 2;
+    gl.es = false;
+#endif
 
 	if (gl.es)
 	{
@@ -184,6 +190,27 @@ void gl_LoadExtensions()
 	}
 	else
 	{
+
+#ifdef __MOBILE__
+        gl.glslversion = 0;
+        gl.lightmethod = LM_LEGACY;
+        gl.buffermethod = BM_LEGACY;
+        if(CheckExtension("GL_OES_texture_npot"))
+        {
+            Printf("NPOT allowed");
+            gl.flags |= RFL_NPOT;
+        }
+        if(CheckExtension("GL_EXT_texture_format_BGRA8888"))
+        {
+            Printf("BGRA allowed");
+            gl.flags |= RFL_BGRA;
+        }
+        gl.vendorstring = "ANDROID";
+
+        //This is needed to the fix the brutal doom white lines?!
+        glDisable(GL_CLIP_PLANE0);
+        glEnable(GL_CLIP_PLANE0);
+#else
 		// Don't even start if it's lower than 2.0 or no framebuffers are available (The framebuffer extension is needed for glGenerateMipmapsEXT!)
 		if ((gl_version < 2.0f || !CheckExtension("GL_EXT_framebuffer_object")) && gl_version < 3.0f)
 		{
@@ -195,8 +222,9 @@ void gl_LoadExtensions()
 		// add 0.01 to account for roundoff errors making the number a tad smaller than the actual version
 		gl.glslversion = strtod((char*)glGetString(GL_SHADING_LANGUAGE_VERSION), NULL) + 0.01f;
 
-		gl.vendorstring = (char*)glGetString(GL_VENDOR);
 
+		gl.vendorstring = (char*)glGetString(GL_VENDOR);
+#endif
 		// first test for optional features
 		if (CheckExtension("GL_ARB_texture_compression")) gl.flags |= RFL_TEXTURE_COMPRESSION;
 		if (CheckExtension("GL_EXT_texture_compression_s3tc")) gl.flags |= RFL_TEXTURE_COMPRESSION_S3TC;
@@ -334,11 +362,12 @@ void gl_PrintStartupLog()
 {
 	int v = 0;
 	if (!gl.legacyMode) glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &v);
-
-	Printf ("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
+#ifndef __MOBILE__
+ 	Printf ("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
 	Printf ("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
 	Printf ("GL_VERSION: %s (%s profile)\n", glGetString(GL_VERSION), (v & GL_CONTEXT_CORE_PROFILE_BIT)? "Core" : "Compatibility");
 	Printf ("GL_SHADING_LANGUAGE_VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+#endif
 	Printf (PRINT_LOG, "GL_EXTENSIONS:");
 	for (unsigned i = 0; i < m_Extensions.Size(); i++)
 	{

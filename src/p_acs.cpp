@@ -826,6 +826,11 @@ inline int uallong(const int &foo)
 	const unsigned char *bar = (const unsigned char *)&foo;
 	return bar[0] | (bar[1] << 8) | (bar[2] << 16) | (bar[3] << 24);
 }
+
+inline int ualcharint(uint8_t *bar)
+{
+	return bar[0] | (bar[1] << 8) | (bar[2] << 16) | (bar[3] << 24);
+}
 #endif
 
 //============================================================================
@@ -3336,11 +3341,19 @@ uint8_t *FBehavior::FindChunk (uint32_t id) const
 
 	while (chunk != NULL && chunk < Data + DataSize)
 	{
+#ifdef __arm__ //Trying to fixed unalligned access, there will be more..
+        if (ualcharint(&chunk[0]) == id)
+		{
+			return chunk;
+		}
+		chunk += LittleLong(ualcharint(&chunk[4])) + 8;
+#else
 		if (((uint32_t *)chunk)[0] == id)
 		{
 			return chunk;
 		}
 		chunk += LittleLong(((uint32_t *)chunk)[1]) + 8;
+#endif
 	}
 	return NULL;
 }
