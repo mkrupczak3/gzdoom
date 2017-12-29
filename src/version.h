@@ -102,7 +102,11 @@ const char *GetVersionString();
 #define BASEWAD "gzdoom.pk3"
 #endif
 
+#ifdef __ANDROID__
+#define OPTIONALWAD "./res/zd_extra_dev.pk3"
+#else
 #define OPTIONALWAD "zd_extra.pk3"
+#endif
 
 #define BASESF "gzdoom.sf2"
 
