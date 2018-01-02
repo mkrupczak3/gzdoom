@@ -152,11 +152,12 @@ void FGLModelRenderer::DrawArrays(int start, int count)
 
 void FGLModelRenderer::DrawElements(int numIndices, size_t offset)
 {
-#ifdef __USE_SHORT_IDX__ // Some old devices can not use integer index type
-    glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, ( void*)(intptr_t)offset);
-#else
-	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, (void*)(intptr_t)offset);
+#ifdef __MOBILE__
+    if (!(gl.flags & RFL_UINT_IDX))// Some old devices can not use integer index type
+        glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, ( void*)(intptr_t)offset);
+    else
 #endif
+        glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, (void*)(intptr_t)offset);
 }
 
 double FGLModelRenderer::GetTimeFloat()

@@ -45,6 +45,9 @@ RenderContext gl;
 EXTERN_CVAR(Bool, gl_legacy_mode)
 extern int currentrenderer;
 
+#ifdef __MOBILE__
+    CVAR(Bool, force_uint_idx, false, 0)
+#endif
 //==========================================================================
 //
 // 
@@ -195,16 +198,31 @@ void gl_LoadExtensions()
         gl.glslversion = 0;
         gl.lightmethod = LM_LEGACY;
         gl.buffermethod = BM_LEGACY;
+
         if(CheckExtension("GL_OES_texture_npot"))
         {
             Printf("NPOT allowed");
             gl.flags |= RFL_NPOT;
         }
+
         if(CheckExtension("GL_EXT_texture_format_BGRA8888"))
         {
             Printf("BGRA allowed");
             gl.flags |= RFL_BGRA;
         }
+
+        if(CheckExtension("GL_OES_element_index_uint"))
+        {
+            Printf("UINT element index allowed");
+            gl.flags |= RFL_UINT_IDX;
+        }
+
+        if(force_uint_idx == true)
+        {
+            Printf("FORCING UINT element index allowed");
+            gl.flags |= RFL_UINT_IDX;
+        }
+
         gl.vendorstring = "ANDROID";
 
         //This is needed to the fix the brutal doom white lines?!

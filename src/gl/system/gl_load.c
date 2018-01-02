@@ -77,12 +77,12 @@ static void* PosixGetProcAddressMobile (const GLubyte* name)
 
   if( !ret )
   {
-    LOGI("Loading.. %s    FAIL", newName);
+    //LOGI("Loading.. %s    FAIL", newName);
     ret = CATCH;
   }
   else
   {
-    LOGI("Loading.. %s    OK", newName);
+    //LOGI("Loading.. %s    OK", newName);
   }
   return ret;
 }

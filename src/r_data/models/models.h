@@ -33,10 +33,6 @@
 
 #define MAX_LODS			4
 
-#ifdef __MOBILE__ // Some old GLES devices can only used short indexes
-#define __USE_SHORT_IDX__
-#endif
-
 enum { VX, VZ, VY };
 
 #define MD2_MAGIC			0x32504449
@@ -412,11 +408,7 @@ protected:
 	FTextureID mPalette;
 	unsigned int mNumIndices;
 	TArray<FModelVertex> mVertices;
-#ifdef __USE_SHORT_IDX__
-    TArray<unsigned short> mIndices;
-#else
     TArray<unsigned int> mIndices;
-#endif
 	
 	void MakeSlabPolys(int x, int y, kvxslab_t *voxptr, FVoxelMap &check);
 	void AddFace(int x1, int y1, int z1, int x2, int y2, int z2, int x3, int y3, int z3, int x4, int y4, int z4, uint8_t color, FVoxelMap &check);

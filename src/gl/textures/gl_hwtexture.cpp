@@ -162,13 +162,14 @@ static void BGRAtoRGBA(unsigned char * buffer, int numPixels)
 #ifdef __MOBILE__
 static void GL_ResampleTexture (uint32_t *in, uint32_t inwidth, uint32_t inheight, uint32_t *out,  uint32_t outwidth, uint32_t outheight)
 {
-	//LOGI("GL_ResampleTexture %dx%d -> %dx%d",inwidth,inheight,outwidth,outheight);
+	LOGI("GL_ResampleTexture %dx%d -> %dx%d",inwidth,inheight,outwidth,outheight);
 
 	int		i, j;
 	uint32_t	*inrow, *inrow2;
 	uint32_t	frac, fracstep;
-	uint32_t	p1[2048], p2[2048];
 	uint8_t		*pix1, *pix2, *pix3, *pix4;
+	uint32_t	*p1 = (uint32_t*)malloc(sizeof(uint32_t) * outwidth );
+	uint32_t	*p2 = (uint32_t*)malloc(sizeof(uint32_t) * outwidth );
 
 	fracstep = inwidth*0x10000/outwidth;
 
@@ -202,6 +203,9 @@ static void GL_ResampleTexture (uint32_t *in, uint32_t inwidth, uint32_t inheigh
 			((uint8_t *)(out+j))[3] = (pix1[3] + pix2[3] + pix3[3] + pix4[3])>>2;
 		}
 	}
+
+	free(p1);
+	free(p2);
 }
 #endif
 //===========================================================================
