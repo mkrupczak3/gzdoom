@@ -29,6 +29,7 @@ enum RenderFlags
 #ifdef __MOBILE__
     RFL_NPOT = 256,
     RFL_BGRA = 512,
+    RFL_UINT_IDX = 1024,
 #endif
 };
 

@@ -26,6 +26,10 @@
 #include "m_crc32.h"
 #include "r_data/models/models.h"
 
+#ifdef __MOBILE__
+#include "gl/system/gl_interface.h"
+#endif
+
 #define MAX_QPATH 64
 
 #ifdef _MSC_VER
@@ -255,11 +259,8 @@ void FMD3Model::BuildVertexBuffer(FModelRenderer *renderer)
 
 		mVBuf = renderer->CreateVertexBuffer(true, numFrames == 1);
 		FModelVertex *vertptr = mVBuf->LockVertexBuffer(vbufsize);
-#ifdef __USE_SHORT_IDX__ // Some old devices can not use integer index type
-        unsigned short *indxptr = (unsigned short *)mVBuf->LockIndexBuffer(ibufsize/2+2);
-#else
+
         unsigned int *indxptr = mVBuf->LockIndexBuffer(ibufsize);
-#endif
 
 		assert(vertptr != nullptr && indxptr != nullptr);
 
@@ -286,7 +287,13 @@ void FMD3Model::BuildVertexBuffer(FModelRenderer *renderer)
 			{
 				for (int l = 0; l < 3; l++)
 				{
-					indxptr[iindex++] = surf->tris[k].VertIndex[l];
+#ifdef __MOBILE__
+                    if (!(gl.flags & RFL_UINT_IDX))
+                        ((unsigned short*)indxptr)[iindex++] = surf->tris[k].VertIndex[l];
+                    else
+#endif
+                        indxptr[iindex++] = surf->tris[k].VertIndex[l];
+
 				}
 			}
 			surf->UnloadGeometry();
@@ -372,11 +379,12 @@ void FMD3Model::RenderFrame(FModelRenderer *renderer, FTexture * skin, int frame
 
 		renderer->SetMaterial(surfaceSkin, false, translation);
 		mVBuf->SetupFrame(renderer, surf->vindex + frameno * surf->numVertices, surf->vindex + frameno2 * surf->numVertices, surf->numVertices);
-#ifdef __USE_SHORT_IDX__
-        renderer->DrawElements(surf->numTriangles * 3, surf->iindex * sizeof(unsigned short));
-#else
-        renderer->DrawElements(surf->numTriangles * 3, surf->iindex * sizeof(unsigned int));
+#ifdef __MOBILE__
+        if (!(gl.flags & RFL_UINT_IDX))
+            renderer->DrawElements(surf->numTriangles * 3, surf->iindex * sizeof(unsigned short));
+        else
 #endif
+            renderer->DrawElements(surf->numTriangles * 3, surf->iindex * sizeof(unsigned int));
 	}
 	renderer->SetInterpolation(0.f);
 }
