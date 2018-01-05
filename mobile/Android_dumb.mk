@@ -7,7 +7,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := dumb_1.9
 
-LOCAL_CFLAGS :=   -O2  -DNEED_ITOA
+LOCAL_CFLAGS := -DNEED_ITOA  -Wno-pointer-sign -Wno-uninitialized -fsigned-char
 
 LOCAL_LDLIBS += -llog
 
