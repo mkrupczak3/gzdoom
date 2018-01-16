@@ -2869,9 +2869,17 @@ bool FBehavior::Init(int lumpnum, FileReader * fr, int len)
 					char *parse = (char *)&chunk[3];
 					for (uint32_t j = 0; j < LittleLong(chunk[2]); ++j)
 					{
+#ifdef __arm__
+                        uint32_t varNum = LittleLong(ualcharint((uint8_t*)parse));
+#else
 						uint32_t varNum = LittleLong(*(uint32_t *)parse);
+#endif
 						parse += 4;
+#ifdef __arm__
+                        uint32_t expectedSize = LittleLong(ualcharint((uint8_t*)parse));
+#else
 						uint32_t expectedSize = LittleLong(*(uint32_t *)parse);
+#endif
 						parse += 4;
 						int impNum = lib->FindMapArray (parse);
 						if (impNum >= 0)
@@ -3418,7 +3426,21 @@ uint8_t *FBehavior::FindChunk (uint32_t id) const
 
 uint8_t *FBehavior::NextChunk (uint8_t *chunk) const
 {
+#ifdef __arm__
+    uint32_t id = ualcharint(chunk);
+
+    chunk += LittleLong(ualcharint(&chunk[4])) + 8;
+    while (chunk != NULL && chunk < Data + DataSize)
+    {
+        if (ualcharint(&chunk[0]) == id)
+        {
+            return chunk;
+        }
+        chunk += LittleLong(ualcharint(&chunk[4])) + 8;
+    }
+#else
 	uint32_t id = *(uint32_t *)chunk;
+
 	chunk += LittleLong(((uint32_t *)chunk)[1]) + 8;
 	while (chunk != NULL && chunk < Data + DataSize)
 	{
@@ -3428,6 +3450,7 @@ uint8_t *FBehavior::NextChunk (uint8_t *chunk) const
 		}
 		chunk += LittleLong(((uint32_t *)chunk)[1]) + 8;
 	}
+#endif
 	return NULL;
 }
 
