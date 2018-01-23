@@ -6,6 +6,10 @@
 
 #ifdef NO_VBO
 
+// #define GL_BEGIN 1  This might be quicker due to jwzgles batching.. doesn't seem to be
+
+extern "C" void jwzgles_glBegin_OVERRIDE(int mode);
+
 class FQuadDrawer
 {
 	static FFlatVertex buffer[4];
@@ -15,15 +19,27 @@ public:
 
 	FQuadDrawer()
 	{
+#if GL_BEGIN
+	    glBegin(GL_TRIANGLE_FAN);
+#endif
 	}
 
 	void Set(int ndx, float x, float y, float z, float s, float t)
 	{
-		buffer[ndx].Set(x, y, z, s, t);
+#if GL_BEGIN
+        glTexCoord2f(s,t);
+        glVertex3f(x,y,z);
+#else
+        buffer[ndx].Set(x, y, z, s, t);
+#endif
 	}
 	void Render(int type)
 	{
-	    glTexCoordPointer(2,GL_FLOAT, sizeof(FFlatVertex),&buffer[0].u);
+#if GL_BEGIN
+	    jwzgles_glBegin_OVERRIDE( type );
+	    glEnd();
+#else
+        glTexCoordPointer(2,GL_FLOAT, sizeof(FFlatVertex),&buffer[0].u);
         glVertexPointer  (3,GL_FLOAT, sizeof(FFlatVertex),&buffer[0].x);
 
 		glEnableClientState (GL_VERTEX_ARRAY);
@@ -32,6 +48,7 @@ public:
 
 		glBindBuffer (GL_ARRAY_BUFFER, 0); // NO VBO
         glDrawArrays (type, 0, 4);
+#endif
 	}
 };
 

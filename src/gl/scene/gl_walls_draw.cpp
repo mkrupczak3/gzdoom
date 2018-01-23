@@ -204,6 +204,41 @@ void GLWall::RenderWall(int textured)
     bool nosplit = !!(textured&RWF_NOSPLIT);
     bool split = (gl_seamless && !nosplit && seg->sidedef != NULL && !(seg->sidedef->Flags & WALLF_POLYOBJ) && !(flags & GLWF_NOSPLIT));
 
+#if 1 // A bit quicker due to batching, still not very fast..
+	glBegin(GL_TRIANGLE_FAN);
+
+	// lower left corner
+	if (textured&1) glTexCoord2f(tcs[0].u,tcs[0].v);
+	glVertex3f(glseg.x1,zbottom[0],glseg.y1);
+
+	//if (split && glseg.fracleft==0) SplitLeftEdge(tcs);
+
+	// upper left corner
+	if (textured&1) glTexCoord2f(tcs[1].u,tcs[1].v);
+	glVertex3f(glseg.x1,ztop[0],glseg.y1);
+
+	//if (split && !(flags & GLWF_NOSPLITUPPER)) SplitUpperEdge(tcs);
+
+	// color for right side
+	//if (color2) glColor4fv(color2);
+
+	// upper right corner
+	if (textured&1) glTexCoord2f(tcs[2].u,tcs[2].v);
+	glVertex3f(glseg.x2,ztop[1],glseg.y2);
+
+	//if (split && glseg.fracright==1) SplitRightEdge(tcs);
+
+	// lower right corner
+	if (textured&1) glTexCoord2f(tcs[3].u,tcs[3].v);
+	glVertex3f(glseg.x2,zbottom[1],glseg.y2);
+
+	//if (split && !(flags & GLWF_NOSPLITLOWER)) SplitLowerEdge(tcs);
+
+	glEnd();
+
+	vertexcount+=4;
+#else
+
     static FFlatVertex vtx[100]; // Yes this is static. It's only used once, and I think it's faster as the address doesn't keep changing
     FFlatVertex *ptr = &vtx[0];
 
@@ -234,6 +269,7 @@ void GLWall::RenderWall(int textured)
     glDrawArrays (GL_TRIANGLE_FAN, 0, vertcount);
 
     vertexcount += vertcount;
+    #endif
 #else
 	if (gl.buffermethod != BM_DEFERRED)
 	{
