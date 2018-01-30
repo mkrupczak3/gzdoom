@@ -17,7 +17,7 @@ endif
 	
 LOCAL_C_INCLUDES := \
  $(TOP_DIR)/ \
- $(GZDOOM_TOP_PATH)/../FMOD_Studio/api/lowlevel/inc \
+ $(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth/include_from_prboom \
  $(GZDOOM_TOP_PATH)/src/  \
  $(GZDOOM_TOP_PATH)/mobile/src/extrafiles  \
  $(GZDOOM_TOP_PATH)/game-music-emu/ \
@@ -37,17 +37,16 @@ LOCAL_C_INCLUDES := \
  $(GZDOOM_TOP_PATH)/src/scripting/vm \
  $(GZDOOM_TOP_PATH)/src/posix \
  $(GZDOOM_TOP_PATH)/src/posix\sdl \
- $(TOP_DIR)/fluidsynth/include_from_prboom \
  $(SDL_INCLUDE_PATHS) \
-$(TOP_DIR)/openal/include/AL \
-$(TOP_DIR)/libsndfile-android/jni/ \
-$(TOP_DIR)/libmpg123 \
-$(TOP_DIR)/FMOD_studio/api/lowlevel/inc \
-$(TOP_DIR)/jpeg8d \
-$(TOP_DIR)/Clibs_OpenTouch \
-$(TOP_DIR)/jwzgles \
-$(TOP_DIR)/MobileTouchControls  \
-$(GZDOOM_TOP_PATH)/mobile/src
+ $(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth/include_from_prboom \
+ $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
+ $(TOP_DIR)/AudioLibs_OpenTouch/libsndfile-android/jni/ \
+ $(TOP_DIR)/AudioLibs_OpenTouch/libmpg123 \
+ $(TOP_DIR)/jpeg8d \
+ $(TOP_DIR)/Clibs_OpenTouch \
+ $(TOP_DIR)/jwzgles \
+ $(TOP_DIR)/MobileTouchControls  \
+ $(GZDOOM_TOP_PATH)/mobile/src
 
 
 #############################################################################
@@ -498,7 +497,9 @@ LOCAL_LDLIBS := -ldl -llog -lOpenSLES -lGLESv1_CM
 LOCAL_LDLIBS +=  -lEGL
 
 # This is stop a linker warning for mp123 lib failing build
-LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
+#LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
+
+#LOCAL_LDFLAGS += -flto
 
 LOCAL_STATIC_LIBRARIES :=  sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_3.2 lzma_3.2 gdtoa_3.2 dumb_3.2 gme_3.2 bzip2_3.2 logwritter
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 jwzgles_shared
