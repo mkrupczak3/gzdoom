@@ -16,7 +16,7 @@ endif
 	
 LOCAL_C_INCLUDES := \
  $(TOP_DIR)/ \
- $(GZDOOM_TOP_PATH)/../FMOD_Studio/api/lowlevel/inc \
+ $(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth/include_from_prboom \
  $(GZDOOM_TOP_PATH)/src/  \
  $(GZDOOM_TOP_PATH)/mobile/src/extrafiles  \
  $(GZDOOM_TOP_PATH)/game-music-emu/ \
@@ -34,17 +34,17 @@ LOCAL_C_INCLUDES := \
  $(GZDOOM_TOP_PATH)/src/g_raven \
  $(GZDOOM_TOP_PATH)/src/g_strife \
  $(GZDOOM_TOP_PATH)/src/g_shared \
- $(TOP_DIR)/fluidsynth/include_from_prboom \
  $(SDL_INCLUDE_PATHS) \
-$(TOP_DIR)/openal/include/AL \
-$(TOP_DIR)/libsndfile-android/jni/ \
-$(TOP_DIR)/libmpg123 \
-$(TOP_DIR)/FMOD_studio/api/lowlevel/inc \
-$(TOP_DIR)/jpeg8d \
-$(TOP_DIR)/Clibs_OpenTouch \
-$(TOP_DIR)/jwzgles \
-$(TOP_DIR)/MobileTouchControls  \
-$(GZDOOM_TOP_PATH)/mobile/src
+ $(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth/include_from_prboom \
+ $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
+ $(TOP_DIR)/AudioLibs_OpenTouch/libsndfile-android/jni/ \
+ $(TOP_DIR)/AudioLibs_OpenTouch/libmpg123 \
+ $(TOP_DIR)/AudioLibs_OpenTouch/FMOD_studio/api/lowlevel/inc \
+ $(TOP_DIR)/jpeg8d \
+ $(TOP_DIR)/Clibs_OpenTouch \
+ $(TOP_DIR)/jwzgles \
+ $(TOP_DIR)/MobileTouchControls  \
+ $(GZDOOM_TOP_PATH)/mobile/src
 
 
 #############################################################################
