@@ -471,8 +471,10 @@ public:
 	bool SetDepthClamp(bool on)
 	{
 		bool res = mLastDepthClamp;
+#ifndef __MOBILE__
 		if (!on) glDisable(GL_DEPTH_CLAMP);
 		else glEnable(GL_DEPTH_CLAMP);
+#endif
 		mLastDepthClamp = on;
 		return res;
 	}

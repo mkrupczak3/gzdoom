@@ -395,14 +395,14 @@ void gl_PrintStartupLog()
 	{
 		Printf(PRINT_LOG, " %s", m_Extensions[i].GetChars());
 	}
-
+#ifndef __MOBILE__
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &v);
 	Printf("\nMax. texture size: %d\n", v);
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &v);
 	Printf ("Max. texture units: %d\n", v);
 	glGetIntegerv(GL_MAX_VARYING_FLOATS, &v);
 	Printf ("Max. varying: %d\n", v);
-	
+#endif
 	if (!gl.legacyMode && !(gl.flags & RFL_SHADER_STORAGE_BUFFER))
 	{
 		glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &v);

@@ -254,6 +254,9 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 	}
 	else
 	{
+#ifdef __MOBILE__
+    	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, (mipmap && TexFilter[gl_texture_filter].mipmapping) );
+#endif
 		rw = GetTexDimension (w);
 		rh = GetTexDimension (h);
         if (rw == w && rh == h) // Same size, do nothing
@@ -321,10 +324,12 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
     if (mipmap && use_mipmapping)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TexFilter[gl_texture_filter].minfilter);
+#ifndef __MOBILE__
         if (gl_texture_filter_anisotropic)
         {
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, gl_texture_filter_anisotropic);
         }
+#endif
         glTex->mipmapped = true;
     }
     else
