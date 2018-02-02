@@ -285,7 +285,9 @@ void FVoxelVertexBuffer::BindVBO()
 	glTexCoordPointer(2,GL_FLOAT, sizeof(FVoxelVertex), &VVO->u);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+#ifndef __MOBILE__
 	glEnableClientState(GL_INDEX_ARRAY);
+#endif
 }
 
 
@@ -519,7 +521,7 @@ void FVoxelModel::RenderFrame(FTexture * skin, int frame, int cm, int translatio
 	FMaterial * tex = FMaterial::ValidateTexture(skin);
 	tex->Bind(cm, 0, translation);
 	gl_RenderState.Apply();
-
+#ifndef __MOBILE__
 	if (mVBO == NULL) MakeGLData();
 	if (mVBO != NULL)
 	{
@@ -528,7 +530,7 @@ void FVoxelModel::RenderFrame(FTexture * skin, int frame, int cm, int translatio
 		GLRenderer->mVBO->BindVBO();
 		return;
 	}
-
+#endif
 	glBegin(GL_QUADS);
 	for(unsigned i=0;i < mIndices.Size(); i++)
 	{
