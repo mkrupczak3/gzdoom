@@ -180,3 +180,16 @@ FString M_GetSavegamesPath()
 {
 	return NicePath("./gzdoom_dev/saves/");
 }
+
+//===========================================================================
+//
+// M_GetDocumentsPath												Unix
+//
+// Returns the path to the default documents directory.
+//
+//===========================================================================
+
+FString M_GetDocumentsPath()
+{
+	return NicePath("./gzdoom_dev/");
+}

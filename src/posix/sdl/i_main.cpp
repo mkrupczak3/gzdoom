@@ -73,6 +73,10 @@ extern "C" int cc_install_handlers(int, char**, int, int*, const char*, int(*)(c
 void Mac_I_FatalError(const char* errortext);
 #endif
 
+#ifdef __linux__
+void Linux_I_FatalError(const char* errortext);
+#endif
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -282,6 +286,10 @@ int main (int argc, char **argv)
 #ifdef __APPLE__
 		Mac_I_FatalError(error.GetMessage());
 #endif // __APPLE__
+
+#ifdef __linux__
+		Linux_I_FatalError(error.GetMessage());
+#endif // __linux__
 
 		exit (-1);
     }

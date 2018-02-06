@@ -761,35 +761,6 @@ protected:
 private:
 	DLevelScript();
 
-	int getbyte(int *&pc)
-	{
-		CheckInstructionPointer(pc);
-
-		int res = *(uint8_t *)pc;
-		pc = (int *)((uint8_t *)pc+1);
-		return res;
-	}
-
-	int getshort(int *&pc)
-	{
-		CheckInstructionPointer(pc);
-
-		int res = LittleShort( *(int16_t *)pc);
-		pc = (int *)((uint8_t *)pc+2);
-		return res;
-	}
-
-	void CheckInstructionPointer(int *pc) const
-	{
-		const uint32_t offset = activeBehavior->PC2Ofs(pc);
-		const uint32_t size = activeBehavior->GetDataSize();
-
-		if (offset >= size)
-		{
-			I_Error("Out of bounds instruction pointer in ACS VM");
-		}
-	}
-
 	friend class DACSThinker;
 };
 
@@ -844,7 +815,7 @@ TArray<FString> ACS_StringBuilderStack;
 //
 //============================================================================
 
-#if defined(_M_IX86) || defined(_M_X64) || defined(__i386__)
+#if defined(_M_IX86) || defined(_M_X64) || defined(__i386__) || defined(__x86_64__)
 inline int uallong(const int &foo)
 {
 	return foo;
@@ -869,12 +840,12 @@ inline int ualcharint(uint8_t *bar)
 //============================================================================
 
 // ACS variables with world scope
-int32_t ACS_WorldVars[NUM_WORLDVARS];
-FWorldGlobalArray ACS_WorldArrays[NUM_WORLDVARS];
+static BoundsCheckingArray<int32_t, NUM_WORLDVARS> ACS_WorldVars;
+static BoundsCheckingArray<FWorldGlobalArray, NUM_WORLDVARS> ACS_WorldArrays;
 
 // ACS variables with global scope
-int32_t ACS_GlobalVars[NUM_GLOBALVARS];
-FWorldGlobalArray ACS_GlobalArrays[NUM_GLOBALVARS];
+BoundsCheckingArray<int32_t, NUM_GLOBALVARS> ACS_GlobalVars;
+BoundsCheckingArray<FWorldGlobalArray, NUM_GLOBALVARS> ACS_GlobalArrays;
 
 //----------------------------------------------------------------------------
 //
@@ -885,21 +856,7 @@ FWorldGlobalArray ACS_GlobalArrays[NUM_GLOBALVARS];
 //
 //----------------------------------------------------------------------------
 
-struct FACSStackMemory
-{
-	int32_t& operator[](const size_t index)
-	{
-		if (index >= STACK_SIZE)
-		{
-			I_Error("Corrupted stack pointer in ACS VM");
-		}
-
-		return buffer[index];
-	}
-
-private:
-	int32_t buffer[STACK_SIZE];
-};
+using FACSStackMemory = BoundsCheckingArray<int32_t, STACK_SIZE>;
 
 struct FACSStack
 {
@@ -1504,10 +1461,10 @@ void ACSStringPool::UnlockForLevel(int lnum)
 
 void P_MarkWorldVarStrings()
 {
-	GlobalACSStrings.MarkStringArray(ACS_WorldVars, countof(ACS_WorldVars));
-	for (size_t i = 0; i < countof(ACS_WorldArrays); ++i)
+	GlobalACSStrings.MarkStringArray(ACS_WorldVars.Pointer(), ACS_WorldVars.Size());
+	for (size_t i = 0; i < ACS_WorldArrays.Size(); ++i)
 	{
-		GlobalACSStrings.MarkStringMap(ACS_WorldArrays[i]);
+		GlobalACSStrings.MarkStringMap(ACS_WorldArrays.Pointer()[i]);
 	}
 }
 
@@ -1519,10 +1476,10 @@ void P_MarkWorldVarStrings()
 
 void P_MarkGlobalVarStrings()
 {
-	GlobalACSStrings.MarkStringArray(ACS_GlobalVars, countof(ACS_GlobalVars));
-	for (size_t i = 0; i < countof(ACS_GlobalArrays); ++i)
+	GlobalACSStrings.MarkStringArray(ACS_GlobalVars.Pointer(), ACS_GlobalVars.Size());
+	for (size_t i = 0; i < ACS_GlobalArrays.Size(); ++i)
 	{
-		GlobalACSStrings.MarkStringMap(ACS_GlobalArrays[i]);
+		GlobalACSStrings.MarkStringMap(ACS_GlobalArrays.Pointer()[i]);
 	}
 }
 
@@ -1605,14 +1562,14 @@ void P_ClearACSVars(bool alsoglobal)
 {
 	int i;
 
-	memset (ACS_WorldVars, 0, sizeof(ACS_WorldVars));
+	ACS_WorldVars.Fill(0);
 	for (i = 0; i < NUM_WORLDVARS; ++i)
 	{
 		ACS_WorldArrays[i].Clear ();
 	}
 	if (alsoglobal)
 	{
-		memset (ACS_GlobalVars, 0, sizeof(ACS_GlobalVars));
+		ACS_GlobalVars.Fill(0);
 		for (i = 0; i < NUM_GLOBALVARS; ++i)
 		{
 			ACS_GlobalArrays[i].Clear ();
@@ -1760,10 +1717,10 @@ static void ReadArrayVars (FSerializer &file, FWorldGlobalArray *vars, size_t co
 
 void P_ReadACSVars(FSerializer &arc)
 {
-	ReadVars (arc, ACS_WorldVars, NUM_WORLDVARS, "acsworldvars");
-	ReadVars (arc, ACS_GlobalVars, NUM_GLOBALVARS, "acsglobalvars");
-	ReadArrayVars (arc, ACS_WorldArrays, NUM_WORLDVARS, "acsworldarrays");
-	ReadArrayVars (arc, ACS_GlobalArrays, NUM_GLOBALVARS, "acsglobalarrays");
+	ReadVars (arc, ACS_WorldVars.Pointer(), NUM_WORLDVARS, "acsworldvars");
+	ReadVars (arc, ACS_GlobalVars.Pointer(), NUM_GLOBALVARS, "acsglobalvars");
+	ReadArrayVars (arc, ACS_WorldArrays.Pointer(), NUM_WORLDVARS, "acsworldarrays");
+	ReadArrayVars (arc, ACS_GlobalArrays.Pointer(), NUM_GLOBALVARS, "acsglobalarrays");
 	GlobalACSStrings.ReadStrings(arc, "acsglobalstrings");
 }
 
@@ -1775,10 +1732,10 @@ void P_ReadACSVars(FSerializer &arc)
 
 void P_WriteACSVars(FSerializer &arc)
 {
-	WriteVars (arc, ACS_WorldVars, NUM_WORLDVARS, "acsworldvars");
-	WriteVars (arc, ACS_GlobalVars, NUM_GLOBALVARS, "acsglobalvars");
-	WriteArrayVars (arc, ACS_WorldArrays, NUM_WORLDVARS, "acsworldarrays");
-	WriteArrayVars (arc, ACS_GlobalArrays, NUM_GLOBALVARS, "acsglobalarrays");
+	WriteVars (arc, ACS_WorldVars.Pointer(), NUM_WORLDVARS, "acsworldvars");
+	WriteVars (arc, ACS_GlobalVars.Pointer(), NUM_GLOBALVARS, "acsglobalvars");
+	WriteArrayVars (arc, ACS_WorldArrays.Pointer(), NUM_WORLDVARS, "acsworldarrays");
+	WriteArrayVars (arc, ACS_GlobalArrays.Pointer(), NUM_GLOBALVARS, "acsglobalarrays");
 	GlobalACSStrings.WriteStrings(arc, "acsglobalstrings");
 }
 
@@ -2401,7 +2358,7 @@ void FBehavior::SerializeVarSet (FSerializer &arc, int32_t *vars, int max)
 
 static int ParseLocalArrayChunk(void *chunk, ACSLocalArrays *arrays, int offset)
 {
-	unsigned count = (LittleShort(static_cast<unsigned short>(((unsigned *)chunk)[1]) - 2)) / 4;
+	unsigned count = LittleShort(static_cast<unsigned short>(((unsigned *)chunk)[1] - 2)) / 4;
 	int *sizes = (int *)((uint8_t *)chunk + 10);
 	arrays->Count = count;
 	if (count > 0)
@@ -6961,13 +6918,27 @@ enum
 };
 
 
-#define NEXTWORD	(CheckInstructionPointer(pc), LittleLong(*pc++))
+#define NEXTWORD	(LittleLong(*pc++))
 #define NEXTBYTE	(fmt==ACS_LittleEnhanced?getbyte(pc):NEXTWORD)
 #define NEXTSHORT	(fmt==ACS_LittleEnhanced?getshort(pc):NEXTWORD)
 #define STACK(a)	(Stack[sp - (a)])
 #define PushToStack(a)	(Stack[sp++] = (a))
 // Direct instructions that take strings need to have the tag applied.
 #define TAGSTR(a)	(a|activeBehavior->GetLibraryID())
+
+inline int getbyte (int *&pc)
+{
+	int res = *(uint8_t *)pc;
+	pc = (int *)((uint8_t *)pc+1);
+	return res;
+}
+
+inline int getshort (int *&pc)
+{
+	int res = LittleShort( *(int16_t *)pc);
+	pc = (int *)((uint8_t *)pc+2);
+	return res;
+}
 
 static bool CharArrayParms(int &capacity, int &offset, int &a, FACSStackMemory& Stack, int &sp, bool ranged)
 {
@@ -9903,7 +9874,7 @@ scriptwait:
 			if (STACK(2) != 0)
 			{
 				AActor *marine;
-				NActorIterator iterator("ScriptedMarine", STACK(2));
+				NActorIterator iterator(NAME_ScriptedMarine, STACK(2));
 
 				while ((marine = iterator.Next()) != NULL)
 				{
@@ -9912,7 +9883,7 @@ scriptwait:
 			}
 			else
 			{
-				if (activator != nullptr && activator->IsKindOf (PClass::FindClass("ScriptedMarine")))
+				if (activator != nullptr && activator->IsKindOf (NAME_ScriptedMarine))
 				{
 					SetMarineWeapon(activator, STACK(1));
 				}
@@ -9929,7 +9900,7 @@ scriptwait:
 					if (STACK(2) != 0)
 					{
 						AActor *marine;
-						NActorIterator iterator("ScriptedMarine", STACK(2));
+						NActorIterator iterator(NAME_ScriptedMarine, STACK(2));
 
 						while ((marine = iterator.Next()) != NULL)
 						{
@@ -9938,7 +9909,7 @@ scriptwait:
 					}
 					else
 					{
-						if (activator != nullptr && activator->IsKindOf("ScriptedMarine"))
+						if (activator != nullptr && activator->IsKindOf(NAME_ScriptedMarine))
 						{
 							SetMarineSprite(activator, type);
 						}
