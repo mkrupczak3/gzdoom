@@ -162,7 +162,9 @@ void gl_GetRenderStyle(FRenderStyle style, bool drawopaque, bool allowcolorblend
 	*db = dstblend;
 }
 
-
+#ifdef __MOBILE__
+EXTERN_CVAR(Float, vid_brightness)
+#endif
 //==========================================================================
 //
 // Get current light level
@@ -199,7 +201,14 @@ int gl_CalcLightLevel(int lightlevel, int rellight, bool weapon)
 	{
 		light=lightlevel+rellight;
 	}
-
+#ifdef __MOBILE__ // Hook in brightness slider to this also, taken from old renderer
+    int brightness = vid_brightness * 255;
+    if (light<brightness && glset.lightmode != 8)		// ambient clipping only if not using software lighting model.
+    {
+        light = brightness;
+        if (rellight<0) rellight>>=1;
+    }
+#endif
 	return clamp(light, 0, 255);
 }
 
