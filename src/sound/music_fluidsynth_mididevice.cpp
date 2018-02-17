@@ -283,6 +283,12 @@ FluidSynthMIDIDevice::FluidSynthMIDIDevice(const char *args)
 	fluid_settings_setint(FluidSettings, "synth.polyphony", fluid_voices);
 	fluid_settings_setint(FluidSettings, "synth.cpu-cores", fluid_threads);
 	FluidSynth = new_fluid_synth(FluidSettings);
+#ifdef __MOBILE__ // We are using a really old version of fluid synth because new version hard to build (glib).
+                  // The fluid_settings_setint does not work with reverb or chorus in this old version (different type)
+    fluid_synth_set_reverb_on(FluidSynth, fluid_reverb);
+    fluid_synth_set_chorus_on(FluidSynth, fluid_chorus);
+#endif
+
 	if (FluidSynth == NULL)
 	{
 		Printf("Failed to create FluidSynth.\n");
@@ -557,7 +563,11 @@ void FluidSynthMIDIDevice::FluidSettingInt(const char *setting, int value)
 		Printf("Failed to set %s to %d.\n", setting, value);
 	}
 	// fluid_settings_setint succeeded; update these settings in the running synth, too
+#ifdef __MOBILE__ // Always do this on mobile due to issue explained above
+    if (strcmp(setting, "synth.reverb.active") == 0)
+#else
 	else if (strcmp(setting, "synth.reverb.active") == 0)
+#endif
 	{
 		fluid_synth_set_reverb_on(FluidSynth, value);
 	}
