@@ -110,6 +110,7 @@ const char *GetVersionString();
 
 #define BASESF "gzdoom.sf2"
 
+
 // More stuff that needs to be different for derivatives.
 #define GAMENAME "GZDoom"
 #define GAMENAMELOWERCASE "gzdoom"

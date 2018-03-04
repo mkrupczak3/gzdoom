@@ -190,7 +190,6 @@ PCH_SOURCES = \
 	nodebuild_extract.cpp \
 	nodebuild_gl.cpp \
 	nodebuild_utility.cpp \
-	pathexpander.cpp \
 	p_3dfloors.cpp \
 	p_3dmidtex.cpp \
 	p_acs.cpp \
@@ -417,21 +416,23 @@ PCH_SOURCES = \
 	sfmt/SFMT.cpp \
 	sound/i_music.cpp \
 	sound/i_sound.cpp \
+	sound/i_soundfont.cpp \
 	sound/mididevices/music_opldumper_mididevice.cpp \
 	sound/mididevices/music_opl_mididevice.cpp \
-	sound/mididevices/music_pseudo_mididevice.cpp \
 	sound/mididevices/music_fluidsynth_mididevice.cpp \
 	sound/mididevices/music_softsynth_mididevice.cpp \
 	sound/mididevices/music_timidity_mididevice.cpp \
 	sound/mididevices/music_wildmidi_mididevice.cpp \
+	sound/mididevices/music_wavewriter_mididevice.cpp \
 	sound/musicformats/music_cd.cpp \
 	sound/musicformats/music_dumb.cpp \
 	sound/musicformats/music_gme.cpp \
 	sound/musicformats/music_libsndfile.cpp \
-	sound/musicformats/music_mus_midiout.cpp \
-	sound/musicformats/music_smf_midiout.cpp \
-	sound/musicformats/music_hmi_midiout.cpp \
-	sound/musicformats/music_xmi_midiout.cpp \
+	sound/midisources/midisource.cpp \
+	sound/midisources/midisource_mus.cpp \
+	sound/midisources/midisource_smf.cpp \
+	sound/midisources/midisource_hmi.cpp \
+	sound/midisources/midisource_xmi.cpp \
 	sound/musicformats/music_midistream.cpp \
 	sound/musicformats/music_opl.cpp \
 	sound/musicformats/music_stream.cpp \
@@ -450,6 +451,27 @@ PCH_SOURCES = \
 	sound/timidity/playmidi.cpp \
 	sound/timidity/resample.cpp \
 	sound/timidity/timidity.cpp \
+		sound/timiditypp/common.cpp \
+    	sound/timiditypp/configfile.cpp \
+    	sound/timiditypp/effect.cpp \
+    	sound/timiditypp/filter.cpp \
+    	sound/timiditypp/freq.cpp \
+    	sound/timiditypp/instrum.cpp \
+    	sound/timiditypp/mblock.cpp \
+    	sound/timiditypp/mix.cpp \
+    	sound/timiditypp/playmidi.cpp \
+    	sound/timiditypp/quantity.cpp \
+    	sound/timiditypp/readmidic.cpp \
+    	sound/timiditypp/recache.cpp \
+    	sound/timiditypp/resample.cpp \
+    	sound/timiditypp/sbkconv.cpp \
+    	sound/timiditypp/sffile.cpp \
+    	sound/timiditypp/sfitem.cpp \
+    	sound/timiditypp/smplfile.cpp \
+    	sound/timiditypp/sndfont.cpp \
+    	sound/timiditypp/tables.cpp \
+    	sound/timiditypp/fft4g.cpp \
+        sound/timiditypp/reverb.cpp \
 	sound/wildmidi/file_io.cpp \
 	sound/wildmidi/gus_pat.cpp \
 	sound/wildmidi/reverb.cpp \
@@ -469,7 +491,6 @@ LOCAL_SRC_FILES = \
     $(PCH_SOURCES) \
 	x86.cpp \
 	strnatcmp.c \
-	tmpfileplus.cpp \
 	zstring.cpp \
 	math/asin.c \
 	math/atan.c \

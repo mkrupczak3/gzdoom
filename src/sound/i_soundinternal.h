@@ -112,6 +112,9 @@ struct FISoundChannel
 };
 
 
+void FindLoopTags(FileReader *fr, uint32_t *start, bool *startass, uint32_t *end, bool *endass);
+
+
 enum SampleType
 {
     SampleType_UInt8,
@@ -159,6 +162,8 @@ enum EMidiDevice
 	MDEV_FLUIDSYNTH = 4,
 	MDEV_GUS = 5,
 	MDEV_WILDMIDI = 6,
+
+	MDEV_COUNT
 };
 
 class MusInfo;

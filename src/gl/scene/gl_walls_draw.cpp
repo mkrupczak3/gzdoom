@@ -333,7 +333,7 @@ void GLWall::RenderFogBoundary()
 //==========================================================================
 void GLWall::RenderMirrorSurface()
 {
-	if (GLRenderer->mirrortexture == NULL) return;
+	if (!GLRenderer->mirrorTexture.isValid()) return;
 
 	// For the sphere map effect we need a normal of the mirror surface,
 	FVector3 v = glseg.Normal();
@@ -361,7 +361,7 @@ void GLWall::RenderMirrorSurface()
 	gl_RenderState.AlphaFunc(GL_GREATER,0);
 	glDepthFunc(GL_LEQUAL);
 
-	FMaterial * pat=FMaterial::ValidateTexture(GLRenderer->mirrortexture, false);
+	FMaterial * pat=FMaterial::ValidateTexture(GLRenderer->mirrorTexture, false, false);
 	gl_RenderState.SetMaterial(pat, CLAMP_NONE, 0, -1, false);
 
 	flags &= ~GLWF_GLOW;

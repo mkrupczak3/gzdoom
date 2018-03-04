@@ -559,6 +559,7 @@ void OpenGLFrameBuffer::GameRestart()
 	UpdatePalette ();
 	ScreenshotBuffer = NULL;
 	gl_GenerateGlobalBrightmapFromColormap();
+	GLRenderer->GetSpecialTextures();
 }
 
 
