@@ -66,9 +66,9 @@
 //
 //==========================================================================
 
-TimidityMIDIDevice::TimidityMIDIDevice(const char *args)
+TimidityMIDIDevice::TimidityMIDIDevice(const char *args, int samplerate)
+	: SoftSynthMIDIDevice(samplerate, 11025, 65535)
 {
-	Renderer = nullptr;
 	Renderer = new Timidity::Renderer((float)SampleRate, args);
 }
 
@@ -156,6 +156,7 @@ void TimidityMIDIDevice::HandleLongEvent(const uint8_t *data, int len)
 void TimidityMIDIDevice::ComputeOutput(float *buffer, int len)
 {
 	Renderer->ComputeOutput(buffer, len);
+	for (int i = 0; i < len * 2; i++) buffer[i] *= 0.7f;
 }
 
 //==========================================================================

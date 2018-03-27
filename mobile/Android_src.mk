@@ -5,10 +5,14 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := gzdoom_dev
 
-#-DNO_FMOD
 LOCAL_CFLAGS   := -DNO_VBO -D__MOBILE__ -DGZDOOM -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
 LOCAL_CPPFLAGS := -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14  -DONLY_GPL -DHAVE_JWZGLES -DUSE_GLES   -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
-#-std=gnu++1y -DHAVE_FLUIDSYNTH
+
+LOCAL_CFLAGS  += -DNO_SEND_STATS
+
+LOCAL_CFLAGS  += -DOPNMIDI_USE_LEGACY_EMULATOR
+LOCAL_CFLAGS  += -DADLMIDI_DISABLE_MUS_SUPPORT -DADLMIDI_DISABLE_XMI_SUPPORT -DADLMIDI_DISABLE_MIDI_SEQUENCER
+LOCAL_CFLAGS  += -DOPNMIDI_DISABLE_MUS_SUPPORT -DOPNMIDI_DISABLE_XMI_SUPPORT -DOPNMIDI_DISABLE_MIDI_SEQUENCER
 
 ifeq ($(BUILD_SERIAL),1)
 LOCAL_CPPFLAGS += -DANTI_HACK 
@@ -26,6 +30,7 @@ LOCAL_C_INCLUDES := \
  $(GZDOOM_TOP_PATH)/bzip2 \
  $(GZDOOM_TOP_PATH)/src/sound \
  $(GZDOOM_TOP_PATH)/src/sound/oplsynth \
+ $(GZDOOM_TOP_PATH)/src/sound/adlmidi \
  $(GZDOOM_TOP_PATH)/src/textures \
  $(GZDOOM_TOP_PATH)/src/thingdef \
  $(GZDOOM_TOP_PATH)/src/sdl \
@@ -116,6 +121,20 @@ FASTMATH_SOURCES = \
 	gl/models/gl_models.cpp \
 	r_data/models/models.cpp \
 	r_data/matrix.cpp \
+	sound/adlmidi/adldata.cpp \
+	sound/adlmidi/adlmidi.cpp \
+	sound/adlmidi/adlmidi_load.cpp \
+	sound/adlmidi/adlmidi_midiplay.cpp \
+	sound/adlmidi/adlmidi_opl3.cpp \
+	sound/adlmidi/adlmidi_private.cpp \
+	sound/adlmidi/dbopl.cpp \
+	sound/adlmidi/nukedopl3.c \
+	sound/opnmidi/opnmidi.cpp \
+	sound/opnmidi/opnmidi_load.cpp \
+	sound/opnmidi/opnmidi_midiplay.cpp \
+	sound/opnmidi/opnmidi_opn2.cpp \
+	sound/opnmidi/opnmidi_private.cpp \
+	sound/opnmidi/Ym2612_ChipEmu.cpp \
 
 
 PCH_SOURCES = \
@@ -148,6 +167,7 @@ PCH_SOURCES = \
 	d_netinfo.cpp \
 	d_protocol.cpp \
 	decallib.cpp \
+    d_stats.cpp \
 	dobject.cpp \
 	dobjgc.cpp \
 	dobjtype.cpp \
@@ -157,6 +177,7 @@ PCH_SOURCES = \
 	edata.cpp \
 	f_wipe.cpp \
 	files.cpp \
+    files_decompress.cpp \
 	g_doomedmap.cpp \
 	g_game.cpp \
 	g_hub.cpp \
@@ -372,6 +393,8 @@ PCH_SOURCES = \
 	textures/tgatexture.cpp \
 	textures/warptexture.cpp \
 	textures/skyboxtexture.cpp \
+	textures/md5check.cpp \
+	textures/worldtexture.cpp \
 	xlat/parse_xlat.cpp \
 	fragglescript/t_func.cpp \
 	fragglescript/t_load.cpp \
@@ -424,6 +447,8 @@ PCH_SOURCES = \
 	sound/mididevices/music_timidity_mididevice.cpp \
 	sound/mididevices/music_wildmidi_mididevice.cpp \
 	sound/mididevices/music_wavewriter_mididevice.cpp \
+    sound/mididevices/music_adlmidi_mididevice.cpp \
+    sound/mididevices/music_opnmidi_mididevice.cpp \
 	sound/musicformats/music_cd.cpp \
 	sound/musicformats/music_dumb.cpp \
 	sound/musicformats/music_gme.cpp \
