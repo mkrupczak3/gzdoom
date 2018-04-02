@@ -593,7 +593,10 @@ void P_Recalculate3DFloors(sector_t * sector)
 		lightlist[0].extra_colormap = sector->ColorMap;
 		lightlist[0].blend = 0;
 		lightlist[0].flags = 0;
-		
+
+#ifdef __MOBILE__ // Backport this fix, causes kdiz to crash
+		resetlight = lightlist[0];
+#endif
 		maxheight = sector->CenterCeiling();
 		minheight = sector->CenterFloor();
 		for(i = 0; i < ffloors.Size(); i++)
