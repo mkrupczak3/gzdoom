@@ -491,6 +491,8 @@ LOCAL_SRC_FILES = \
 	math/fastsin.cpp \
 	zzautozend.cpp \
 
+# Turn down optimisation of this file so clang doesnt produce ldrd instructions which are missaligned
+p_acs.cpp_CFLAGS := -O1
 
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES -lGLESv1_CM
 
