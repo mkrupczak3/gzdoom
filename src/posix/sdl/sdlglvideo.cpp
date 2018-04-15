@@ -350,7 +350,11 @@ void SDLGLVideo::SetupPixelFormat(bool allowsoftware, int multisample, const int
 	SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE,  8 );
 	SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE,  8 );
 	SDL_GL_SetAttribute( SDL_GL_ALPHA_SIZE,  8 );
+#ifdef __MOBILE__
+	SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE,  16 );
+#else
 	SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE,  24 );
+#endif
 	SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE,  8 );
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER,  1 );
 	if (multisample > 0) {
@@ -359,7 +363,13 @@ void SDLGLVideo::SetupPixelFormat(bool allowsoftware, int multisample, const int
 	}
 	if (gl_debug)
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
-		
+
+#ifdef __MOBILE__
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	return;
+#endif
 	if (gl_es)
 	{
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);

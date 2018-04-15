@@ -137,7 +137,11 @@ void OpenGLFrameBuffer::InitializeState()
 	}
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClearDepth(1.0f);
+#ifdef __MOBILE__
+	if( gl.es != 3 )
+#endif
+		glClearDepth(1.0f);
+
 	glDepthFunc(GL_LESS);
 
 	glEnable(GL_DITHER);

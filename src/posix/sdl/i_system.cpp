@@ -158,6 +158,15 @@ bool gameisdead;
 void Mac_I_FatalError(const char* errortext);
 #endif
 
+
+#ifdef __ANDROID__
+#include <android/log.h>
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"Gzdoom", __VA_ARGS__))
+#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "Gzdoom", __VA_ARGS__))
+#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR,"Gzdoom", __VA_ARGS__))
+#include "LogWritter.h"
+#endif
+
 #ifdef __linux__
 void Linux_I_FatalError(const char* errortext)
 {
@@ -208,6 +217,11 @@ void I_FatalError (const char *error, ...)
 		Mac_I_FatalError(errortext);
 #endif // __APPLE__		
 
+#ifdef __ANDROID__
+        LOGI("FATAL ERROR: %s", errortext);
+        LogWritter_Write(errortext);
+#endif
+
 #ifdef __linux__
 		Linux_I_FatalError(errortext);
 #endif
@@ -238,6 +252,11 @@ void I_Error (const char *error, ...)
 	va_start (argptr, error);
 	vsprintf (errortext, error, argptr);
 	va_end (argptr);
+
+#ifdef __ANDROID__
+        LOGI("ERROR: %s", errortext);
+        LogWritter_Write(errortext);
+#endif
 
 	throw CRecoverableError (errortext);
 }

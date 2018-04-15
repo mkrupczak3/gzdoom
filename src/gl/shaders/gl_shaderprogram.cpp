@@ -131,7 +131,9 @@ void FShaderProgram::Compile(ShaderType type, const char *name, const FString &c
 
 void FShaderProgram::SetFragDataLocation(int index, const char *name)
 {
+#ifndef __MOBILE__
 	glBindFragDataLocation(mProgram, index, name);
+#endif
 }
 
 //==========================================================================

@@ -141,7 +141,7 @@ void gl_LoadExtensions()
 	if (glversion && strlen(glversion) > 10 && memcmp(glversion, "OpenGL ES ", 10) == 0)
 	{
 		glversion += 10;
-		gl.es = true;
+		gl.es = 3;
 	}
 
 	const char *version = Args->CheckValue("-glversion");

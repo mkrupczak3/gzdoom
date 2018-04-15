@@ -660,10 +660,19 @@ void FGLRenderBuffers::ClearFrameBuffer(bool stencil, bool depth)
 	GLdouble depthValue;
 	glGetBooleanv(GL_SCISSOR_TEST, &scissorEnabled);
 	glGetIntegerv(GL_STENCIL_CLEAR_VALUE, &stencilValue);
+#ifdef __MOBILE__
+    GLfloat t;
+    glGetFloatv(GL_DEPTH_CLEAR_VALUE, &t);
+    depthValue = t;
+#else
 	glGetDoublev(GL_DEPTH_CLEAR_VALUE, &depthValue);
+#endif
 	glDisable(GL_SCISSOR_TEST);
 	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glClearDepth(0.0);
+#ifdef __MOBILE__
+	if( gl.es != 3 )
+#endif
+		glClearDepth(0.0);
 	glClearStencil(0);
 	GLenum flags = GL_COLOR_BUFFER_BIT;
 	if (stencil)
@@ -672,7 +681,9 @@ void FGLRenderBuffers::ClearFrameBuffer(bool stencil, bool depth)
 		flags |= GL_DEPTH_BUFFER_BIT;
 	glClear(flags);
 	glClearStencil(stencilValue);
+#ifndef __GLES3__
 	glClearDepth(depthValue);
+#endif
 	if (scissorEnabled)
 		glEnable(GL_SCISSOR_TEST);
 }

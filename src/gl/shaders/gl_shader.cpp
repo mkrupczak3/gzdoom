@@ -142,9 +142,13 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 	FString i_data;
 	
 	// these settings are actually pointless but there seem to be some old ATI drivers that fail to compile the shader without setting the precision here.
+#ifdef __MOBILE__ // Seems to speed it up quite a bit
+	i_data += "precision mediump  int;\n";
+	i_data += "precision mediump  float;\n";
+#else
 	i_data += "precision highp int;\n";
 	i_data += "precision highp float;\n";
-
+#endif
 	i_data += "uniform vec4 uCameraPos;\n";
 	i_data += "uniform int uTextureMode;\n";
 	i_data += "uniform float uClipHeight;\n";
@@ -390,11 +394,11 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 	glBindAttribLocation(hShader, VATTR_COLOR, "aColor");
 	glBindAttribLocation(hShader, VATTR_VERTEX2, "aVertex2");
 	glBindAttribLocation(hShader, VATTR_NORMAL, "aNormal");
-
+#ifndef __MOBILE__ // GLES3 can not do multiple outputs from shader
 	glBindFragDataLocation(hShader, 0, "FragColor");
 	glBindFragDataLocation(hShader, 1, "FragFog");
 	glBindFragDataLocation(hShader, 2, "FragNormal");
-
+#endif
 	glLinkProgram(hShader);
 
 	glGetShaderInfoLog(hVertProg, 10000, NULL, buffer);
