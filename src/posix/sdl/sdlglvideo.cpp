@@ -365,11 +365,23 @@ void SDLGLVideo::SetupPixelFormat(bool allowsoftware, int multisample, const int
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
 #ifdef __MOBILE__
+	int glesver = 1;
+	const char *version = Args->CheckValue("-glversion");
+	if( !strcmp(version, "gles1") )
+	{
+		glesver = 1;
+	}
+	else if ( !strcmp(version, "gles3") )
+	{
+		glesver = 3;
+	}
+
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, glesver);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 	return;
 #endif
+
 	if (gl_es)
 	{
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);

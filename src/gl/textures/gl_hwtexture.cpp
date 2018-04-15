@@ -161,8 +161,68 @@ static void BGRAtoRGBA(unsigned char * buffer, int numPixels)
     }
 }
 #endif
+#ifdef __MOBILE__
+static void GL_ResampleTexture (uint32_t *in, uint32_t inwidth, uint32_t inheight, uint32_t *out,  uint32_t outwidth, uint32_t outheight)
+{
+	LOGI("GL_ResampleTexture %dx%d -> %dx%d",inwidth,inheight,outwidth,outheight);
+
+	int		i, j;
+	uint32_t	*inrow, *inrow2;
+	uint32_t	frac, fracstep;
+	uint8_t		*pix1, *pix2, *pix3, *pix4;
+	uint32_t	*p1 = (uint32_t*)malloc(sizeof(uint32_t) * outwidth );
+	uint32_t	*p2 = (uint32_t*)malloc(sizeof(uint32_t) * outwidth );
+
+	fracstep = inwidth*0x10000/outwidth;
+
+	frac = fracstep>>2;
+	for (i=0 ; i<outwidth ; i++)
+	{
+		p1[i] = 4*(frac>>16);
+		frac += fracstep;
+	}
+	frac = 3*(fracstep>>2);
+	for (i=0 ; i<outwidth ; i++)
+	{
+		p2[i] = 4*(frac>>16);
+		frac += fracstep;
+	}
+
+	for (i=0 ; i<outheight ; i++, out += outwidth)
+	{
+		inrow = in + inwidth*(int)((i+0.25)*inheight/outheight);
+		inrow2 = in + inwidth*(int)((i+0.75)*inheight/outheight);
+		frac = fracstep >> 1;
+		for (j=0 ; j<outwidth ; j++)
+		{
+			pix1 = (uint8_t *)inrow + p1[j];
+			pix2 = (uint8_t *)inrow + p2[j];
+			pix3 = (uint8_t *)inrow2 + p1[j];
+			pix4 = (uint8_t *)inrow2 + p2[j];
+			((uint8_t *)(out+j))[0] = (pix1[0] + pix2[0] + pix3[0] + pix4[0])>>2;
+			((uint8_t *)(out+j))[1] = (pix1[1] + pix2[1] + pix3[1] + pix4[1])>>2;
+			((uint8_t *)(out+j))[2] = (pix1[2] + pix2[2] + pix3[2] + pix4[2])>>2;
+			((uint8_t *)(out+j))[3] = (pix1[3] + pix2[3] + pix3[3] + pix4[3])>>2;
+		}
+	}
+
+	free(p1);
+	free(p2);
+}
+
+static bool IsPowerOfTwo(unsigned int x)
+{
+    return (x & (x - 1)) == 0;
+}
+static int NextPow2( int value )
+{
+	int i=1;
+	while (i<value) i+=i;
+	return i;
+}
+#endif
 //===========================================================================
-// 
+//
 //	Loads the texture image into the hardware
 //
 // NOTE: For some strange reason I was unable to find the source buffer
@@ -171,7 +231,11 @@ static void BGRAtoRGBA(unsigned char * buffer, int numPixels)
 //
 //===========================================================================
 
+#ifdef __MOBILE__
+unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int h, int texunit, bool mipmap, int translation, const FString &name, bool material)
+#else
 unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int h, int texunit, bool mipmap, int translation, const FString &name)
+#endif
 {
 	int rh,rw;
 	int texformat=TexFormat[gl_texture_format];
@@ -199,10 +263,13 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 		glTex->mipmapped = false;
 		buffer=(unsigned char *)calloc(4,rw * (rh+1));
 		deletebuffer=true;
-		//texheight=-h;	
+		//texheight=-h;
 	}
 	else
 	{
+#ifdef __MOBILE__
+    	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, (mipmap && TexFilter[gl_texture_filter].mipmapping) );
+#endif
 		rw = GetTexDimension (w);
 		rh = GetTexDimension (h);
 
@@ -217,12 +284,36 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 				buffer=scaledbuffer;
 			}
 		}
+
+		if( !(gl.flags & RFL_NPOT ) )
+		{
+			if( !IsPowerOfTwo(rw) || !IsPowerOfTwo(rh) )
+			{
+				rw = NextPow2(rw);
+				rh = NextPow2(rh);
+				unsigned int * scaledbuffer=(unsigned int *)calloc(4,rw * (rh+1));
+				GL_ResampleTexture((unsigned  *)buffer,w,h,(unsigned *)scaledbuffer,rw,rh);
+				deletebuffer=true;
+				buffer=(unsigned char *)scaledbuffer;
+			}
+		}
 	}
 #ifdef __MOBILE__
-    texformat = GL_RGBA;
-    BGRAtoRGBA( buffer, rw * rh );
-	glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	if(!(gl.flags & RFL_BGRA))
+	{
+		texformat = GL_RGBA;
+		BGRAtoRGBA( buffer, rw * rh );
+	}
+	else
+	{
+		texformat = GL_BGRA;
+	}
+
+	glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, texformat, GL_UNSIGNED_BYTE, buffer);
+#else
+	glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, GL_BGRA, GL_UNSIGNED_BYTE, buffer);
 #endif
+
 	if (deletebuffer) free(buffer);
 
 	if (mipmap && TexFilter[gl_texture_filter].mipmapping)

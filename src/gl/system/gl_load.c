@@ -54,7 +54,7 @@ static void CATCH(int a, int b, int c, int d, int e)
 void* SDL_GL_GetProcAddress(const char* proc);
 static void *MOBILE_GetProcAddress(const char* name)
 {
-	int gles = 3; // TODO tifx this!
+	int gles = 1; // TODO tifx this!
 
 	if( gles == 3 )
 	{
@@ -62,6 +62,15 @@ static void *MOBILE_GetProcAddress(const char* name)
 	}
 	else if ( gles == 1 )
 	{
+		static int jwzLoaded = 0;
+		if( ! jwzLoaded )
+		{
+          	void jwzgles_reset (void);
+          	jwzgles_reset ();
+			jwzLoaded = 1;
+		}
+
+
 		static void* h = NULL;
 
 		if (h == NULL)

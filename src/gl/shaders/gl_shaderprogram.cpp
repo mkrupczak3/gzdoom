@@ -218,6 +218,9 @@ FString FShaderProgram::PatchShader(ShaderType type, const FString &code, const 
 	FString patchedCode;
 
 	int shaderVersion = MIN((int)round(gl.glslversion * 10) * 10, maxGlslVersion);
+#ifdef __MOBILE__
+	shaderVersion = 300;
+#endif
 	if (gl.es)
 		patchedCode.AppendFormat("#version %d es\n", shaderVersion);
 	else

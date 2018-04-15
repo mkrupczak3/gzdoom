@@ -153,7 +153,12 @@ void FGLModelRenderer::DrawArrays(int start, int count)
 
 void FGLModelRenderer::DrawElements(int numIndices, size_t offset)
 {
-	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, (void*)(intptr_t)offset);
+#ifdef __MOBILE__
+    if (!(gl.flags & RFL_UINT_IDX))// Some old devices can not use integer index type
+        glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, ( void*)(intptr_t)offset);
+    else
+#endif
+        glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, (void*)(intptr_t)offset);
 }
 
 double FGLModelRenderer::GetTimeFloat()
@@ -172,10 +177,17 @@ double FGLModelRenderer::GetTimeFloat()
 //===========================================================================
 
 FModelVertexBuffer::FModelVertexBuffer(bool needindex, bool singleframe)
+#ifdef __MOBILE__
+	: FVertexBuffer(0) // so gles1 doesn't crash, need to fix this
+#else
 	: FVertexBuffer(singleframe || !gl.legacyMode)
+#endif
 {
 	vbo_ptr = nullptr;
 	ibo_id = 0;
+#ifdef __MOBILE__
+	ibo_mem = nullptr;
+#endif
 	if (needindex)
 	{
 		glGenBuffers(1, &ibo_id);	// The index buffer can always be a real buffer.
@@ -224,6 +236,12 @@ FModelVertexBuffer::~FModelVertexBuffer()
 	{
 		delete[] vbo_ptr;
 	}
+#ifdef __MOBILE__
+    if (ibo_mem != nullptr)
+    {
+        free( ibo_mem );
+    }
+#endif
 }
 
 //===========================================================================
@@ -277,6 +295,26 @@ unsigned int *FModelVertexBuffer::LockIndexBuffer(unsigned int size)
 {
 	if (ibo_id != 0)
 	{
+#ifdef __MOBILE__ // MapBuffer not available, so allocate memory instead and upload at the end
+		if( gl.es == 1 )
+		{
+			if( ibo_mem == nullptr )
+			{
+				ibo_size = size * sizeof(unsigned int);
+				ibo_mem = (char*)malloc(ibo_size);
+			}
+			else
+			{
+				if(size * sizeof(unsigned int) > ibo_size )
+				{
+					ibo_size = size * sizeof(unsigned int);
+					ibo_mem = (char*)realloc(ibo_mem,ibo_size);
+				}
+			}
+			return (unsigned int*)ibo_mem;
+		}
+	
+#endif
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * sizeof(unsigned int), NULL, GL_STATIC_DRAW);
 		if (!gl.legacyMode)
@@ -300,8 +338,17 @@ void FModelVertexBuffer::UnlockIndexBuffer()
 {
 	if (ibo_id > 0)
 	{
+#ifdef __MOBILE__
+		if( gl.es == 1 )
+		{
+	    	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, ibo_size, ibo_mem, GL_STATIC_DRAW);
+			return;
+		}
+#endif
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
-		glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+	    glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+
 	}
 }
 
