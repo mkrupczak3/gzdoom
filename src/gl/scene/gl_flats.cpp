@@ -169,6 +169,24 @@ void GLFlat::DrawSubsector(subsector_t * sub)
 {
 	if (gl.buffermethod != BM_DEFERRED)
 	{
+#ifdef __MOBILE__
+		if( gl.novbo )
+		{
+			glBegin(GL_TRIANGLE_FAN);
+	    	for(unsigned int k=0; k<sub->numlines; k++)
+	    	{
+	    		vertex_t *vt = sub->firstline[k].v1;
+	    		glTexCoord2f(vt->fX()/64.f, -vt->fY()/64.f);
+	    		float zc = plane.plane.ZatPoint(vt) + dz;
+	    		glVertex3f(vt->fX(), zc, vt->fY());
+	    	}
+	    	glEnd();
+		
+			flatvertices += sub->numlines;
+			flatprimitives++;
+			return;
+		}
+#endif
 		FFlatVertex *ptr = GLRenderer->mVBO->GetBuffer();
 		for (unsigned int k = 0; k < sub->numlines; k++)
 		{
@@ -257,7 +275,11 @@ void GLFlat::DrawSubsectors(int pass, bool processlights, bool istrans)
 	int dli = dynlightindex;
 
 	gl_RenderState.Apply();
+#ifdef __MOBILE__
+	if ( !gl.novbo && vboindex >= 0)
+#else
 	if (vboindex >= 0)
+#endif
 	{
 		int index = vboindex;
 		for (int i=0; i<sector->subsectorcount; i++)

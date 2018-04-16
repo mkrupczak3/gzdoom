@@ -178,7 +178,7 @@ double FGLModelRenderer::GetTimeFloat()
 
 FModelVertexBuffer::FModelVertexBuffer(bool needindex, bool singleframe)
 #ifdef __MOBILE__
-	: FVertexBuffer(0) // so gles1 doesn't crash, need to fix this
+	: FVertexBuffer((singleframe || !gl.legacyMode) && !gl.novbo) // so gles1 doesn't crash, need to fix this
 #else
 	: FVertexBuffer(singleframe || !gl.legacyMode)
 #endif

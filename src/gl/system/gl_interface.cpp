@@ -179,6 +179,8 @@ void gl_LoadExtensions()
 			gl.flags |= RFL_UINT_IDX;
 		}
 
+		gl.novbo = true;
+
         //This is needed to the fix the brutal doom white lines?!
         glDisable(GL_CLIP_PLANE0);
         glEnable(GL_CLIP_PLANE0);
@@ -186,6 +188,10 @@ void gl_LoadExtensions()
 	else if ( !strcmp(version, "gles3") )
 	{
 		gl.es = 3;
+
+		gl.novbo = false;
+
+		gl.flags |= RFL_UINT_IDX;
 
 		gl.legacyMode = false;
 		gl.lightmethod = LM_DEFERRED;

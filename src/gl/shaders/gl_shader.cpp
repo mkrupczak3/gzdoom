@@ -142,13 +142,9 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 	FString i_data;
 	
 	// these settings are actually pointless but there seem to be some old ATI drivers that fail to compile the shader without setting the precision here.
-#ifdef __MOBILE__ // Seems to speed it up quite a bit
-	i_data += "precision mediump  int;\n";
-	i_data += "precision mediump  float;\n";
-#else
 	i_data += "precision highp int;\n";
 	i_data += "precision highp float;\n";
-#endif
+
 	i_data += "uniform vec4 uCameraPos;\n";
 	i_data += "uniform int uTextureMode;\n";
 	i_data += "uniform float uClipHeight;\n";

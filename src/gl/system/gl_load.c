@@ -51,16 +51,17 @@ static void CATCH(int a, int b, int c, int d, int e)
 	LOGI("CAUGHT BAD");
 }
 
+int glesLoad = 1; // TODO tifx this!
+
 void* SDL_GL_GetProcAddress(const char* proc);
 static void *MOBILE_GetProcAddress(const char* name)
 {
-	int gles = 1; // TODO tifx this!
 
-	if( gles == 3 )
+	if( glesLoad == 3 )
 	{
 		return SDL_GL_GetProcAddress( name );
 	}
-	else if ( gles == 1 )
+	else if ( glesLoad == 1 )
 	{
 		static int jwzLoaded = 0;
 		if( ! jwzLoaded )
@@ -2599,7 +2600,7 @@ int ogl_LoadFunctions()
 	}
 
 	numFailed = Load_Version_3_3();
-	
+
 	if(numFailed == 0)
 		return ogl_LOAD_SUCCEEDED;
 	else

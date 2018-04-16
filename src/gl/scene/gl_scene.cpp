@@ -70,6 +70,9 @@
 #include "gl/utility/gl_convert.h"
 #include "gl/utility/gl_templates.h"
 
+#ifdef __MOBILE__
+#include "gl/renderer/gl_quaddrawer.h"
+#endif
 //==========================================================================
 //
 // CVARs
@@ -103,7 +106,7 @@ angle_t GLSceneDrawer::FrustumAngle()
 {
 	float tilt = fabs(GLRenderer->mAngles.Pitch.Degrees);
 
-	// If the pitch is larger than this you can look all around at a FOV of 90°
+	// If the pitch is larger than this you can look all around at a FOV of 90ï¿½
 	if (tilt > 46.0f) return 0xffffffff;
 
 	// ok, this is a gross hack that barely works...
@@ -518,7 +521,9 @@ void GLSceneDrawer::DrawScene(int drawmode)
 	// Handle all glSectorPortals after rendering the opaque objects but before
 	// doing all translucent stuff
 	recursion++;
+#ifndef __MOBILE__ // Not sure exactly what this does.. removing speeds up rendering...
 	GLPortal::EndFrame();
+#endif
 	recursion--;
 	RenderTranslucent();
 }
@@ -529,6 +534,18 @@ void gl_FillScreen()
 	gl_RenderState.AlphaFunc(GL_GEQUAL, 0.f);
 	gl_RenderState.EnableTexture(false);
 	gl_RenderState.Apply();
+#ifdef __MOBILE__
+	if( gl.novbo )
+	{
+  		FQuadDrawer qd;
+	    qd.Set(0, 0, 0, 0, 0, 0);
+	    qd.Set(1, 0, viewheight, 0, 0, 0);
+	    qd.Set(2, viewwidth, 0, 0, 0, 0);
+	    qd.Set(3, viewwidth, viewheight, 0, 0, 0);
+	    qd.Render(GL_TRIANGLE_STRIP);
+		return;
+	}
+#endif
 	// The fullscreen quad is stored at index 4 in the main vertex buffer.
 	GLRenderer->mVBO->RenderArray(GL_TRIANGLE_STRIP, FFlatVertexBuffer::FULLSCREEN_INDEX, 4);
 }

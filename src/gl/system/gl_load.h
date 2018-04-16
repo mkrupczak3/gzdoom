@@ -1762,8 +1762,9 @@ extern void (CODEGEN_FUNCPTR *_ptrc_glDepthFunc)(GLenum func);
 extern void (CODEGEN_FUNCPTR *_ptrc_glDepthMask)(GLboolean flag);
 #define glDepthMask _ptrc_glDepthMask
 
-#ifdef __GLES3__
+#ifdef __MOBILE__
 extern void (CODEGEN_FUNCPTR *_ptrc_glDepthRangef)(GLfloat ren_near, GLfloat ren_far);
+#define glDepthRangef _ptrc_glDepthRangef
 #define glDepthRange _ptrc_glDepthRangef
 #else
 extern void (CODEGEN_FUNCPTR *_ptrc_glDepthRange)(GLdouble ren_near, GLdouble ren_far);
