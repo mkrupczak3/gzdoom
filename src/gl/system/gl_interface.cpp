@@ -63,7 +63,7 @@ static void CollectExtensions()
 
 	int max = 0;
 #ifdef __MOBILE__
-	if( gl.es != 1 )
+	if( gl.es )
 #endif
 		glGetIntegerv(GL_NUM_EXTENSIONS, &max);
 
@@ -192,6 +192,7 @@ void gl_LoadExtensions()
 		gl.novbo = false;
 
 		gl.flags |= RFL_UINT_IDX;
+		gl.flags |= RFL_NPOT;
 
 		gl.legacyMode = false;
 		gl.lightmethod = LM_DEFERRED;

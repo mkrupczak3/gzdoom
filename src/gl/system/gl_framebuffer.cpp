@@ -161,12 +161,12 @@ void OpenGLFrameBuffer::InitializeState()
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_POLYGON_OFFSET_FILL);
 #ifdef __MOBILE__
-	if( gl.es == 1 )
+	if( gl.es != 1 )
 #endif
 	glEnable(GL_POLYGON_OFFSET_LINE);
 	glEnable(GL_BLEND);
 #ifdef __MOBILE__
-	if( gl.es == 1 )
+	if( gl.es != 1 )
 #endif
 	glEnable(GL_DEPTH_CLAMP);
 	glDisable(GL_DEPTH_TEST);

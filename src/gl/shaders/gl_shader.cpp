@@ -142,8 +142,8 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 	FString i_data;
 	
 	// these settings are actually pointless but there seem to be some old ATI drivers that fail to compile the shader without setting the precision here.
-	i_data += "precision highp int;\n";
-	i_data += "precision highp float;\n";
+//	i_data += "precision highp int;\n";
+//	i_data += "precision highp float;\n";
 
 	i_data += "uniform vec4 uCameraPos;\n";
 	i_data += "uniform int uTextureMode;\n";
@@ -595,7 +595,7 @@ static const FDefaultShader defaultshaders[]=
 	{"Jagged Fuzz", "shaders/glsl/fuzz_jagged.fp", "shaders/glsl/material_normal.fp", ""},
 	{"Noise Fuzz", "shaders/glsl/fuzz_noise.fp", "shaders/glsl/material_normal.fp", ""},
 	{"Smooth Noise Fuzz", "shaders/glsl/fuzz_smoothnoise.fp", "shaders/glsl/material_normal.fp", ""},
-	{"Software Fuzz", "shaders/glsl/fuzz_software.fp", "shaders/glsl/material_normal.fp", ""},
+	//{"Software Fuzz", "shaders/glsl/fuzz_software.fp", "shaders/glsl/material_normal.fp", ""},
 	{nullptr,nullptr,nullptr,nullptr}
 };
 
