@@ -2569,6 +2569,11 @@ static int ProcExtsFromExtList(void)
 	GLint iLoop;
 	GLint iNumExtensions = 0;
 
+#ifdef __MOBILE__
+	if( glesLoad == 1 )// GLES1 does not have GL_NUM_EXTENSIONS
+		return 0;
+#endif
+
 	if (_ptrc_glGetStringi == NULL) return 0;
 
 	_ptrc_glGetIntegerv(GL_NUM_EXTENSIONS, &iNumExtensions);
