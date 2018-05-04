@@ -668,21 +668,56 @@ void GLFlat::DrawSubsectorLights(subsector_t * sub, int pass)
 		}
 		gl_RenderState.Apply();
 
-		FFlatVertex *ptr = GLRenderer->mVBO->GetBuffer();
-		for (unsigned int k = 0; k < sub->numlines; k++)
+#ifdef __MOBILE__
+		if( gl.novbo )
 		{
-			vertex_t *vt = sub->firstline[k].v1;
-			ptr->x = vt->fX();
-			ptr->z = plane.plane.ZatPoint(vt) + dz;
-			ptr->y = vt->fY();
-			t1 = { ptr->x, ptr->z, ptr->y };
-			FVector3 nearToVert = t1 - nearPt;
+			static FFlatVertex vtx[100]; // Yes this is static. It's only used once, and I think it's faster as the address doesn't keep changing
+			FFlatVertex *ptr = &vtx[0];
+			for (unsigned int k = 0; k < sub->numlines; k++)
+			{
+				vertex_t *vt = sub->firstline[k].v1;
+				float x = vt->fX();
+				float y = vt->fY();
+				float z = plane.plane.ZatPoint(vt) + dz;
+				t1 = { x, z, y };
+				FVector3 nearToVert = t1 - nearPt;
+				float u = ((nearToVert | right) * scale) + 0.5f;
+				float v = ((nearToVert | up) * scale) + 0.5f;
+				ptr->Set(x,z,y,u,v);
+				ptr++;
+			}
+			int vertcount = (ptr - &vtx[0]);
+			glTexCoordPointer(2,GL_FLOAT, sizeof(FFlatVertex),&vtx[0].u);
+			glVertexPointer  (3,GL_FLOAT, sizeof(FFlatVertex),&vtx[0].x);
 
-			ptr->u = ((nearToVert | right) * scale) + 0.5f;
-			ptr->v = ((nearToVert | up) * scale) + 0.5f;
-			ptr++;
+			glEnableClientState (GL_VERTEX_ARRAY);
+			glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+			glDisableClientState (GL_COLOR_ARRAY);
+
+			glBindBuffer (GL_ARRAY_BUFFER, 0); // NO VBO
+			glDrawArrays (GL_TRIANGLE_FAN, 0, vertcount);
 		}
-		GLRenderer->mVBO->RenderCurrent(ptr, GL_TRIANGLE_FAN);
+		else
+		{
+#endif
+			FFlatVertex *ptr = GLRenderer->mVBO->GetBuffer();
+			for (unsigned int k = 0; k < sub->numlines; k++)
+			{
+				vertex_t *vt = sub->firstline[k].v1;
+				ptr->x = vt->fX();
+				ptr->z = plane.plane.ZatPoint(vt) + dz;
+				ptr->y = vt->fY();
+				t1 = { ptr->x, ptr->z, ptr->y };
+				FVector3 nearToVert = t1 - nearPt;
+
+				ptr->u = ((nearToVert | right) * scale) + 0.5f;
+				ptr->v = ((nearToVert | up) * scale) + 0.5f;
+				ptr++;
+			}
+			GLRenderer->mVBO->RenderCurrent(ptr, GL_TRIANGLE_FAN);
+#ifdef __MOBILE__
+		}
+#endif
 		node = node->nextLight;
 	}
 }

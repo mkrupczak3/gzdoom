@@ -521,9 +521,7 @@ void GLSceneDrawer::DrawScene(int drawmode)
 	// Handle all glSectorPortals after rendering the opaque objects but before
 	// doing all translucent stuff
 	recursion++;
-#ifndef __MOBILE__ // Not sure exactly what this does.. removing speeds up rendering...
 	GLPortal::EndFrame();
-#endif
 	recursion--;
 	RenderTranslucent();
 }
