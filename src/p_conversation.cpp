@@ -38,26 +38,19 @@
 #include "p_conversation.h"
 #include "w_wad.h"
 #include "cmdlib.h"
-#include "s_sound.h"
 #include "v_text.h"
-#include "v_video.h"
-#include "m_random.h"
 #include "gi.h"
-#include "templates.h"
 #include "a_keys.h"
 #include "p_enemy.h"
 #include "gstrings.h"
 #include "sound/i_music.h"
 #include "p_setup.h"
 #include "d_net.h"
-#include "g_level.h"
 #include "d_event.h"
-#include "d_gui.h"
 #include "doomstat.h"
 #include "c_console.h"
 #include "sbar.h"
 #include "p_lnspec.h"
-#include "r_utility.h"
 #include "p_local.h"
 #include "menu/menu.h"
 #include "g_levellocals.h"
@@ -227,9 +220,16 @@ void P_LoadStrifeConversations (MapData *map, const char *mapname)
 bool LoadScriptFile (const char *name, bool include, int type)
 {
 	int lumpnum = Wads.CheckNumForName (name);
+	const bool found = lumpnum >= 0
+		|| (lumpnum = Wads.CheckNumForFullName (name)) >= 0;
 
-	if (lumpnum < 0)
+	if (!found)
 	{
+		if (type == 0)
+		{
+			Printf(TEXTCOLOR_RED "Could not find dialog file %s\n", name);
+		}
+
 		return false;
 	}
 	FileReader lump = Wads.ReopenLumpReader (lumpnum);

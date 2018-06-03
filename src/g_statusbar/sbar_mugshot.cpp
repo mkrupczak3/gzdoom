@@ -36,10 +36,7 @@
 #include "r_defs.h"
 #include "m_random.h"
 #include "d_player.h"
-#include "d_event.h"
 #include "sbar.h"
-#include "sbarinfo.h"
-#include "templates.h"
 #include "r_utility.h"
 #include "actorinlines.h"
 
@@ -99,7 +96,7 @@ FTexture *FMugShotFrame::GetTexture(const char *default_face, const char *skin_f
 		}
 		sprite.UnlockBuffer();
 	}
-	return TexMan[TexMan.CheckForTexture(sprite, 0, FTextureManager::TEXMAN_TryAny|FTextureManager::TEXMAN_AllowSkins)];
+	return TexMan[TexMan.CheckForTexture(sprite, ETextureType::Any, FTextureManager::TEXMAN_TryAny|FTextureManager::TEXMAN_AllowSkins)];
 }
 
 //===========================================================================

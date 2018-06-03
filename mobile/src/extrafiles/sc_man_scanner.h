@@ -704,84 +704,84 @@ yy84:
 	yyaccept = 0;
 	yych = *(YYMARKER = ++YYCURSOR);
 	if (yych <= '.') {
-		if (yych == '*') goto yy735;
+		if (yych == '*') goto yy741;
 	} else {
-		if (yych <= '/') goto yy733;
-		if (yych == '=') goto yy731;
+		if (yych <= '/') goto yy739;
+		if (yych == '=') goto yy737;
 	}
 yy85:
-#line 286 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 287 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('/'); }
 #line 716 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy86:
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
 	if (yych <= 'e') {
-		if (yych == 'I') goto yy706;
-		if (yych >= 'e') goto yy707;
+		if (yych == 'I') goto yy712;
+		if (yych >= 'e') goto yy713;
 	} else {
 		if (yych <= 'i') {
-			if (yych >= 'i') goto yy706;
+			if (yych >= 'i') goto yy712;
 		} else {
-			if (yych == 'r') goto yy708;
+			if (yych == 'r') goto yy714;
 		}
 	}
 yy87:
-#line 293 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 294 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('#'); }
 #line 733 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy88:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Y') {
 		if (yych <= 'Q') {
-			if (yych == 'O') goto yy688;
+			if (yych == 'O') goto yy694;
 			goto yy275;
 		} else {
-			if (yych <= 'R') goto yy689;
+			if (yych <= 'R') goto yy695;
 			if (yych <= 'X') goto yy275;
-			goto yy690;
+			goto yy696;
 		}
 	} else {
 		if (yych <= 'q') {
-			if (yych == 'o') goto yy688;
+			if (yych == 'o') goto yy694;
 			goto yy275;
 		} else {
-			if (yych <= 'r') goto yy689;
-			if (yych == 'y') goto yy690;
+			if (yych <= 'r') goto yy695;
+			if (yych == 'y') goto yy696;
 			goto yy275;
 		}
 	}
 yy89:
-#line 226 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 227 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_Identifier); }
 #line 758 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy90:
 	yych = *++YYCURSOR;
 	switch (yych) {
 	case 'A':
-	case 'a':	goto yy639;
+	case 'a':	goto yy645;
 	case 'H':
-	case 'h':	goto yy640;
+	case 'h':	goto yy646;
 	case 'L':
-	case 'l':	goto yy641;
+	case 'l':	goto yy647;
 	case 'O':
-	case 'o':	goto yy642;
+	case 'o':	goto yy648;
 	case 'R':
-	case 'r':	goto yy643;
+	case 'r':	goto yy649;
 	default:	goto yy275;
 	}
 yy91:
 	yych = *++YYCURSOR;
 	if (yych <= 'O') {
-		if (yych == 'E') goto yy614;
+		if (yych == 'E') goto yy620;
 		if (yych <= 'N') goto yy275;
-		goto yy615;
+		goto yy621;
 	} else {
 		if (yych <= 'e') {
 			if (yych <= 'd') goto yy275;
-			goto yy614;
+			goto yy620;
 		} else {
-			if (yych == 'o') goto yy615;
+			if (yych == 'o') goto yy621;
 			goto yy275;
 		}
 	}
@@ -789,20 +789,20 @@ yy92:
 	yych = *++YYCURSOR;
 	if (yych <= 'X') {
 		if (yych <= 'M') {
-			if (yych == 'L') goto yy600;
+			if (yych == 'L') goto yy606;
 			goto yy275;
 		} else {
-			if (yych <= 'N') goto yy601;
+			if (yych <= 'N') goto yy607;
 			if (yych <= 'W') goto yy275;
-			goto yy602;
+			goto yy608;
 		}
 	} else {
 		if (yych <= 'm') {
-			if (yych == 'l') goto yy600;
+			if (yych == 'l') goto yy606;
 			goto yy275;
 		} else {
-			if (yych <= 'n') goto yy601;
-			if (yych == 'x') goto yy602;
+			if (yych <= 'n') goto yy607;
+			if (yych == 'x') goto yy608;
 			goto yy275;
 		}
 	}
@@ -810,33 +810,33 @@ yy93:
 	yych = *++YYCURSOR;
 	if (yych <= 'O') {
 		if (yych <= 'I') {
-			if (yych == 'A') goto yy574;
+			if (yych == 'A') goto yy580;
 			if (yych <= 'H') goto yy275;
-			goto yy575;
+			goto yy581;
 		} else {
-			if (yych == 'L') goto yy576;
+			if (yych == 'L') goto yy582;
 			if (yych <= 'N') goto yy275;
-			goto yy577;
+			goto yy583;
 		}
 	} else {
 		if (yych <= 'i') {
-			if (yych == 'a') goto yy574;
+			if (yych == 'a') goto yy580;
 			if (yych <= 'h') goto yy275;
-			goto yy575;
+			goto yy581;
 		} else {
 			if (yych <= 'l') {
 				if (yych <= 'k') goto yy275;
-				goto yy576;
+				goto yy582;
 			} else {
-				if (yych == 'o') goto yy577;
+				if (yych == 'o') goto yy583;
 				goto yy275;
 			}
 		}
 	}
 yy94:
 	yych = *++YYCURSOR;
-	if (yych == 'O') goto yy570;
-	if (yych == 'o') goto yy570;
+	if (yych == 'O') goto yy576;
+	if (yych == 'o') goto yy576;
 	goto yy275;
 yy95:
 	yych = *++YYCURSOR;
@@ -1092,7 +1092,7 @@ yy109:
 		}
 	}
 yy110:
-#line 229 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 230 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_IntConst); }
 #line 1098 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy111:
@@ -1105,7 +1105,7 @@ yy112:
 	if (yych <= '/') goto yy113;
 	if (yych <= '9') goto yy238;
 yy113:
-#line 279 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 280 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('.'); }
 #line 1111 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy114:
@@ -1113,7 +1113,7 @@ yy114:
 	yych = *(YYMARKER = ++YYCURSOR);
 	goto yy230;
 yy115:
-#line 299 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 300 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{
 			ScriptError ("Unexpected character: %c (ASCII %d)\n", *tok, *tok);
 			goto std1;
@@ -1130,7 +1130,7 @@ yy117:
 	if (yych <= '=') goto yy215;
 	if (yych <= '>') goto yy217;
 yy118:
-#line 289 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 290 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('>'); }
 #line 1136 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy119:
@@ -1141,14 +1141,14 @@ yy119:
 	if (yych <= '=') goto yy207;
 	if (yych <= '>') goto yy206;
 yy120:
-#line 288 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 289 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('<'); }
 #line 1147 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy121:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) == '+') goto yy202;
 	if (yych == '=') goto yy204;
-#line 284 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 285 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('+'); }
 #line 1154 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy123:
@@ -1159,52 +1159,52 @@ yy123:
 		if (yych <= '=') goto yy200;
 		if (yych <= '>') goto yy196;
 	}
-#line 283 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 284 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('-'); }
 #line 1165 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy125:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) == '*') goto yy192;
 	if (yych == '=') goto yy194;
-#line 285 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 286 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('*'); }
 #line 1172 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy127:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) == '=') goto yy190;
-#line 287 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 288 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('%'); }
 #line 1178 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy129:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) == '&') goto yy186;
 	if (yych == '=') goto yy188;
-#line 280 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 281 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('&'); }
 #line 1185 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy131:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) == '=') goto yy184;
-#line 290 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 291 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('^'); }
 #line 1191 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy133:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) == '=') goto yy182;
 	if (yych == '|') goto yy180;
-#line 291 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 292 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('|'); }
 #line 1198 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy135:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) == '=') goto yy178;
-#line 274 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 275 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('='); }
 #line 1204 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy137:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) == '=') goto yy176;
-#line 281 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 282 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('!'); }
 #line 1210 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy139:
@@ -1212,63 +1212,63 @@ yy139:
 	yych = *(YYMARKER = ++YYCURSOR);
 	if (yych == '=') goto yy172;
 yy140:
-#line 282 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 283 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('~'); }
 #line 1218 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy141:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) == ':') goto yy170;
-#line 273 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 274 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(':'); }
 #line 1224 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy143:
 	++YYCURSOR;
-#line 269 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 270 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ StateOptions = false; RET(';'); }
 #line 1229 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy145:
 	++YYCURSOR;
-#line 270 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 271 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ StateOptions = false; RET('{'); }
 #line 1234 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy147:
 	++YYCURSOR;
-#line 271 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 272 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('}'); }
 #line 1239 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy149:
 	++YYCURSOR;
-#line 272 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 273 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(','); }
 #line 1244 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy151:
 	++YYCURSOR;
-#line 275 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 276 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('('); }
 #line 1249 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy153:
 	++YYCURSOR;
-#line 276 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 277 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(')'); }
 #line 1254 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy155:
 	++YYCURSOR;
-#line 277 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 278 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('['); }
 #line 1259 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy157:
 	++YYCURSOR;
-#line 278 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 279 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(']'); }
 #line 1264 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy159:
 	++YYCURSOR;
-#line 292 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 293 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('?'); }
 #line 1269 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy161:
 	++YYCURSOR;
-#line 294 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 295 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET('@'); }
 #line 1274 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy163:
@@ -1276,12 +1276,12 @@ yy163:
 	yych = *YYCURSOR;
 	goto yy169;
 yy164:
-#line 296 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 297 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto std1; }
 #line 1282 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy165:
 	++YYCURSOR;
-#line 297 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 298 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto newline; }
 #line 1287 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy167:
@@ -1302,7 +1302,7 @@ yy169:
 	}
 yy170:
 	++YYCURSOR;
-#line 267 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 268 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_ColonColon); }
 #line 1308 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy172:
@@ -1341,82 +1341,82 @@ yy173:
 	}
 yy174:
 	++YYCURSOR;
-#line 264 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 265 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_ApproxEq); }
 #line 1347 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy176:
 	++YYCURSOR;
-#line 263 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 264 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_Neq); }
 #line 1352 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy178:
 	++YYCURSOR;
-#line 262 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 263 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_Eq); }
 #line 1357 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy180:
 	++YYCURSOR;
-#line 259 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 260 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_OrOr); }
 #line 1362 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy182:
 	++YYCURSOR;
-#line 252 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 253 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_OrEq); }
 #line 1367 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy184:
 	++YYCURSOR;
-#line 251 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 252 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_XorEq); }
 #line 1372 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy186:
 	++YYCURSOR;
-#line 258 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 259 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_AndAnd); }
 #line 1377 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy188:
 	++YYCURSOR;
-#line 250 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 251 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_AndEq); }
 #line 1382 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy190:
 	++YYCURSOR;
-#line 249 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 250 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_ModEq); }
 #line 1387 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy192:
 	++YYCURSOR;
-#line 266 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 267 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_MulMul); }
 #line 1392 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy194:
 	++YYCURSOR;
-#line 247 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 248 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_MulEq); }
 #line 1397 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy196:
 	++YYCURSOR;
-#line 268 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 269 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_Arrow); }
 #line 1402 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy198:
 	++YYCURSOR;
-#line 257 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 258 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_Decr); }
 #line 1407 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy200:
 	++YYCURSOR;
-#line 246 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 247 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_SubEq); }
 #line 1412 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy202:
 	++YYCURSOR;
-#line 256 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 257 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_Incr); }
 #line 1417 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy204:
 	++YYCURSOR;
-#line 245 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 246 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_AddEq); }
 #line 1422 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy206:
@@ -1425,28 +1425,28 @@ yy206:
 	goto yy173;
 yy207:
 	++YYCURSOR;
-#line 260 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 261 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_Leq); }
 #line 1431 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy209:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) == '=') goto yy211;
-#line 255 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 256 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_LShift); }
 #line 1437 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy211:
 	++YYCURSOR;
-#line 244 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 245 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_LShiftEq); }
 #line 1442 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy213:
 	++YYCURSOR;
-#line 265 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 266 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_LtGtEq); }
 #line 1447 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy215:
 	++YYCURSOR;
-#line 261 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 262 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_Geq); }
 #line 1452 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy217:
@@ -1455,23 +1455,23 @@ yy217:
 	if (yych <= '=') goto yy221;
 	if (yych <= '>') goto yy219;
 yy218:
-#line 254 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 255 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_RShift); }
 #line 1461 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy219:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) == '=') goto yy223;
-#line 253 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 254 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_URShift); }
 #line 1467 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy221:
 	++YYCURSOR;
-#line 243 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 244 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_RShiftEq); }
 #line 1472 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy223:
 	++YYCURSOR;
-#line 242 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 243 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_URShiftEq); }
 #line 1477 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy225:
@@ -1482,7 +1482,7 @@ yy226:
 	if (yych == '\n') goto yy173;
 	if (yych != '\'') goto yy225;
 	++YYCURSOR;
-#line 238 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 239 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_NameConst); }
 #line 1488 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy229:
@@ -1502,7 +1502,7 @@ yy231:
 yy233:
 	++YYCURSOR;
 yy234:
-#line 235 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 236 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_StringConst); }
 #line 1508 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy235:
@@ -1516,7 +1516,7 @@ yy235:
 yy236:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) == '.') goto yy246;
-#line 240 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 241 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_DotDot); }
 #line 1522 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy238:
@@ -1537,7 +1537,7 @@ yy238:
 		}
 	}
 yy240:
-#line 232 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 233 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_FloatConst); }
 #line 1543 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy241:
@@ -1573,7 +1573,7 @@ yy244:
 	}
 yy246:
 	++YYCURSOR;
-#line 241 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 242 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_Ellipsis); }
 #line 1579 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy248:
@@ -1942,7 +1942,7 @@ yy291:
 		}
 	}
 yy292:
-#line 220 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 221 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(StateOptions ? TK_Offset : TK_Identifier); }
 #line 1948 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy293:
@@ -2498,7 +2498,7 @@ yy378:
 		}
 	}
 yy379:
-#line 218 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 219 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(StateOptions ? TK_NoDelay : TK_Identifier); }
 #line 2504 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy380:
@@ -2631,7 +2631,7 @@ yy398:
 		}
 	}
 yy399:
-#line 221 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 222 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(StateOptions ? TK_Light : TK_Identifier); }
 #line 2637 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy400:
@@ -2649,7 +2649,7 @@ yy400:
 		}
 	}
 yy401:
-#line 212 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 213 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(ParseVersion >= MakeVersion(1, 0, 0)? TK_Let : TK_Identifier); }
 #line 2655 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy402:
@@ -3500,7 +3500,7 @@ yy522:
 		}
 	}
 yy523:
-#line 217 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 218 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(StateOptions ? TK_Slow : TK_Identifier); }
 #line 3506 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy524:
@@ -3771,31 +3771,37 @@ yy562:
 #line 3772 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy563:
 	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= '9') {
-		if (yych <= '1') {
+	if ((yych = *YYCURSOR) <= 'D') {
+		if (yych <= '7') {
 			if (yych <= '/') goto yy564;
-			if (yych <= '0') goto yy274;
-			goto yy565;
-		} else {
-			if (yych == '8') goto yy566;
+			if (yych == '1') goto yy565;
 			goto yy274;
+		} else {
+			if (yych <= '8') goto yy566;
+			if (yych <= '9') goto yy274;
+			if (yych >= 'A') goto yy274;
 		}
 	} else {
-		if (yych <= '^') {
-			if (yych <= '@') goto yy564;
+		if (yych <= '_') {
+			if (yych <= 'E') goto yy568;
 			if (yych <= 'Z') goto yy274;
+			if (yych >= '_') goto yy274;
 		} else {
-			if (yych == '`') goto yy564;
-			if (yych <= 'z') goto yy274;
+			if (yych <= 'd') {
+				if (yych >= 'a') goto yy274;
+			} else {
+				if (yych <= 'e') goto yy568;
+				if (yych <= 'z') goto yy274;
+			}
 		}
 	}
 yy564:
 #line 153 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_Int); }
-#line 3796 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 3802 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy565:
 	yych = *++YYCURSOR;
-	if (yych == '6') goto yy568;
+	if (yych == '6') goto yy574;
 	goto yy275;
 yy566:
 	++YYCURSOR;
@@ -3814,33 +3820,23 @@ yy566:
 yy567:
 #line 149 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_Int8); }
-#line 3818 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 3824 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy568:
-	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy569;
-		if (yych <= '9') goto yy274;
-		if (yych >= 'A') goto yy274;
-	} else {
-		if (yych <= '_') {
-			if (yych >= '_') goto yy274;
-		} else {
-			if (yych <= '`') goto yy569;
-			if (yych <= 'z') goto yy274;
-		}
-	}
+	yych = *++YYCURSOR;
+	if (yych == 'R') goto yy569;
+	if (yych != 'r') goto yy275;
 yy569:
-#line 151 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Int16); }
-#line 3836 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+	yych = *++YYCURSOR;
+	if (yych == 'N') goto yy570;
+	if (yych != 'n') goto yy275;
 yy570:
 	yych = *++YYCURSOR;
-	if (yych == 'T') goto yy571;
-	if (yych != 't') goto yy275;
+	if (yych == 'A') goto yy571;
+	if (yych != 'a') goto yy275;
 yy571:
 	yych = *++YYCURSOR;
-	if (yych == 'O') goto yy572;
-	if (yych != 'o') goto yy275;
+	if (yych == 'L') goto yy572;
+	if (yych != 'l') goto yy275;
 yy572:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Z') {
@@ -3856,261 +3852,261 @@ yy572:
 		}
 	}
 yy573:
-#line 132 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Goto); }
-#line 3862 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 212 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(ParseVersion >= MakeVersion(3, 4, 0)? TK_Internal : TK_Identifier); }
+#line 3858 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy574:
-	yych = *++YYCURSOR;
-	if (yych <= 'S') {
-		if (yych == 'L') goto yy593;
-		if (yych <= 'R') goto yy275;
-		goto yy594;
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= 'Z') {
+		if (yych <= '/') goto yy575;
+		if (yych <= '9') goto yy274;
+		if (yych >= 'A') goto yy274;
 	} else {
-		if (yych <= 'l') {
-			if (yych <= 'k') goto yy275;
-			goto yy593;
+		if (yych <= '_') {
+			if (yych >= '_') goto yy274;
 		} else {
-			if (yych == 's') goto yy594;
-			goto yy275;
+			if (yych <= '`') goto yy575;
+			if (yych <= 'z') goto yy274;
 		}
 	}
 yy575:
-	yych = *++YYCURSOR;
-	if (yych == 'N') goto yy589;
-	if (yych == 'n') goto yy589;
-	goto yy275;
+#line 151 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Int16); }
+#line 3876 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy576:
 	yych = *++YYCURSOR;
-	if (yych == 'O') goto yy585;
-	if (yych == 'o') goto yy585;
-	goto yy275;
+	if (yych == 'T') goto yy577;
+	if (yych != 't') goto yy275;
 yy577:
 	yych = *++YYCURSOR;
-	if (yych == 'R') goto yy578;
-	if (yych != 'r') goto yy275;
+	if (yych == 'O') goto yy578;
+	if (yych != 'o') goto yy275;
 yy578:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Z') {
+		if (yych <= '/') goto yy579;
+		if (yych <= '9') goto yy274;
+		if (yych >= 'A') goto yy274;
+	} else {
+		if (yych <= '_') {
+			if (yych >= '_') goto yy274;
+		} else {
+			if (yych <= '`') goto yy579;
+			if (yych <= 'z') goto yy274;
+		}
+	}
+yy579:
+#line 132 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Goto); }
+#line 3902 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy580:
+	yych = *++YYCURSOR;
+	if (yych <= 'S') {
+		if (yych == 'L') goto yy599;
+		if (yych <= 'R') goto yy275;
+		goto yy600;
+	} else {
+		if (yych <= 'l') {
+			if (yych <= 'k') goto yy275;
+			goto yy599;
+		} else {
+			if (yych == 's') goto yy600;
+			goto yy275;
+		}
+	}
+yy581:
+	yych = *++YYCURSOR;
+	if (yych == 'N') goto yy595;
+	if (yych == 'n') goto yy595;
+	goto yy275;
+yy582:
+	yych = *++YYCURSOR;
+	if (yych == 'O') goto yy591;
+	if (yych == 'o') goto yy591;
+	goto yy275;
+yy583:
+	yych = *++YYCURSOR;
+	if (yych == 'R') goto yy584;
+	if (yych != 'r') goto yy275;
+yy584:
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= 'Z') {
 		if (yych <= '@') {
-			if (yych <= '/') goto yy579;
+			if (yych <= '/') goto yy585;
 			if (yych <= '9') goto yy274;
 		} else {
-			if (yych == 'E') goto yy580;
+			if (yych == 'E') goto yy586;
 			goto yy274;
 		}
 	} else {
 		if (yych <= '`') {
 			if (yych == '_') goto yy274;
 		} else {
-			if (yych == 'e') goto yy580;
+			if (yych == 'e') goto yy586;
 			if (yych <= 'z') goto yy274;
 		}
 	}
-yy579:
+yy585:
 #line 131 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_For); }
-#line 3913 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy580:
-	yych = *++YYCURSOR;
-	if (yych == 'A') goto yy581;
-	if (yych != 'a') goto yy275;
-yy581:
-	yych = *++YYCURSOR;
-	if (yych == 'C') goto yy582;
-	if (yych != 'c') goto yy275;
-yy582:
-	yych = *++YYCURSOR;
-	if (yych == 'H') goto yy583;
-	if (yych != 'h') goto yy275;
-yy583:
-	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy584;
-		if (yych <= '9') goto yy274;
-		if (yych >= 'A') goto yy274;
-	} else {
-		if (yych <= '_') {
-			if (yych >= '_') goto yy274;
-		} else {
-			if (yych <= '`') goto yy584;
-			if (yych <= 'z') goto yy274;
-		}
-	}
-yy584:
-#line 176 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_ForEach); }
-#line 3943 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy585:
-	yych = *++YYCURSOR;
-	if (yych == 'A') goto yy586;
-	if (yych != 'a') goto yy275;
+#line 3953 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy586:
 	yych = *++YYCURSOR;
-	if (yych == 'T') goto yy587;
-	if (yych != 't') goto yy275;
+	if (yych == 'A') goto yy587;
+	if (yych != 'a') goto yy275;
 yy587:
+	yych = *++YYCURSOR;
+	if (yych == 'C') goto yy588;
+	if (yych != 'c') goto yy275;
+yy588:
+	yych = *++YYCURSOR;
+	if (yych == 'H') goto yy589;
+	if (yych != 'h') goto yy275;
+yy589:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy588;
+		if (yych <= '/') goto yy590;
 		if (yych <= '9') goto yy274;
 		if (yych >= 'A') goto yy274;
 	} else {
 		if (yych <= '_') {
 			if (yych >= '_') goto yy274;
 		} else {
-			if (yych <= '`') goto yy588;
+			if (yych <= '`') goto yy590;
 			if (yych <= 'z') goto yy274;
 		}
 	}
-yy588:
+yy590:
+#line 176 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_ForEach); }
+#line 3983 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy591:
+	yych = *++YYCURSOR;
+	if (yych == 'A') goto yy592;
+	if (yych != 'a') goto yy275;
+yy592:
+	yych = *++YYCURSOR;
+	if (yych == 'T') goto yy593;
+	if (yych != 't') goto yy275;
+yy593:
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= 'Z') {
+		if (yych <= '/') goto yy594;
+		if (yych <= '9') goto yy274;
+		if (yych >= 'A') goto yy274;
+	} else {
+		if (yych <= '_') {
+			if (yych >= '_') goto yy274;
+		} else {
+			if (yych <= '`') goto yy594;
+			if (yych <= 'z') goto yy274;
+		}
+	}
+yy594:
 #line 142 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_Float); }
-#line 3969 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy589:
+#line 4009 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy595:
 	yych = *++YYCURSOR;
-	if (yych == 'A') goto yy590;
+	if (yych == 'A') goto yy596;
 	if (yych != 'a') goto yy275;
-yy590:
+yy596:
 	yych = *++YYCURSOR;
-	if (yych == 'L') goto yy591;
+	if (yych == 'L') goto yy597;
 	if (yych != 'l') goto yy275;
-yy591:
+yy597:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy592;
+		if (yych <= '/') goto yy598;
 		if (yych <= '9') goto yy274;
 		if (yych >= 'A') goto yy274;
 	} else {
 		if (yych <= '_') {
 			if (yych >= '_') goto yy274;
 		} else {
-			if (yych <= '`') goto yy592;
+			if (yych <= '`') goto yy598;
 			if (yych <= 'z') goto yy274;
 		}
 	}
-yy592:
+yy598:
 #line 187 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(ParseVersion >= MakeVersion(1, 0, 0)? TK_Final : TK_Identifier); }
-#line 3995 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy593:
-	yych = *++YYCURSOR;
-	if (yych == 'S') goto yy597;
-	if (yych == 's') goto yy597;
-	goto yy275;
-yy594:
-	yych = *++YYCURSOR;
-	if (yych == 'T') goto yy595;
-	if (yych != 't') goto yy275;
-yy595:
-	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy596;
-		if (yych <= '9') goto yy274;
-		if (yych >= 'A') goto yy274;
-	} else {
-		if (yych <= '_') {
-			if (yych >= '_') goto yy274;
-		} else {
-			if (yych <= '`') goto yy596;
-			if (yych <= 'z') goto yy274;
-		}
-	}
-yy596:
-#line 216 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(StateOptions ? TK_Fast : TK_Identifier); }
-#line 4022 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy597:
-	yych = *++YYCURSOR;
-	if (yych == 'E') goto yy598;
-	if (yych != 'e') goto yy275;
-yy598:
-	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy599;
-		if (yych <= '9') goto yy274;
-		if (yych >= 'A') goto yy274;
-	} else {
-		if (yych <= '_') {
-			if (yych >= '_') goto yy274;
-		} else {
-			if (yych <= '`') goto yy599;
-			if (yych <= 'z') goto yy274;
-		}
-	}
+#line 4035 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy599:
-#line 178 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_False); }
-#line 4044 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+	yych = *++YYCURSOR;
+	if (yych == 'S') goto yy603;
+	if (yych == 's') goto yy603;
+	goto yy275;
 yy600:
 	yych = *++YYCURSOR;
-	if (yych == 'S') goto yy611;
-	if (yych == 's') goto yy611;
-	goto yy275;
-yy601:
-	yych = *++YYCURSOR;
-	if (yych == 'U') goto yy608;
-	if (yych == 'u') goto yy608;
-	goto yy275;
-yy602:
-	yych = *++YYCURSOR;
-	if (yych == 'T') goto yy603;
+	if (yych == 'T') goto yy601;
 	if (yych != 't') goto yy275;
+yy601:
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= 'Z') {
+		if (yych <= '/') goto yy602;
+		if (yych <= '9') goto yy274;
+		if (yych >= 'A') goto yy274;
+	} else {
+		if (yych <= '_') {
+			if (yych >= '_') goto yy274;
+		} else {
+			if (yych <= '`') goto yy602;
+			if (yych <= 'z') goto yy274;
+		}
+	}
+yy602:
+#line 217 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(StateOptions ? TK_Fast : TK_Identifier); }
+#line 4062 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy603:
 	yych = *++YYCURSOR;
 	if (yych == 'E') goto yy604;
 	if (yych != 'e') goto yy275;
 yy604:
-	yych = *++YYCURSOR;
-	if (yych == 'N') goto yy605;
-	if (yych != 'n') goto yy275;
-yy605:
-	yych = *++YYCURSOR;
-	if (yych == 'D') goto yy606;
-	if (yych != 'd') goto yy275;
-yy606:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy607;
+		if (yych <= '/') goto yy605;
 		if (yych <= '9') goto yy274;
 		if (yych >= 'A') goto yy274;
 	} else {
 		if (yych <= '_') {
 			if (yych >= '_') goto yy274;
 		} else {
-			if (yych <= '`') goto yy607;
+			if (yych <= '`') goto yy605;
 			if (yych <= 'z') goto yy274;
 		}
 	}
+yy605:
+#line 178 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_False); }
+#line 4084 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy606:
+	yych = *++YYCURSOR;
+	if (yych == 'S') goto yy617;
+	if (yych == 's') goto yy617;
+	goto yy275;
 yy607:
-#line 188 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(ParseVersion >= MakeVersion(1, 0, 0)? TK_Extend : TK_Identifier); }
-#line 4088 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+	yych = *++YYCURSOR;
+	if (yych == 'U') goto yy614;
+	if (yych == 'u') goto yy614;
+	goto yy275;
 yy608:
 	yych = *++YYCURSOR;
-	if (yych == 'M') goto yy609;
-	if (yych != 'm') goto yy275;
+	if (yych == 'T') goto yy609;
+	if (yych != 't') goto yy275;
 yy609:
-	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy610;
-		if (yych <= '9') goto yy274;
-		if (yych >= 'A') goto yy274;
-	} else {
-		if (yych <= '_') {
-			if (yych >= '_') goto yy274;
-		} else {
-			if (yych <= '`') goto yy610;
-			if (yych <= 'z') goto yy274;
-		}
-	}
+	yych = *++YYCURSOR;
+	if (yych == 'E') goto yy610;
+	if (yych != 'e') goto yy275;
 yy610:
-#line 160 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Enum); }
-#line 4110 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+	yych = *++YYCURSOR;
+	if (yych == 'N') goto yy611;
+	if (yych != 'n') goto yy275;
 yy611:
 	yych = *++YYCURSOR;
-	if (yych == 'E') goto yy612;
-	if (yych != 'e') goto yy275;
+	if (yych == 'D') goto yy612;
+	if (yych != 'd') goto yy275;
 yy612:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Z') {
@@ -4126,55 +4122,35 @@ yy612:
 		}
 	}
 yy613:
-#line 130 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Else); }
-#line 4132 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 188 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(ParseVersion >= MakeVersion(1, 0, 0)? TK_Extend : TK_Identifier); }
+#line 4128 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy614:
 	yych = *++YYCURSOR;
-	if (yych <= 'P') {
-		if (yych == 'F') goto yy624;
-		if (yych <= 'O') goto yy275;
-		goto yy625;
-	} else {
-		if (yych <= 'f') {
-			if (yych <= 'e') goto yy275;
-			goto yy624;
-		} else {
-			if (yych == 'p') goto yy625;
-			goto yy275;
-		}
-	}
+	if (yych == 'M') goto yy615;
+	if (yych != 'm') goto yy275;
 yy615:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '@') {
-			if (yych <= '/') goto yy616;
-			if (yych <= '9') goto yy274;
-		} else {
-			if (yych <= 'S') goto yy274;
-			if (yych <= 'T') goto yy618;
-			if (yych <= 'U') goto yy617;
-			goto yy274;
-		}
+		if (yych <= '/') goto yy616;
+		if (yych <= '9') goto yy274;
+		if (yych >= 'A') goto yy274;
 	} else {
-		if (yych <= 's') {
-			if (yych == '_') goto yy274;
-			if (yych >= 'a') goto yy274;
+		if (yych <= '_') {
+			if (yych >= '_') goto yy274;
 		} else {
-			if (yych <= 't') goto yy618;
-			if (yych <= 'u') goto yy617;
+			if (yych <= '`') goto yy616;
 			if (yych <= 'z') goto yy274;
 		}
 	}
 yy616:
-#line 129 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Do); }
-#line 4173 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 160 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Enum); }
+#line 4150 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy617:
 	yych = *++YYCURSOR;
-	if (yych == 'B') goto yy620;
-	if (yych == 'b') goto yy620;
-	goto yy275;
+	if (yych == 'E') goto yy618;
+	if (yych != 'e') goto yy275;
 yy618:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Z') {
@@ -4190,207 +4166,229 @@ yy618:
 		}
 	}
 yy619:
-#line 191 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Dot); }
-#line 4196 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 130 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Else); }
+#line 4172 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy620:
 	yych = *++YYCURSOR;
-	if (yych == 'L') goto yy621;
-	if (yych != 'l') goto yy275;
+	if (yych <= 'P') {
+		if (yych == 'F') goto yy630;
+		if (yych <= 'O') goto yy275;
+		goto yy631;
+	} else {
+		if (yych <= 'f') {
+			if (yych <= 'e') goto yy275;
+			goto yy630;
+		} else {
+			if (yych == 'p') goto yy631;
+			goto yy275;
+		}
+	}
 yy621:
-	yych = *++YYCURSOR;
-	if (yych == 'E') goto yy622;
-	if (yych != 'e') goto yy275;
-yy622:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy623;
+		if (yych <= '@') {
+			if (yych <= '/') goto yy622;
+			if (yych <= '9') goto yy274;
+		} else {
+			if (yych <= 'S') goto yy274;
+			if (yych <= 'T') goto yy624;
+			if (yych <= 'U') goto yy623;
+			goto yy274;
+		}
+	} else {
+		if (yych <= 's') {
+			if (yych == '_') goto yy274;
+			if (yych >= 'a') goto yy274;
+		} else {
+			if (yych <= 't') goto yy624;
+			if (yych <= 'u') goto yy623;
+			if (yych <= 'z') goto yy274;
+		}
+	}
+yy622:
+#line 129 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Do); }
+#line 4213 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy623:
+	yych = *++YYCURSOR;
+	if (yych == 'B') goto yy626;
+	if (yych == 'b') goto yy626;
+	goto yy275;
+yy624:
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= 'Z') {
+		if (yych <= '/') goto yy625;
 		if (yych <= '9') goto yy274;
 		if (yych >= 'A') goto yy274;
 	} else {
 		if (yych <= '_') {
 			if (yych >= '_') goto yy274;
 		} else {
-			if (yych <= '`') goto yy623;
+			if (yych <= '`') goto yy625;
 			if (yych <= 'z') goto yy274;
 		}
 	}
-yy623:
-#line 143 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Double); }
-#line 4222 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy624:
-	yych = *++YYCURSOR;
-	if (yych == 'A') goto yy634;
-	if (yych == 'a') goto yy634;
-	goto yy275;
 yy625:
-	yych = *++YYCURSOR;
-	if (yych == 'R') goto yy626;
-	if (yych != 'r') goto yy275;
+#line 191 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Dot); }
+#line 4236 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy626:
 	yych = *++YYCURSOR;
-	if (yych == 'E') goto yy627;
-	if (yych != 'e') goto yy275;
+	if (yych == 'L') goto yy627;
+	if (yych != 'l') goto yy275;
 yy627:
 	yych = *++YYCURSOR;
-	if (yych == 'C') goto yy628;
-	if (yych != 'c') goto yy275;
+	if (yych == 'E') goto yy628;
+	if (yych != 'e') goto yy275;
 yy628:
-	yych = *++YYCURSOR;
-	if (yych == 'A') goto yy629;
-	if (yych != 'a') goto yy275;
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= 'Z') {
+		if (yych <= '/') goto yy629;
+		if (yych <= '9') goto yy274;
+		if (yych >= 'A') goto yy274;
+	} else {
+		if (yych <= '_') {
+			if (yych >= '_') goto yy274;
+		} else {
+			if (yych <= '`') goto yy629;
+			if (yych <= 'z') goto yy274;
+		}
+	}
 yy629:
-	yych = *++YYCURSOR;
-	if (yych == 'T') goto yy630;
-	if (yych != 't') goto yy275;
+#line 143 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Double); }
+#line 4262 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy630:
 	yych = *++YYCURSOR;
-	if (yych == 'E') goto yy631;
-	if (yych != 'e') goto yy275;
+	if (yych == 'A') goto yy640;
+	if (yych == 'a') goto yy640;
+	goto yy275;
 yy631:
 	yych = *++YYCURSOR;
-	if (yych == 'D') goto yy632;
-	if (yych != 'd') goto yy275;
+	if (yych == 'R') goto yy632;
+	if (yych != 'r') goto yy275;
 yy632:
-	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy633;
-		if (yych <= '9') goto yy274;
-		if (yych >= 'A') goto yy274;
-	} else {
-		if (yych <= '_') {
-			if (yych >= '_') goto yy274;
-		} else {
-			if (yych <= '`') goto yy633;
-			if (yych <= 'z') goto yy274;
-		}
-	}
+	yych = *++YYCURSOR;
+	if (yych == 'E') goto yy633;
+	if (yych != 'e') goto yy275;
 yy633:
-#line 208 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(ParseVersion >= MakeVersion(1, 0, 0)? TK_Deprecated : TK_Identifier); }
-#line 4273 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+	yych = *++YYCURSOR;
+	if (yych == 'C') goto yy634;
+	if (yych != 'c') goto yy275;
 yy634:
 	yych = *++YYCURSOR;
-	if (yych == 'U') goto yy635;
-	if (yych != 'u') goto yy275;
+	if (yych == 'A') goto yy635;
+	if (yych != 'a') goto yy275;
 yy635:
 	yych = *++YYCURSOR;
-	if (yych == 'L') goto yy636;
-	if (yych != 'l') goto yy275;
+	if (yych == 'T') goto yy636;
+	if (yych != 't') goto yy275;
 yy636:
 	yych = *++YYCURSOR;
-	if (yych == 'T') goto yy637;
-	if (yych != 't') goto yy275;
+	if (yych == 'E') goto yy637;
+	if (yych != 'e') goto yy275;
 yy637:
+	yych = *++YYCURSOR;
+	if (yych == 'D') goto yy638;
+	if (yych != 'd') goto yy275;
+yy638:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy638;
+		if (yych <= '/') goto yy639;
 		if (yych <= '9') goto yy274;
 		if (yych >= 'A') goto yy274;
 	} else {
 		if (yych <= '_') {
 			if (yych >= '_') goto yy274;
 		} else {
-			if (yych <= '`') goto yy638;
+			if (yych <= '`') goto yy639;
 			if (yych <= 'z') goto yy274;
 		}
 	}
-yy638:
+yy639:
+#line 208 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(ParseVersion >= MakeVersion(1, 0, 0)? TK_Deprecated : TK_Identifier); }
+#line 4313 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy640:
+	yych = *++YYCURSOR;
+	if (yych == 'U') goto yy641;
+	if (yych != 'u') goto yy275;
+yy641:
+	yych = *++YYCURSOR;
+	if (yych == 'L') goto yy642;
+	if (yych != 'l') goto yy275;
+yy642:
+	yych = *++YYCURSOR;
+	if (yych == 'T') goto yy643;
+	if (yych != 't') goto yy275;
+yy643:
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= 'Z') {
+		if (yych <= '/') goto yy644;
+		if (yych <= '9') goto yy274;
+		if (yych >= 'A') goto yy274;
+	} else {
+		if (yych <= '_') {
+			if (yych >= '_') goto yy274;
+		} else {
+			if (yych <= '`') goto yy644;
+			if (yych <= 'z') goto yy274;
+		}
+	}
+yy644:
 #line 128 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ RET(TK_Default); }
-#line 4303 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy639:
+#line 4343 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy645:
 	yych = *++YYCURSOR;
 	if (yych <= 'S') {
-		if (yych == 'N') goto yy679;
+		if (yych == 'N') goto yy685;
 		if (yych <= 'R') goto yy275;
-		goto yy678;
+		goto yy684;
 	} else {
 		if (yych <= 'n') {
 			if (yych <= 'm') goto yy275;
-			goto yy679;
+			goto yy685;
 		} else {
-			if (yych == 's') goto yy678;
+			if (yych == 's') goto yy684;
 			goto yy275;
 		}
 	}
-yy640:
+yy646:
 	yych = *++YYCURSOR;
-	if (yych == 'A') goto yy675;
-	if (yych == 'a') goto yy675;
+	if (yych == 'A') goto yy681;
+	if (yych == 'a') goto yy681;
 	goto yy275;
-yy641:
+yy647:
 	yych = *++YYCURSOR;
 	if (yych <= 'E') {
-		if (yych == 'A') goto yy662;
+		if (yych == 'A') goto yy668;
 		if (yych <= 'D') goto yy275;
-		goto yy663;
+		goto yy669;
 	} else {
 		if (yych <= 'a') {
 			if (yych <= '`') goto yy275;
-			goto yy662;
+			goto yy668;
 		} else {
-			if (yych == 'e') goto yy663;
+			if (yych == 'e') goto yy669;
 			goto yy275;
 		}
 	}
-yy642:
+yy648:
 	yych = *++YYCURSOR;
 	if (yych <= 'N') {
-		if (yych == 'L') goto yy649;
+		if (yych == 'L') goto yy655;
 		if (yych <= 'M') goto yy275;
-		goto yy648;
+		goto yy654;
 	} else {
 		if (yych <= 'l') {
 			if (yych <= 'k') goto yy275;
-			goto yy649;
+			goto yy655;
 		} else {
-			if (yych == 'n') goto yy648;
+			if (yych == 'n') goto yy654;
 			goto yy275;
 		}
-	}
-yy643:
-	yych = *++YYCURSOR;
-	if (yych == 'O') goto yy644;
-	if (yych != 'o') goto yy275;
-yy644:
-	yych = *++YYCURSOR;
-	if (yych == 'S') goto yy645;
-	if (yych != 's') goto yy275;
-yy645:
-	yych = *++YYCURSOR;
-	if (yych == 'S') goto yy646;
-	if (yych != 's') goto yy275;
-yy646:
-	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy647;
-		if (yych <= '9') goto yy274;
-		if (yych >= 'A') goto yy274;
-	} else {
-		if (yych <= '_') {
-			if (yych >= '_') goto yy274;
-		} else {
-			if (yych <= '`') goto yy647;
-			if (yych <= 'z') goto yy274;
-		}
-	}
-yy647:
-#line 192 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Cross); }
-#line 4383 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy648:
-	yych = *++YYCURSOR;
-	if (yych <= 'T') {
-		if (yych <= 'R') goto yy275;
-		if (yych <= 'S') goto yy653;
-		goto yy654;
-	} else {
-		if (yych <= 'r') goto yy275;
-		if (yych <= 's') goto yy653;
-		if (yych <= 't') goto yy654;
-		goto yy275;
 	}
 yy649:
 	yych = *++YYCURSOR;
@@ -4398,160 +4396,158 @@ yy649:
 	if (yych != 'o') goto yy275;
 yy650:
 	yych = *++YYCURSOR;
-	if (yych == 'R') goto yy651;
-	if (yych != 'r') goto yy275;
+	if (yych == 'S') goto yy651;
+	if (yych != 's') goto yy275;
 yy651:
+	yych = *++YYCURSOR;
+	if (yych == 'S') goto yy652;
+	if (yych != 's') goto yy275;
+yy652:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy652;
+		if (yych <= '/') goto yy653;
 		if (yych <= '9') goto yy274;
 		if (yych >= 'A') goto yy274;
 	} else {
 		if (yych <= '_') {
 			if (yych >= '_') goto yy274;
 		} else {
-			if (yych <= '`') goto yy652;
+			if (yych <= '`') goto yy653;
 			if (yych <= 'z') goto yy274;
 		}
 	}
-yy652:
-#line 165 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Color); }
-#line 4421 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy653:
-	yych = *++YYCURSOR;
-	if (yych == 'T') goto yy660;
-	if (yych == 't') goto yy660;
-	goto yy275;
+#line 192 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Cross); }
+#line 4423 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy654:
 	yych = *++YYCURSOR;
-	if (yych == 'I') goto yy655;
-	if (yych != 'i') goto yy275;
+	if (yych <= 'T') {
+		if (yych <= 'R') goto yy275;
+		if (yych <= 'S') goto yy659;
+		goto yy660;
+	} else {
+		if (yych <= 'r') goto yy275;
+		if (yych <= 's') goto yy659;
+		if (yych <= 't') goto yy660;
+		goto yy275;
+	}
 yy655:
 	yych = *++YYCURSOR;
-	if (yych == 'N') goto yy656;
-	if (yych != 'n') goto yy275;
+	if (yych == 'O') goto yy656;
+	if (yych != 'o') goto yy275;
 yy656:
 	yych = *++YYCURSOR;
-	if (yych == 'U') goto yy657;
-	if (yych != 'u') goto yy275;
+	if (yych == 'R') goto yy657;
+	if (yych != 'r') goto yy275;
 yy657:
-	yych = *++YYCURSOR;
-	if (yych == 'E') goto yy658;
-	if (yych != 'e') goto yy275;
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= 'Z') {
+		if (yych <= '/') goto yy658;
+		if (yych <= '9') goto yy274;
+		if (yych >= 'A') goto yy274;
+	} else {
+		if (yych <= '_') {
+			if (yych >= '_') goto yy274;
+		} else {
+			if (yych <= '`') goto yy658;
+			if (yych <= 'z') goto yy274;
+		}
+	}
 yy658:
-	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy659;
-		if (yych <= '9') goto yy274;
-		if (yych >= 'A') goto yy274;
-	} else {
-		if (yych <= '_') {
-			if (yych >= '_') goto yy274;
-		} else {
-			if (yych <= '`') goto yy659;
-			if (yych <= 'z') goto yy274;
-		}
-	}
+#line 165 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Color); }
+#line 4461 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy659:
-#line 127 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Continue); }
-#line 4460 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+	yych = *++YYCURSOR;
+	if (yych == 'T') goto yy666;
+	if (yych == 't') goto yy666;
+	goto yy275;
 yy660:
-	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy661;
-		if (yych <= '9') goto yy274;
-		if (yych >= 'A') goto yy274;
-	} else {
-		if (yych <= '_') {
-			if (yych >= '_') goto yy274;
-		} else {
-			if (yych <= '`') goto yy661;
-			if (yych <= 'z') goto yy274;
-		}
-	}
+	yych = *++YYCURSOR;
+	if (yych == 'I') goto yy661;
+	if (yych != 'i') goto yy275;
 yy661:
-#line 126 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Const); }
-#line 4478 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+	yych = *++YYCURSOR;
+	if (yych == 'N') goto yy662;
+	if (yych != 'n') goto yy275;
 yy662:
 	yych = *++YYCURSOR;
-	if (yych == 'S') goto yy672;
-	if (yych == 's') goto yy672;
-	goto yy275;
+	if (yych == 'U') goto yy663;
+	if (yych != 'u') goto yy275;
 yy663:
 	yych = *++YYCURSOR;
-	if (yych == 'A') goto yy664;
-	if (yych != 'a') goto yy275;
+	if (yych == 'E') goto yy664;
+	if (yych != 'e') goto yy275;
 yy664:
-	yych = *++YYCURSOR;
-	if (yych == 'R') goto yy665;
-	if (yych != 'r') goto yy275;
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= 'Z') {
+		if (yych <= '/') goto yy665;
+		if (yych <= '9') goto yy274;
+		if (yych >= 'A') goto yy274;
+	} else {
+		if (yych <= '_') {
+			if (yych >= '_') goto yy274;
+		} else {
+			if (yych <= '`') goto yy665;
+			if (yych <= 'z') goto yy274;
+		}
+	}
 yy665:
-	yych = *++YYCURSOR;
-	if (yych == 'S') goto yy666;
-	if (yych != 's') goto yy275;
+#line 127 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Continue); }
+#line 4500 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy666:
-	yych = *++YYCURSOR;
-	if (yych == 'C') goto yy667;
-	if (yych != 'c') goto yy275;
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= 'Z') {
+		if (yych <= '/') goto yy667;
+		if (yych <= '9') goto yy274;
+		if (yych >= 'A') goto yy274;
+	} else {
+		if (yych <= '_') {
+			if (yych >= '_') goto yy274;
+		} else {
+			if (yych <= '`') goto yy667;
+			if (yych <= 'z') goto yy274;
+		}
+	}
 yy667:
-	yych = *++YYCURSOR;
-	if (yych == 'O') goto yy668;
-	if (yych != 'o') goto yy275;
+#line 126 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Const); }
+#line 4518 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy668:
 	yych = *++YYCURSOR;
-	if (yych == 'P') goto yy669;
-	if (yych != 'p') goto yy275;
+	if (yych == 'S') goto yy678;
+	if (yych == 's') goto yy678;
+	goto yy275;
 yy669:
 	yych = *++YYCURSOR;
-	if (yych == 'E') goto yy670;
-	if (yych != 'e') goto yy275;
+	if (yych == 'A') goto yy670;
+	if (yych != 'a') goto yy275;
 yy670:
-	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy671;
-		if (yych <= '9') goto yy274;
-		if (yych >= 'A') goto yy274;
-	} else {
-		if (yych <= '_') {
-			if (yych >= '_') goto yy274;
-		} else {
-			if (yych <= '`') goto yy671;
-			if (yych <= 'z') goto yy274;
-		}
-	}
+	yych = *++YYCURSOR;
+	if (yych == 'R') goto yy671;
+	if (yych != 'r') goto yy275;
 yy671:
-#line 198 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(ParseVersion >= MakeVersion(2, 4, 0)? TK_ClearScope : TK_Identifier); }
-#line 4529 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+	yych = *++YYCURSOR;
+	if (yych == 'S') goto yy672;
+	if (yych != 's') goto yy275;
 yy672:
 	yych = *++YYCURSOR;
-	if (yych == 'S') goto yy673;
-	if (yych != 's') goto yy275;
+	if (yych == 'C') goto yy673;
+	if (yych != 'c') goto yy275;
 yy673:
-	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy674;
-		if (yych <= '9') goto yy274;
-		if (yych >= 'A') goto yy274;
-	} else {
-		if (yych <= '_') {
-			if (yych >= '_') goto yy274;
-		} else {
-			if (yych <= '`') goto yy674;
-			if (yych <= 'z') goto yy274;
-		}
-	}
+	yych = *++YYCURSOR;
+	if (yych == 'O') goto yy674;
+	if (yych != 'o') goto yy275;
 yy674:
-#line 159 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Class); }
-#line 4551 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+	yych = *++YYCURSOR;
+	if (yych == 'P') goto yy675;
+	if (yych != 'p') goto yy275;
 yy675:
 	yych = *++YYCURSOR;
-	if (yych == 'R') goto yy676;
-	if (yych != 'r') goto yy275;
+	if (yych == 'E') goto yy676;
+	if (yych != 'e') goto yy275;
 yy676:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Z') {
@@ -4567,98 +4563,96 @@ yy676:
 		}
 	}
 yy677:
-#line 144 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Char); }
-#line 4573 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 198 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(ParseVersion >= MakeVersion(2, 4, 0)? TK_ClearScope : TK_Identifier); }
+#line 4569 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy678:
 	yych = *++YYCURSOR;
-	if (yych == 'E') goto yy686;
-	if (yych == 'e') goto yy686;
-	goto yy275;
+	if (yych == 'S') goto yy679;
+	if (yych != 's') goto yy275;
 yy679:
-	yych = *++YYCURSOR;
-	if (yych == 'R') goto yy680;
-	if (yych != 'r') goto yy275;
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= 'Z') {
+		if (yych <= '/') goto yy680;
+		if (yych <= '9') goto yy274;
+		if (yych >= 'A') goto yy274;
+	} else {
+		if (yych <= '_') {
+			if (yych >= '_') goto yy274;
+		} else {
+			if (yych <= '`') goto yy680;
+			if (yych <= 'z') goto yy274;
+		}
+	}
 yy680:
-	yych = *++YYCURSOR;
-	if (yych == 'A') goto yy681;
-	if (yych != 'a') goto yy275;
+#line 159 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Class); }
+#line 4591 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy681:
 	yych = *++YYCURSOR;
-	if (yych == 'I') goto yy682;
-	if (yych != 'i') goto yy275;
+	if (yych == 'R') goto yy682;
+	if (yych != 'r') goto yy275;
 yy682:
-	yych = *++YYCURSOR;
-	if (yych == 'S') goto yy683;
-	if (yych != 's') goto yy275;
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= 'Z') {
+		if (yych <= '/') goto yy683;
+		if (yych <= '9') goto yy274;
+		if (yych >= 'A') goto yy274;
+	} else {
+		if (yych <= '_') {
+			if (yych >= '_') goto yy274;
+		} else {
+			if (yych <= '`') goto yy683;
+			if (yych <= 'z') goto yy274;
+		}
+	}
 yy683:
-	yych = *++YYCURSOR;
-	if (yych == 'E') goto yy684;
-	if (yych != 'e') goto yy275;
+#line 144 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Char); }
+#line 4613 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy684:
-	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy685;
-		if (yych <= '9') goto yy274;
-		if (yych >= 'A') goto yy274;
-	} else {
-		if (yych <= '_') {
-			if (yych >= '_') goto yy274;
-		} else {
-			if (yych <= '`') goto yy685;
-			if (yych <= 'z') goto yy274;
-		}
-	}
-yy685:
-#line 219 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(StateOptions ? TK_CanRaise : TK_Identifier); }
-#line 4616 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy686:
-	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy687;
-		if (yych <= '9') goto yy274;
-		if (yych >= 'A') goto yy274;
-	} else {
-		if (yych <= '_') {
-			if (yych >= '_') goto yy274;
-		} else {
-			if (yych <= '`') goto yy687;
-			if (yych <= 'z') goto yy274;
-		}
-	}
-yy687:
-#line 125 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Case); }
-#line 4634 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy688:
-	yych = *++YYCURSOR;
-	if (yych == 'O') goto yy703;
-	if (yych == 'o') goto yy703;
-	goto yy275;
-yy689:
-	yych = *++YYCURSOR;
-	if (yych <= 'I') {
-		if (yych == 'E') goto yy694;
-		if (yych <= 'H') goto yy275;
-		goto yy695;
-	} else {
-		if (yych <= 'e') {
-			if (yych <= 'd') goto yy275;
-			goto yy694;
-		} else {
-			if (yych == 'i') goto yy695;
-			goto yy275;
-		}
-	}
-yy690:
-	yych = *++YYCURSOR;
-	if (yych == 'T') goto yy691;
-	if (yych != 't') goto yy275;
-yy691:
 	yych = *++YYCURSOR;
 	if (yych == 'E') goto yy692;
+	if (yych == 'e') goto yy692;
+	goto yy275;
+yy685:
+	yych = *++YYCURSOR;
+	if (yych == 'R') goto yy686;
+	if (yych != 'r') goto yy275;
+yy686:
+	yych = *++YYCURSOR;
+	if (yych == 'A') goto yy687;
+	if (yych != 'a') goto yy275;
+yy687:
+	yych = *++YYCURSOR;
+	if (yych == 'I') goto yy688;
+	if (yych != 'i') goto yy275;
+yy688:
+	yych = *++YYCURSOR;
+	if (yych == 'S') goto yy689;
+	if (yych != 's') goto yy275;
+yy689:
+	yych = *++YYCURSOR;
+	if (yych == 'E') goto yy690;
 	if (yych != 'e') goto yy275;
+yy690:
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= 'Z') {
+		if (yych <= '/') goto yy691;
+		if (yych <= '9') goto yy274;
+		if (yych >= 'A') goto yy274;
+	} else {
+		if (yych <= '_') {
+			if (yych >= '_') goto yy274;
+		} else {
+			if (yych <= '`') goto yy691;
+			if (yych <= 'z') goto yy274;
+		}
+	}
+yy691:
+#line 220 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(StateOptions ? TK_CanRaise : TK_Identifier); }
+#line 4656 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy692:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Z') {
@@ -4674,26 +4668,37 @@ yy692:
 		}
 	}
 yy693:
-#line 145 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Byte); }
-#line 4680 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 125 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Case); }
+#line 4674 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy694:
 	yych = *++YYCURSOR;
-	if (yych == 'A') goto yy700;
-	if (yych == 'a') goto yy700;
+	if (yych == 'O') goto yy709;
+	if (yych == 'o') goto yy709;
 	goto yy275;
 yy695:
 	yych = *++YYCURSOR;
-	if (yych == 'G') goto yy696;
-	if (yych != 'g') goto yy275;
+	if (yych <= 'I') {
+		if (yych == 'E') goto yy700;
+		if (yych <= 'H') goto yy275;
+		goto yy701;
+	} else {
+		if (yych <= 'e') {
+			if (yych <= 'd') goto yy275;
+			goto yy700;
+		} else {
+			if (yych == 'i') goto yy701;
+			goto yy275;
+		}
+	}
 yy696:
 	yych = *++YYCURSOR;
-	if (yych == 'H') goto yy697;
-	if (yych != 'h') goto yy275;
+	if (yych == 'T') goto yy697;
+	if (yych != 't') goto yy275;
 yy697:
 	yych = *++YYCURSOR;
-	if (yych == 'T') goto yy698;
-	if (yych != 't') goto yy275;
+	if (yych == 'E') goto yy698;
+	if (yych != 'e') goto yy275;
 yy698:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Z') {
@@ -4709,35 +4714,26 @@ yy698:
 		}
 	}
 yy699:
-#line 215 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(StateOptions ? TK_Bright : TK_Identifier); }
-#line 4715 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 145 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Byte); }
+#line 4720 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy700:
 	yych = *++YYCURSOR;
-	if (yych == 'K') goto yy701;
-	if (yych != 'k') goto yy275;
+	if (yych == 'A') goto yy706;
+	if (yych == 'a') goto yy706;
+	goto yy275;
 yy701:
-	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= 'Z') {
-		if (yych <= '/') goto yy702;
-		if (yych <= '9') goto yy274;
-		if (yych >= 'A') goto yy274;
-	} else {
-		if (yych <= '_') {
-			if (yych >= '_') goto yy274;
-		} else {
-			if (yych <= '`') goto yy702;
-			if (yych <= 'z') goto yy274;
-		}
-	}
+	yych = *++YYCURSOR;
+	if (yych == 'G') goto yy702;
+	if (yych != 'g') goto yy275;
 yy702:
-#line 124 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Break); }
-#line 4737 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+	yych = *++YYCURSOR;
+	if (yych == 'H') goto yy703;
+	if (yych != 'h') goto yy275;
 yy703:
 	yych = *++YYCURSOR;
-	if (yych == 'L') goto yy704;
-	if (yych != 'l') goto yy275;
+	if (yych == 'T') goto yy704;
+	if (yych != 't') goto yy275;
 yy704:
 	++YYCURSOR;
 	if ((yych = *YYCURSOR) <= 'Z') {
@@ -4753,19 +4749,63 @@ yy704:
 		}
 	}
 yy705:
-#line 141 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Bool); }
-#line 4759 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 216 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(StateOptions ? TK_Bright : TK_Identifier); }
+#line 4755 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy706:
 	yych = *++YYCURSOR;
-	if (yych == 'N') goto yy724;
-	if (yych == 'n') goto yy724;
-	goto yy173;
+	if (yych == 'K') goto yy707;
+	if (yych != 'k') goto yy275;
 yy707:
-	yych = *++YYCURSOR;
-	if (yych == 'n') goto yy717;
-	goto yy173;
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= 'Z') {
+		if (yych <= '/') goto yy708;
+		if (yych <= '9') goto yy274;
+		if (yych >= 'A') goto yy274;
+	} else {
+		if (yych <= '_') {
+			if (yych >= '_') goto yy274;
+		} else {
+			if (yych <= '`') goto yy708;
+			if (yych <= 'z') goto yy274;
+		}
+	}
 yy708:
+#line 124 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Break); }
+#line 4777 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy709:
+	yych = *++YYCURSOR;
+	if (yych == 'L') goto yy710;
+	if (yych != 'l') goto yy275;
+yy710:
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= 'Z') {
+		if (yych <= '/') goto yy711;
+		if (yych <= '9') goto yy274;
+		if (yych >= 'A') goto yy274;
+	} else {
+		if (yych <= '_') {
+			if (yych >= '_') goto yy274;
+		} else {
+			if (yych <= '`') goto yy711;
+			if (yych <= 'z') goto yy274;
+		}
+	}
+yy711:
+#line 141 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Bool); }
+#line 4799 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy712:
+	yych = *++YYCURSOR;
+	if (yych == 'N') goto yy730;
+	if (yych == 'n') goto yy730;
+	goto yy173;
+yy713:
+	yych = *++YYCURSOR;
+	if (yych == 'n') goto yy723;
+	goto yy173;
+yy714:
 	yych = *++YYCURSOR;
 	if (yych != 'e') goto yy173;
 	yych = *++YYCURSOR;
@@ -4776,16 +4816,16 @@ yy708:
 	if (yych != 'o') goto yy173;
 	yych = *++YYCURSOR;
 	if (yych != 'n') goto yy173;
-yy713:
+yy719:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
-	if (yych != '\n') goto yy713;
+	if (yych != '\n') goto yy719;
 	++YYCURSOR;
 #line 121 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto newline; }
-#line 4788 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy717:
+#line 4828 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy723:
 	yych = *++YYCURSOR;
 	if (yych != 'd') goto yy173;
 	yych = *++YYCURSOR;
@@ -4799,62 +4839,62 @@ yy717:
 	yych = *++YYCURSOR;
 	if (yych != 'o') goto yy173;
 	yych = *++YYCURSOR;
-	if (yych == 'n') goto yy713;
+	if (yych == 'n') goto yy719;
 	goto yy173;
-yy724:
+yy730:
 	yych = *++YYCURSOR;
-	if (yych == 'C') goto yy725;
+	if (yych == 'C') goto yy731;
 	if (yych != 'c') goto yy173;
-yy725:
-	yych = *++YYCURSOR;
-	if (yych == 'L') goto yy726;
-	if (yych != 'l') goto yy173;
-yy726:
-	yych = *++YYCURSOR;
-	if (yych == 'U') goto yy727;
-	if (yych != 'u') goto yy173;
-yy727:
-	yych = *++YYCURSOR;
-	if (yych == 'D') goto yy728;
-	if (yych != 'd') goto yy173;
-yy728:
-	yych = *++YYCURSOR;
-	if (yych == 'E') goto yy729;
-	if (yych != 'e') goto yy173;
-yy729:
-	++YYCURSOR;
-#line 224 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_Include); }
-#line 4829 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy731:
-	++YYCURSOR;
-#line 248 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ RET(TK_DivEq); }
-#line 4834 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+	yych = *++YYCURSOR;
+	if (yych == 'L') goto yy732;
+	if (yych != 'l') goto yy173;
+yy732:
+	yych = *++YYCURSOR;
+	if (yych == 'U') goto yy733;
+	if (yych != 'u') goto yy173;
 yy733:
+	yych = *++YYCURSOR;
+	if (yych == 'D') goto yy734;
+	if (yych != 'd') goto yy173;
+yy734:
+	yych = *++YYCURSOR;
+	if (yych == 'E') goto yy735;
+	if (yych != 'e') goto yy173;
+yy735:
+	++YYCURSOR;
+#line 225 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_Include); }
+#line 4869 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy737:
+	++YYCURSOR;
+#line 249 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ RET(TK_DivEq); }
+#line 4874 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy739:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
-	if (yych == '\n') goto yy737;
-	goto yy733;
-yy735:
+	if (yych == '\n') goto yy743;
+	goto yy739;
+yy741:
 	++YYCURSOR;
 #line 118 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto comment; }
-#line 4845 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy737:
+#line 4885 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy743:
 	++YYCURSOR;
 #line 119 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto newline; }
-#line 4850 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 4890 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 }
-#line 303 ".\jni\Doom\gzdoom1\src\sc_man_scanner.re"
+#line 304 ".\jni\Doom\gzdoom1\src\sc_man_scanner.re"
 
 	}
 	if (!CMode)	// The classic Hexen scanner.
 	{
 	
-#line 4858 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 4898 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 {
 	YYCTYPE yych;
 	unsigned int yyaccept = 0;
@@ -4862,321 +4902,321 @@ yy737:
 	yych = *YYCURSOR;
 	if (yych <= '.') {
 		if (yych <= ' ') {
-			if (yych == '\n') goto yy748;
-			goto yy746;
+			if (yych == '\n') goto yy754;
+			goto yy752;
 		} else {
-			if (yych <= '!') goto yy754;
-			if (yych <= '"') goto yy750;
-			if (yych <= '#') goto yy745;
-			goto yy754;
+			if (yych <= '!') goto yy760;
+			if (yych <= '"') goto yy756;
+			if (yych <= '#') goto yy751;
+			goto yy760;
 		}
 	} else {
 		if (yych <= '<') {
-			if (yych <= '/') goto yy742;
-			if (yych == ';') goto yy744;
-			goto yy754;
+			if (yych <= '/') goto yy748;
+			if (yych == ';') goto yy750;
+			goto yy760;
 		} else {
-			if (yych <= '=') goto yy752;
-			if (yych <= 'z') goto yy754;
-			if (yych <= '}') goto yy752;
-			goto yy754;
+			if (yych <= '=') goto yy758;
+			if (yych <= 'z') goto yy760;
+			if (yych <= '}') goto yy758;
+			goto yy760;
 		}
 	}
-yy741:
-#line 320 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+yy747:
+#line 321 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto normal_token; }
-#line 4889 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy742:
+#line 4929 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy748:
 	yyaccept = 0;
 	yych = *(YYMARKER = ++YYCURSOR);
 	if (yych <= '/') {
 		if (yych <= '"') {
-			if (yych == '!') goto yy759;
+			if (yych == '!') goto yy765;
 		} else {
-			if (yych == '*') goto yy789;
-			if (yych <= '.') goto yy759;
-			goto yy785;
+			if (yych == '*') goto yy795;
+			if (yych <= '.') goto yy765;
+			goto yy791;
 		}
 	} else {
 		if (yych <= '<') {
-			if (yych != ';') goto yy759;
+			if (yych != ';') goto yy765;
 		} else {
-			if (yych <= '=') goto yy743;
-			if (yych <= 'z') goto yy759;
-			if (yych >= '~') goto yy759;
+			if (yych <= '=') goto yy749;
+			if (yych <= 'z') goto yy765;
+			if (yych >= '~') goto yy765;
 		}
 	}
-yy743:
-#line 322 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+yy749:
+#line 323 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto normal_token; }
-#line 4913 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy744:
+#line 4953 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy750:
 	yyaccept = 0;
 	yych = *(YYMARKER = ++YYCURSOR);
-	goto yy786;
-yy745:
+	goto yy792;
+yy751:
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych == 'e') goto yy763;
-	if (yych == 'r') goto yy764;
-	goto yy758;
-yy746:
-	++YYCURSOR;
-	yych = *YYCURSOR;
-	goto yy762;
-yy747:
-#line 313 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ goto std1; }
-#line 4931 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy748:
-	++YYCURSOR;
-#line 314 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ goto newline; }
-#line 4936 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy750:
-	++YYCURSOR;
-#line 315 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ goto string; }
-#line 4941 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+	if (yych == 'e') goto yy769;
+	if (yych == 'r') goto yy770;
+	goto yy764;
 yy752:
 	++YYCURSOR;
-#line 317 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ goto normal_token; }
-#line 4946 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+	yych = *YYCURSOR;
+	goto yy768;
+yy753:
+#line 314 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ goto std1; }
+#line 4971 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy754:
+	++YYCURSOR;
+#line 315 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ goto newline; }
+#line 4976 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy756:
+	++YYCURSOR;
+#line 316 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ goto string; }
+#line 4981 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy758:
+	++YYCURSOR;
+#line 318 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ goto normal_token; }
+#line 4986 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy760:
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
-	goto yy758;
-yy755:
-	++YYCURSOR;
-	if (YYLIMIT <= YYCURSOR) YYFILL(1);
-	yych = *YYCURSOR;
-	if (yych <= '/') {
-		if (yych <= '"') {
-			if (yych == '!') goto yy759;
-		} else {
-			if (yych == '*') goto yy756;
-			if (yych <= '.') goto yy759;
-		}
-	} else {
-		if (yych <= '<') {
-			if (yych != ';') goto yy759;
-		} else {
-			if (yych <= '=') goto yy756;
-			if (yych <= 'z') goto yy759;
-			if (yych >= '~') goto yy759;
-		}
-	}
-yy756:
-	YYCURSOR = YYMARKER;
-	if (yyaccept <= 0) {
-		goto yy743;
-	} else {
-		goto yy741;
-	}
-yy757:
-	yyaccept = 1;
-	YYMARKER = ++YYCURSOR;
-	if (YYLIMIT <= YYCURSOR) YYFILL(1);
-	yych = *YYCURSOR;
-yy758:
-	if (yych <= ':') {
-		if (yych <= '"') {
-			if (yych == '!') goto yy757;
-			goto yy741;
-		} else {
-			if (yych == '/') goto yy755;
-			goto yy757;
-		}
-	} else {
-		if (yych <= '=') {
-			if (yych == '<') goto yy757;
-			goto yy741;
-		} else {
-			if (yych <= 'z') goto yy757;
-			if (yych <= '}') goto yy741;
-			goto yy757;
-		}
-	}
-yy759:
-	yyaccept = 1;
-	YYMARKER = ++YYCURSOR;
-	if (YYLIMIT <= YYCURSOR) YYFILL(1);
-	yych = *YYCURSOR;
-	if (yych <= ':') {
-		if (yych <= '"') {
-			if (yych == '!') goto yy759;
-			goto yy741;
-		} else {
-			if (yych == '/') goto yy755;
-			goto yy759;
-		}
-	} else {
-		if (yych <= '=') {
-			if (yych == '<') goto yy759;
-			goto yy741;
-		} else {
-			if (yych <= 'z') goto yy759;
-			if (yych <= '}') goto yy741;
-			goto yy759;
-		}
-	}
+	goto yy764;
 yy761:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
+	if (yych <= '/') {
+		if (yych <= '"') {
+			if (yych == '!') goto yy765;
+		} else {
+			if (yych == '*') goto yy762;
+			if (yych <= '.') goto yy765;
+		}
+	} else {
+		if (yych <= '<') {
+			if (yych != ';') goto yy765;
+		} else {
+			if (yych <= '=') goto yy762;
+			if (yych <= 'z') goto yy765;
+			if (yych >= '~') goto yy765;
+		}
+	}
 yy762:
-	if (yych == '\n') goto yy747;
-	if (yych <= ' ') goto yy761;
-	goto yy747;
+	YYCURSOR = YYMARKER;
+	if (yyaccept <= 0) {
+		goto yy749;
+	} else {
+		goto yy747;
+	}
 yy763:
 	yyaccept = 1;
-	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych == 'n') goto yy778;
-	goto yy758;
+	YYMARKER = ++YYCURSOR;
+	if (YYLIMIT <= YYCURSOR) YYFILL(1);
+	yych = *YYCURSOR;
 yy764:
+	if (yych <= ':') {
+		if (yych <= '"') {
+			if (yych == '!') goto yy763;
+			goto yy747;
+		} else {
+			if (yych == '/') goto yy761;
+			goto yy763;
+		}
+	} else {
+		if (yych <= '=') {
+			if (yych == '<') goto yy763;
+			goto yy747;
+		} else {
+			if (yych <= 'z') goto yy763;
+			if (yych <= '}') goto yy747;
+			goto yy763;
+		}
+	}
+yy765:
 	yyaccept = 1;
-	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych != 'e') goto yy758;
-	yyaccept = 1;
-	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych != 'g') goto yy758;
-	yyaccept = 1;
-	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych != 'i') goto yy758;
-	yyaccept = 1;
-	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych != 'o') goto yy758;
-	yyaccept = 1;
-	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych != 'n') goto yy758;
+	YYMARKER = ++YYCURSOR;
+	if (YYLIMIT <= YYCURSOR) YYFILL(1);
+	yych = *YYCURSOR;
+	if (yych <= ':') {
+		if (yych <= '"') {
+			if (yych == '!') goto yy765;
+			goto yy747;
+		} else {
+			if (yych == '/') goto yy761;
+			goto yy765;
+		}
+	} else {
+		if (yych <= '=') {
+			if (yych == '<') goto yy765;
+			goto yy747;
+		} else {
+			if (yych <= 'z') goto yy765;
+			if (yych <= '}') goto yy747;
+			goto yy765;
+		}
+	}
+yy767:
+	++YYCURSOR;
+	if (YYLIMIT <= YYCURSOR) YYFILL(1);
+	yych = *YYCURSOR;
+yy768:
+	if (yych == '\n') goto yy753;
+	if (yych <= ' ') goto yy767;
+	goto yy753;
 yy769:
+	yyaccept = 1;
+	yych = *(YYMARKER = ++YYCURSOR);
+	if (yych == 'n') goto yy784;
+	goto yy764;
+yy770:
+	yyaccept = 1;
+	yych = *(YYMARKER = ++YYCURSOR);
+	if (yych != 'e') goto yy764;
+	yyaccept = 1;
+	yych = *(YYMARKER = ++YYCURSOR);
+	if (yych != 'g') goto yy764;
+	yyaccept = 1;
+	yych = *(YYMARKER = ++YYCURSOR);
+	if (yych != 'i') goto yy764;
+	yyaccept = 1;
+	yych = *(YYMARKER = ++YYCURSOR);
+	if (yych != 'o') goto yy764;
+	yyaccept = 1;
+	yych = *(YYMARKER = ++YYCURSOR);
+	if (yych != 'n') goto yy764;
+yy775:
 	yyaccept = 1;
 	YYMARKER = ++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	if (yych <= '/') {
 		if (yych <= ' ') {
-			if (yych == '\n') goto yy774;
-			goto yy772;
+			if (yych == '\n') goto yy780;
+			goto yy778;
 		} else {
-			if (yych == '"') goto yy772;
-			if (yych <= '.') goto yy769;
+			if (yych == '"') goto yy778;
+			if (yych <= '.') goto yy775;
 		}
 	} else {
 		if (yych <= '<') {
-			if (yych == ';') goto yy772;
-			goto yy769;
+			if (yych == ';') goto yy778;
+			goto yy775;
 		} else {
-			if (yych <= '=') goto yy772;
-			if (yych <= 'z') goto yy769;
-			if (yych <= '}') goto yy772;
-			goto yy769;
+			if (yych <= '=') goto yy778;
+			if (yych <= 'z') goto yy775;
+			if (yych <= '}') goto yy778;
+			goto yy775;
 		}
 	}
-yy771:
+yy777:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	if (yych <= '.') {
 		if (yych <= '!') {
-			if (yych == '\n') goto yy774;
-			if (yych >= '!') goto yy776;
+			if (yych == '\n') goto yy780;
+			if (yych >= '!') goto yy782;
 		} else {
-			if (yych <= '"') goto yy772;
-			if (yych != '*') goto yy776;
+			if (yych <= '"') goto yy778;
+			if (yych != '*') goto yy782;
 		}
 	} else {
 		if (yych <= '<') {
-			if (yych <= '/') goto yy772;
-			if (yych != ';') goto yy776;
+			if (yych <= '/') goto yy778;
+			if (yych != ';') goto yy782;
 		} else {
-			if (yych <= '=') goto yy772;
-			if (yych <= 'z') goto yy776;
-			if (yych >= '~') goto yy776;
+			if (yych <= '=') goto yy778;
+			if (yych <= 'z') goto yy782;
+			if (yych >= '~') goto yy782;
 		}
 	}
-yy772:
+yy778:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
-	if (yych != '\n') goto yy772;
-yy774:
+	if (yych != '\n') goto yy778;
+yy780:
 	++YYCURSOR;
-#line 311 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 312 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto newline; }
-#line 5109 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy776:
+#line 5149 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy782:
 	yyaccept = 1;
 	YYMARKER = ++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	if (yych <= '/') {
 		if (yych <= ' ') {
-			if (yych == '\n') goto yy774;
-			goto yy772;
+			if (yych == '\n') goto yy780;
+			goto yy778;
 		} else {
-			if (yych == '"') goto yy772;
-			if (yych <= '.') goto yy776;
-			goto yy771;
+			if (yych == '"') goto yy778;
+			if (yych <= '.') goto yy782;
+			goto yy777;
 		}
 	} else {
 		if (yych <= '<') {
-			if (yych == ';') goto yy772;
-			goto yy776;
+			if (yych == ';') goto yy778;
+			goto yy782;
 		} else {
-			if (yych <= '=') goto yy772;
-			if (yych <= 'z') goto yy776;
-			if (yych <= '}') goto yy772;
-			goto yy776;
+			if (yych <= '=') goto yy778;
+			if (yych <= 'z') goto yy782;
+			if (yych <= '}') goto yy778;
+			goto yy782;
 		}
 	}
-yy778:
+yy784:
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych != 'd') goto yy758;
+	if (yych != 'd') goto yy764;
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych != 'r') goto yy758;
+	if (yych != 'r') goto yy764;
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych != 'e') goto yy758;
+	if (yych != 'e') goto yy764;
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych != 'g') goto yy758;
+	if (yych != 'g') goto yy764;
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych != 'i') goto yy758;
+	if (yych != 'i') goto yy764;
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych != 'o') goto yy758;
+	if (yych != 'o') goto yy764;
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych == 'n') goto yy769;
-	goto yy758;
-yy785:
+	if (yych == 'n') goto yy775;
+	goto yy764;
+yy791:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
-yy786:
-	if (yych != '\n') goto yy785;
+yy792:
+	if (yych != '\n') goto yy791;
+	++YYCURSOR;
+#line 310 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ goto newline; }
+#line 5207 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy795:
 	++YYCURSOR;
 #line 309 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ goto newline; }
-#line 5167 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy789:
-	++YYCURSOR;
-#line 308 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto comment; }
-#line 5172 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 5212 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 }
-#line 323 ".\jni\Doom\gzdoom1\src\sc_man_scanner.re"
+#line 324 ".\jni\Doom\gzdoom1\src\sc_man_scanner.re"
 
 	}
 	else		// A modified Hexen scanner for DECORATE.
 	{
 	
-#line 5180 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 5220 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 {
 	YYCTYPE yych;
 	unsigned int yyaccept = 0;
@@ -5185,514 +5225,514 @@ yy789:
 	if (yych <= '9') {
 		if (yych <= '%') {
 			if (yych <= ' ') {
-				if (yych == '\n') goto yy798;
-				goto yy796;
+				if (yych == '\n') goto yy804;
+				goto yy802;
 			} else {
-				if (yych <= '!') goto yy813;
-				if (yych <= '"') goto yy800;
-				if (yych <= '#') goto yy795;
-				goto yy813;
+				if (yych <= '!') goto yy819;
+				if (yych <= '"') goto yy806;
+				if (yych <= '#') goto yy801;
+				goto yy819;
 			}
 		} else {
 			if (yych <= ',') {
-				if (yych <= '&') goto yy808;
-				if (yych <= '\'') goto yy814;
-				goto yy813;
+				if (yych <= '&') goto yy814;
+				if (yych <= '\'') goto yy820;
+				goto yy819;
 			} else {
-				if (yych <= '-') goto yy802;
-				if (yych <= '.') goto yy806;
-				if (yych >= '0') goto yy804;
+				if (yych <= '-') goto yy808;
+				if (yych <= '.') goto yy812;
+				if (yych >= '0') goto yy810;
 			}
 		}
 	} else {
 		if (yych <= 'Z') {
 			if (yych <= '<') {
-				if (yych <= ':') goto yy807;
-				if (yych <= ';') goto yy813;
-				goto yy811;
+				if (yych <= ':') goto yy813;
+				if (yych <= ';') goto yy819;
+				goto yy817;
 			} else {
-				if (yych <= '=') goto yy809;
-				if (yych <= '>') goto yy812;
-				if (yych <= '@') goto yy813;
-				goto yy814;
+				if (yych <= '=') goto yy815;
+				if (yych <= '>') goto yy818;
+				if (yych <= '@') goto yy819;
+				goto yy820;
 			}
 		} else {
 			if (yych <= 'z') {
-				if (yych == '_') goto yy814;
-				if (yych <= '`') goto yy813;
-				goto yy814;
+				if (yych == '_') goto yy820;
+				if (yych <= '`') goto yy819;
+				goto yy820;
 			} else {
-				if (yych == '|') goto yy810;
-				if (yych <= '~') goto yy813;
-				goto yy814;
+				if (yych == '|') goto yy816;
+				if (yych <= '~') goto yy819;
+				goto yy820;
 			}
 		}
 	}
 	yyaccept = 0;
 	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych == '*') goto yy880;
-	if (yych == '/') goto yy878;
-yy794:
-#line 346 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ goto normal_token; }
-#line 5239 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy795:
-	yyaccept = 0;
-	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych == 'e') goto yy861;
-	if (yych == 'r') goto yy862;
-	goto yy794;
-yy796:
-	++YYCURSOR;
-	yych = *YYCURSOR;
-	goto yy860;
-yy797:
-#line 333 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ goto std1; }
-#line 5253 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy798:
-	++YYCURSOR;
-#line 334 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ goto newline; }
-#line 5258 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+	if (yych == '*') goto yy886;
+	if (yych == '/') goto yy884;
 yy800:
-	++YYCURSOR;
-#line 335 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ goto string; }
-#line 5263 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy802:
-	++YYCURSOR;
-#line 337 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ goto negative_check; }
-#line 5268 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy804:
-	++YYCURSOR;
-	if ((yych = *YYCURSOR) <= '9') {
-		if (yych == '.') goto yy842;
-		if (yych <= '/') goto yy816;
-		goto yy839;
-	} else {
-		if (yych <= 'E') {
-			if (yych <= 'D') goto yy816;
-			goto yy841;
-		} else {
-			if (yych == 'e') goto yy841;
-			goto yy816;
-		}
-	}
-yy805:
 #line 347 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto normal_token; }
-#line 5287 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 5279 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy801:
+	yyaccept = 0;
+	yych = *(YYMARKER = ++YYCURSOR);
+	if (yych == 'e') goto yy867;
+	if (yych == 'r') goto yy868;
+	goto yy800;
+yy802:
+	++YYCURSOR;
+	yych = *YYCURSOR;
+	goto yy866;
+yy803:
+#line 334 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ goto std1; }
+#line 5293 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy804:
+	++YYCURSOR;
+#line 335 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ goto newline; }
+#line 5298 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy806:
-	yych = *++YYCURSOR;
-	if (yych <= '/') goto yy794;
-	if (yych <= '9') goto yy829;
-	goto yy794;
-yy807:
-	yych = *++YYCURSOR;
-	if (yych == ':') goto yy827;
-	goto yy794;
+	++YYCURSOR;
+#line 336 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ goto string; }
+#line 5303 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy808:
-	yych = *++YYCURSOR;
-	if (yych == '&') goto yy825;
-	goto yy794;
-yy809:
-	yych = *++YYCURSOR;
-	if (yych == '=') goto yy823;
-	goto yy794;
+	++YYCURSOR;
+#line 338 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ goto negative_check; }
+#line 5308 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy810:
-	yych = *++YYCURSOR;
-	if (yych == '|') goto yy821;
-	goto yy794;
+	++YYCURSOR;
+	if ((yych = *YYCURSOR) <= '9') {
+		if (yych == '.') goto yy848;
+		if (yych <= '/') goto yy822;
+		goto yy845;
+	} else {
+		if (yych <= 'E') {
+			if (yych <= 'D') goto yy822;
+			goto yy847;
+		} else {
+			if (yych == 'e') goto yy847;
+			goto yy822;
+		}
+	}
 yy811:
-	yych = *++YYCURSOR;
-	if (yych == '<') goto yy819;
-	goto yy794;
+#line 348 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ goto normal_token; }
+#line 5327 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy812:
 	yych = *++YYCURSOR;
-	if (yych == '>') goto yy817;
-	goto yy794;
+	if (yych <= '/') goto yy800;
+	if (yych <= '9') goto yy835;
+	goto yy800;
 yy813:
 	yych = *++YYCURSOR;
-	goto yy794;
+	if (yych == ':') goto yy833;
+	goto yy800;
 yy814:
 	yych = *++YYCURSOR;
-	goto yy816;
+	if (yych == '&') goto yy831;
+	goto yy800;
 yy815:
+	yych = *++YYCURSOR;
+	if (yych == '=') goto yy829;
+	goto yy800;
+yy816:
+	yych = *++YYCURSOR;
+	if (yych == '|') goto yy827;
+	goto yy800;
+yy817:
+	yych = *++YYCURSOR;
+	if (yych == '<') goto yy825;
+	goto yy800;
+yy818:
+	yych = *++YYCURSOR;
+	if (yych == '>') goto yy823;
+	goto yy800;
+yy819:
+	yych = *++YYCURSOR;
+	goto yy800;
+yy820:
+	yych = *++YYCURSOR;
+	goto yy822;
+yy821:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
-yy816:
+yy822:
 	if (yych <= 'Z') {
 		if (yych <= '/') {
-			if (yych == '\'') goto yy815;
-			goto yy805;
+			if (yych == '\'') goto yy821;
+			goto yy811;
 		} else {
-			if (yych <= '9') goto yy815;
-			if (yych <= '@') goto yy805;
-			goto yy815;
+			if (yych <= '9') goto yy821;
+			if (yych <= '@') goto yy811;
+			goto yy821;
 		}
 	} else {
 		if (yych <= '`') {
-			if (yych == '_') goto yy815;
-			goto yy805;
+			if (yych == '_') goto yy821;
+			goto yy811;
 		} else {
-			if (yych <= 'z') goto yy815;
-			if (yych <= '~') goto yy805;
-			goto yy815;
+			if (yych <= 'z') goto yy821;
+			if (yych <= '~') goto yy811;
+			goto yy821;
 		}
 	}
-yy817:
+yy823:
+	++YYCURSOR;
+#line 346 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ goto normal_token; }
+#line 5391 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy825:
 	++YYCURSOR;
 #line 345 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto normal_token; }
-#line 5351 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy819:
+#line 5396 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy827:
 	++YYCURSOR;
 #line 344 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto normal_token; }
-#line 5356 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy821:
+#line 5401 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy829:
 	++YYCURSOR;
 #line 343 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto normal_token; }
-#line 5361 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy823:
+#line 5406 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy831:
 	++YYCURSOR;
 #line 342 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto normal_token; }
-#line 5366 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy825:
+#line 5411 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy833:
 	++YYCURSOR;
 #line 341 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto normal_token; }
-#line 5371 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy827:
-	++YYCURSOR;
-#line 340 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ goto normal_token; }
-#line 5376 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy829:
+#line 5416 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy835:
 	yyaccept = 1;
 	YYMARKER = ++YYCURSOR;
 	if ((YYLIMIT - YYCURSOR) < 3) YYFILL(3);
 	yych = *YYCURSOR;
 	if (yych <= 'E') {
-		if (yych <= '/') goto yy831;
-		if (yych <= '9') goto yy829;
-		if (yych >= 'E') goto yy832;
+		if (yych <= '/') goto yy837;
+		if (yych <= '9') goto yy835;
+		if (yych >= 'E') goto yy838;
 	} else {
 		if (yych <= 'd') {
-			if (yych <= 'F') goto yy834;
+			if (yych <= 'F') goto yy840;
 		} else {
-			if (yych <= 'e') goto yy832;
-			if (yych <= 'f') goto yy834;
+			if (yych <= 'e') goto yy838;
+			if (yych <= 'f') goto yy840;
 		}
 	}
-yy831:
-#line 338 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+yy837:
+#line 339 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto normal_token; }
-#line 5397 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy832:
+#line 5437 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy838:
 	yych = *++YYCURSOR;
 	if (yych <= ',') {
-		if (yych == '+') goto yy836;
+		if (yych == '+') goto yy842;
 	} else {
-		if (yych <= '-') goto yy836;
-		if (yych <= '/') goto yy833;
-		if (yych <= '9') goto yy837;
+		if (yych <= '-') goto yy842;
+		if (yych <= '/') goto yy839;
+		if (yych <= '9') goto yy843;
 	}
-yy833:
+yy839:
 	YYCURSOR = YYMARKER;
 	if (yyaccept <= 1) {
 		if (yyaccept <= 0) {
-			goto yy794;
+			goto yy800;
 		} else {
-			goto yy831;
+			goto yy837;
 		}
 	} else {
-		goto yy805;
+		goto yy811;
 	}
-yy834:
+yy840:
 	++YYCURSOR;
-yy835:
-#line 339 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+yy841:
+#line 340 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto normal_token; }
-#line 5423 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy836:
+#line 5463 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy842:
 	yych = *++YYCURSOR;
-	if (yych <= '/') goto yy833;
-	if (yych >= ':') goto yy833;
-yy837:
+	if (yych <= '/') goto yy839;
+	if (yych >= ':') goto yy839;
+yy843:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	if (yych <= 'E') {
-		if (yych <= '/') goto yy835;
-		if (yych <= '9') goto yy837;
-		goto yy835;
+		if (yych <= '/') goto yy841;
+		if (yych <= '9') goto yy843;
+		goto yy841;
 	} else {
-		if (yych <= 'F') goto yy834;
-		if (yych == 'f') goto yy834;
-		goto yy835;
+		if (yych <= 'F') goto yy840;
+		if (yych == 'f') goto yy840;
+		goto yy841;
 	}
-yy839:
+yy845:
 	++YYCURSOR;
 	if ((YYLIMIT - YYCURSOR) < 4) YYFILL(4);
 	yych = *YYCURSOR;
 	if (yych <= 'E') {
 		if (yych <= '.') {
-			if (yych == '\'') goto yy815;
-			if (yych <= '-') goto yy805;
-			goto yy842;
+			if (yych == '\'') goto yy821;
+			if (yych <= '-') goto yy811;
+			goto yy848;
 		} else {
 			if (yych <= '9') {
-				if (yych <= '/') goto yy805;
-				goto yy839;
+				if (yych <= '/') goto yy811;
+				goto yy845;
 			} else {
-				if (yych <= '@') goto yy805;
-				if (yych <= 'D') goto yy815;
+				if (yych <= '@') goto yy811;
+				if (yych <= 'D') goto yy821;
 			}
 		}
 	} else {
 		if (yych <= '`') {
-			if (yych <= 'Z') goto yy815;
-			if (yych == '_') goto yy815;
-			goto yy805;
+			if (yych <= 'Z') goto yy821;
+			if (yych == '_') goto yy821;
+			goto yy811;
 		} else {
 			if (yych <= 'e') {
-				if (yych <= 'd') goto yy815;
+				if (yych <= 'd') goto yy821;
 			} else {
-				if (yych <= 'z') goto yy815;
-				if (yych <= '~') goto yy805;
-				goto yy815;
+				if (yych <= 'z') goto yy821;
+				if (yych <= '~') goto yy811;
+				goto yy821;
 			}
 		}
 	}
-yy841:
+yy847:
 	yyaccept = 2;
 	yych = *(YYMARKER = ++YYCURSOR);
 	if (yych <= ',') {
-		if (yych == '+') goto yy853;
-		goto yy816;
+		if (yych == '+') goto yy859;
+		goto yy822;
 	} else {
-		if (yych <= '-') goto yy853;
-		if (yych <= '/') goto yy816;
-		if (yych <= '9') goto yy854;
-		goto yy816;
+		if (yych <= '-') goto yy859;
+		if (yych <= '/') goto yy822;
+		if (yych <= '9') goto yy860;
+		goto yy822;
 	}
-yy842:
+yy848:
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
-	if (yych == 'E') goto yy845;
-	if (yych == 'e') goto yy845;
-	goto yy844;
-yy843:
+	if (yych == 'E') goto yy851;
+	if (yych == 'e') goto yy851;
+	goto yy850;
+yy849:
 	yyaccept = 1;
 	YYMARKER = ++YYCURSOR;
 	if ((YYLIMIT - YYCURSOR) < 3) YYFILL(3);
 	yych = *YYCURSOR;
-yy844:
+yy850:
 	if (yych <= 'E') {
-		if (yych <= '/') goto yy831;
-		if (yych <= '9') goto yy843;
-		if (yych <= 'D') goto yy831;
-		goto yy849;
+		if (yych <= '/') goto yy837;
+		if (yych <= '9') goto yy849;
+		if (yych <= 'D') goto yy837;
+		goto yy855;
 	} else {
 		if (yych <= 'd') {
-			if (yych <= 'F') goto yy834;
-			goto yy831;
+			if (yych <= 'F') goto yy840;
+			goto yy837;
 		} else {
-			if (yych <= 'e') goto yy849;
-			if (yych <= 'f') goto yy834;
-			goto yy831;
+			if (yych <= 'e') goto yy855;
+			if (yych <= 'f') goto yy840;
+			goto yy837;
 		}
 	}
-yy845:
-	yych = *++YYCURSOR;
-	if (yych <= ',') {
-		if (yych != '+') goto yy833;
-	} else {
-		if (yych <= '-') goto yy846;
-		if (yych <= '/') goto yy833;
-		if (yych <= '9') goto yy847;
-		goto yy833;
-	}
-yy846:
-	yych = *++YYCURSOR;
-	if (yych <= '/') goto yy833;
-	if (yych >= ':') goto yy833;
-yy847:
-	++YYCURSOR;
-	if (YYLIMIT <= YYCURSOR) YYFILL(1);
-	yych = *YYCURSOR;
-	if (yych <= 'E') {
-		if (yych <= '/') goto yy835;
-		if (yych <= '9') goto yy847;
-		goto yy835;
-	} else {
-		if (yych <= 'F') goto yy834;
-		if (yych == 'f') goto yy834;
-		goto yy835;
-	}
-yy849:
-	yych = *++YYCURSOR;
-	if (yych <= ',') {
-		if (yych != '+') goto yy833;
-	} else {
-		if (yych <= '-') goto yy850;
-		if (yych <= '/') goto yy833;
-		if (yych <= '9') goto yy851;
-		goto yy833;
-	}
-yy850:
-	yych = *++YYCURSOR;
-	if (yych <= '/') goto yy833;
-	if (yych >= ':') goto yy833;
 yy851:
+	yych = *++YYCURSOR;
+	if (yych <= ',') {
+		if (yych != '+') goto yy839;
+	} else {
+		if (yych <= '-') goto yy852;
+		if (yych <= '/') goto yy839;
+		if (yych <= '9') goto yy853;
+		goto yy839;
+	}
+yy852:
+	yych = *++YYCURSOR;
+	if (yych <= '/') goto yy839;
+	if (yych >= ':') goto yy839;
+yy853:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	if (yych <= 'E') {
-		if (yych <= '/') goto yy835;
-		if (yych <= '9') goto yy851;
-		goto yy835;
+		if (yych <= '/') goto yy841;
+		if (yych <= '9') goto yy853;
+		goto yy841;
 	} else {
-		if (yych <= 'F') goto yy834;
-		if (yych == 'f') goto yy834;
-		goto yy835;
+		if (yych <= 'F') goto yy840;
+		if (yych == 'f') goto yy840;
+		goto yy841;
 	}
-yy853:
+yy855:
 	yych = *++YYCURSOR;
-	if (yych <= '/') goto yy833;
-	if (yych <= '9') goto yy857;
-	goto yy833;
-yy854:
-	++YYCURSOR;
-	if ((YYLIMIT - YYCURSOR) < 2) YYFILL(2);
-	yych = *YYCURSOR;
-	if (yych <= 'Z') {
-		if (yych <= '9') {
-			if (yych == '\'') goto yy815;
-			if (yych <= '/') goto yy835;
-			goto yy854;
-		} else {
-			if (yych <= '@') goto yy835;
-			if (yych != 'F') goto yy815;
-		}
+	if (yych <= ',') {
+		if (yych != '+') goto yy839;
 	} else {
-		if (yych <= 'e') {
-			if (yych == '_') goto yy815;
-			if (yych <= '`') goto yy835;
-			goto yy815;
-		} else {
-			if (yych <= 'f') goto yy856;
-			if (yych <= 'z') goto yy815;
-			if (yych <= '~') goto yy835;
-			goto yy815;
-		}
+		if (yych <= '-') goto yy856;
+		if (yych <= '/') goto yy839;
+		if (yych <= '9') goto yy857;
+		goto yy839;
 	}
 yy856:
 	yych = *++YYCURSOR;
-	if (yych <= 'Z') {
-		if (yych <= '/') {
-			if (yych == '\'') goto yy815;
-			goto yy835;
-		} else {
-			if (yych <= '9') goto yy815;
-			if (yych <= '@') goto yy835;
-			goto yy815;
-		}
-	} else {
-		if (yych <= '`') {
-			if (yych == '_') goto yy815;
-			goto yy835;
-		} else {
-			if (yych <= 'z') goto yy815;
-			if (yych <= '~') goto yy835;
-			goto yy815;
-		}
-	}
+	if (yych <= '/') goto yy839;
+	if (yych >= ':') goto yy839;
 yy857:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	if (yych <= 'E') {
-		if (yych <= '/') goto yy835;
+		if (yych <= '/') goto yy841;
 		if (yych <= '9') goto yy857;
-		goto yy835;
+		goto yy841;
 	} else {
-		if (yych <= 'F') goto yy834;
-		if (yych == 'f') goto yy834;
-		goto yy835;
+		if (yych <= 'F') goto yy840;
+		if (yych == 'f') goto yy840;
+		goto yy841;
 	}
 yy859:
-	++YYCURSOR;
-	if (YYLIMIT <= YYCURSOR) YYFILL(1);
-	yych = *YYCURSOR;
-yy860:
-	if (yych == '\n') goto yy797;
-	if (yych <= ' ') goto yy859;
-	goto yy797;
-yy861:
 	yych = *++YYCURSOR;
-	if (yych == 'n') goto yy871;
-	goto yy833;
+	if (yych <= '/') goto yy839;
+	if (yych <= '9') goto yy863;
+	goto yy839;
+yy860:
+	++YYCURSOR;
+	if ((YYLIMIT - YYCURSOR) < 2) YYFILL(2);
+	yych = *YYCURSOR;
+	if (yych <= 'Z') {
+		if (yych <= '9') {
+			if (yych == '\'') goto yy821;
+			if (yych <= '/') goto yy841;
+			goto yy860;
+		} else {
+			if (yych <= '@') goto yy841;
+			if (yych != 'F') goto yy821;
+		}
+	} else {
+		if (yych <= 'e') {
+			if (yych == '_') goto yy821;
+			if (yych <= '`') goto yy841;
+			goto yy821;
+		} else {
+			if (yych <= 'f') goto yy862;
+			if (yych <= 'z') goto yy821;
+			if (yych <= '~') goto yy841;
+			goto yy821;
+		}
+	}
 yy862:
 	yych = *++YYCURSOR;
-	if (yych != 'e') goto yy833;
-	yych = *++YYCURSOR;
-	if (yych != 'g') goto yy833;
-	yych = *++YYCURSOR;
-	if (yych != 'i') goto yy833;
-	yych = *++YYCURSOR;
-	if (yych != 'o') goto yy833;
-	yych = *++YYCURSOR;
-	if (yych != 'n') goto yy833;
+	if (yych <= 'Z') {
+		if (yych <= '/') {
+			if (yych == '\'') goto yy821;
+			goto yy841;
+		} else {
+			if (yych <= '9') goto yy821;
+			if (yych <= '@') goto yy841;
+			goto yy821;
+		}
+	} else {
+		if (yych <= '`') {
+			if (yych == '_') goto yy821;
+			goto yy841;
+		} else {
+			if (yych <= 'z') goto yy821;
+			if (yych <= '~') goto yy841;
+			goto yy821;
+		}
+	}
+yy863:
+	++YYCURSOR;
+	if (YYLIMIT <= YYCURSOR) YYFILL(1);
+	yych = *YYCURSOR;
+	if (yych <= 'E') {
+		if (yych <= '/') goto yy841;
+		if (yych <= '9') goto yy863;
+		goto yy841;
+	} else {
+		if (yych <= 'F') goto yy840;
+		if (yych == 'f') goto yy840;
+		goto yy841;
+	}
+yy865:
+	++YYCURSOR;
+	if (YYLIMIT <= YYCURSOR) YYFILL(1);
+	yych = *YYCURSOR;
+yy866:
+	if (yych == '\n') goto yy803;
+	if (yych <= ' ') goto yy865;
+	goto yy803;
 yy867:
+	yych = *++YYCURSOR;
+	if (yych == 'n') goto yy877;
+	goto yy839;
+yy868:
+	yych = *++YYCURSOR;
+	if (yych != 'e') goto yy839;
+	yych = *++YYCURSOR;
+	if (yych != 'g') goto yy839;
+	yych = *++YYCURSOR;
+	if (yych != 'i') goto yy839;
+	yych = *++YYCURSOR;
+	if (yych != 'o') goto yy839;
+	yych = *++YYCURSOR;
+	if (yych != 'n') goto yy839;
+yy873:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
-	if (yych != '\n') goto yy867;
+	if (yych != '\n') goto yy873;
 	++YYCURSOR;
-#line 331 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 332 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto newline; }
-#line 5662 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy871:
+#line 5702 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy877:
 	yych = *++YYCURSOR;
-	if (yych != 'd') goto yy833;
+	if (yych != 'd') goto yy839;
 	yych = *++YYCURSOR;
-	if (yych != 'r') goto yy833;
+	if (yych != 'r') goto yy839;
 	yych = *++YYCURSOR;
-	if (yych != 'e') goto yy833;
+	if (yych != 'e') goto yy839;
 	yych = *++YYCURSOR;
-	if (yych != 'g') goto yy833;
+	if (yych != 'g') goto yy839;
 	yych = *++YYCURSOR;
-	if (yych != 'i') goto yy833;
+	if (yych != 'i') goto yy839;
 	yych = *++YYCURSOR;
-	if (yych != 'o') goto yy833;
+	if (yych != 'o') goto yy839;
 	yych = *++YYCURSOR;
-	if (yych == 'n') goto yy867;
-	goto yy833;
-yy878:
+	if (yych == 'n') goto yy873;
+	goto yy839;
+yy884:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
-	if (yych == '\n') goto yy882;
-	goto yy878;
-yy880:
-	++YYCURSOR;
-#line 328 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
-	{ goto comment; }
-#line 5689 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy882:
+	if (yych == '\n') goto yy888;
+	goto yy884;
+yy886:
 	++YYCURSOR;
 #line 329 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	{ goto comment; }
+#line 5729 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy888:
+	++YYCURSOR;
+#line 330 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto newline; }
-#line 5694 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 5734 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 }
-#line 350 ".\jni\Doom\gzdoom1\src\sc_man_scanner.re"
+#line 351 ".\jni\Doom\gzdoom1\src\sc_man_scanner.re"
 
 	}
 
@@ -5720,22 +5760,22 @@ negative_check:
 
 comment:
 
-#line 5724 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 5764 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 2) YYFILL(2);
 	yych = *YYCURSOR;
-	if (yych == '\n') goto yy888;
-	if (yych != '*') goto yy890;
+	if (yych == '\n') goto yy894;
+	if (yych != '*') goto yy896;
 	++YYCURSOR;
-	if ((yych = *YYCURSOR) == '/') goto yy891;
-yy887:
-#line 399 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+	if ((yych = *YYCURSOR) == '/') goto yy897;
+yy893:
+#line 400 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{ goto comment; }
-#line 5736 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy888:
+#line 5776 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy894:
 	++YYCURSOR;
-#line 388 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 389 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{
 			if (YYCURSOR >= YYLIMIT)
 			{
@@ -5747,13 +5787,13 @@ yy888:
 			Crossed = true;
 			goto comment;
 		}
-#line 5751 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
-yy890:
+#line 5791 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+yy896:
 	yych = *++YYCURSOR;
-	goto yy887;
-yy891:
+	goto yy893;
+yy897:
 	++YYCURSOR;
-#line 378 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
+#line 379 ".\\jni\\Doom\\gzdoom1\\src\\sc_man_scanner.re"
 	{
 			if (YYCURSOR >= YYLIMIT)
 			{
@@ -5763,9 +5803,9 @@ yy891:
 			}
 			goto std1;
 		}
-#line 5767 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
+#line 5807 ".\\jni\\Doom\\gzdoom1\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 }
-#line 400 ".\jni\Doom\gzdoom1\src\sc_man_scanner.re"
+#line 401 ".\jni\Doom\gzdoom1\src\sc_man_scanner.re"
 
 
 newline:

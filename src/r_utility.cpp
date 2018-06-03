@@ -40,23 +40,18 @@
 #include "m_bbox.h"
 #include "r_sky.h"
 #include "st_stuff.h"
-#include "c_cvars.h"
 #include "c_dispatch.h"
 #include "v_video.h"
 #include "stats.h"
 #include "i_video.h"
-#include "i_system.h"
 #include "a_sharedglobal.h"
-#include "r_data/r_translate.h"
 #include "p_3dmidtex.h"
 #include "r_data/r_interpolate.h"
-#include "v_palette.h"
 #include "po_man.h"
 #include "p_effect.h"
 #include "st_start.h"
 #include "v_font.h"
 #include "r_renderer.h"
-#include "r_data/colormaps.h"
 #include "serializer.h"
 #include "r_utility.h"
 #include "d_player.h"
@@ -64,7 +59,6 @@
 #include "g_levellocals.h"
 #include "p_maputl.h"
 #include "sbar.h"
-#include "math/cmath.h"
 #include "vm.h"
 #include "i_time.h"
 
@@ -266,7 +260,6 @@ void R_SetWindow (FRenderViewpoint &viewpoint, FViewWindow &viewwindow, int wind
 void R_ExecuteSetViewSize (FRenderViewpoint &viewpoint, FViewWindow &viewwindow)
 {
 	setsizeneeded = false;
-	V_SetBorderNeedRefresh();
 
 	R_SetWindow (viewpoint, viewwindow, setblocks, SCREENWIDTH, SCREENHEIGHT, StatusBar->GetTopOfStatusbar());
 
@@ -395,6 +388,15 @@ subsector_t *R_PointInSubsector (fixed_t x, fixed_t y)
 
 //==========================================================================
 //
+//
+//
+//==========================================================================
+
+FRenderer *CreateSWRenderer();
+
+
+//==========================================================================
+//
 // R_Init
 //
 //==========================================================================
@@ -404,13 +406,15 @@ void R_Init ()
 	atterm (R_Shutdown);
 
 	StartScreen->Progress();
-	// Colormap init moved back to InitPalette()
-	//R_InitColormaps ();
-	//StartScreen->Progress();
-
 	R_InitTranslationTables ();
 	R_SetViewSize (screenblocks);
-	Renderer->Init();
+
+	if (SWRenderer == NULL)
+	{
+		SWRenderer = CreateSWRenderer();
+	}
+
+	SWRenderer->Init();
 }
 
 //==========================================================================
@@ -421,6 +425,8 @@ void R_Init ()
 
 static void R_Shutdown ()
 {
+	if (SWRenderer != nullptr) delete SWRenderer;
+	SWRenderer = nullptr;
 	R_DeinitTranslationTables();
 	R_DeinitColormaps ();
 	FCanvasTextureInfo::EmptyList();
@@ -511,7 +517,7 @@ void R_InterpolateView (FRenderViewpoint &viewpoint, player_t *player, double Fr
 		}
 		else
 		{
-			DVector2 disp = Displacements.getOffset(oldgroup, newgroup);
+			DVector2 disp = level.Displacements.getOffset(oldgroup, newgroup);
 			viewpoint.Pos = iview->Old.Pos + (iview->New.Pos - iview->Old.Pos - disp) * Frac;
 			viewpoint.Path[0] = viewpoint.Path[1] = iview->New.Pos;
 		}
@@ -1000,7 +1006,8 @@ void R_SetupFrame (FRenderViewpoint &viewpoint, FViewWindow &viewwindow, AActor 
 		{
 			color = pr_hom();
 		}
-		Renderer->SetClearColor(color);
+		screen->SetClearColor(color);
+		SWRenderer->SetClearColor(color);
 	}
 }
 
@@ -1062,8 +1069,9 @@ DEFINE_ACTION_FUNCTION(_TexMan, SetCameraToTexture)
 	PARAM_OBJECT(viewpoint, AActor);
 	PARAM_STRING(texturename); // [ZZ] there is no point in having this as FTextureID because it's easier to refer to a cameratexture by name and it isn't executed too often to cache it.
 	PARAM_FLOAT(fov);
-	FTextureID textureid = TexMan.CheckForTexture(texturename, FTexture::TEX_Wall, FTextureManager::TEXMAN_Overridable);
-	FCanvasTextureInfo::Add(viewpoint, textureid, fov);
+	FTextureID textureid = TexMan.CheckForTexture(texturename, ETextureType::Wall, FTextureManager::TEXMAN_Overridable);
+	if (textureid.isValid())
+		FCanvasTextureInfo::Add(viewpoint, textureid, fov);
 	return 0;
 }
 
@@ -1083,7 +1091,7 @@ void FCanvasTextureInfo::UpdateAll ()
 	{
 		if (probe->Viewpoint != NULL && probe->Texture->bNeedsUpdate)
 		{
-			Renderer->RenderTextureView(probe->Texture, probe->Viewpoint, probe->FOV);
+			screen->RenderTextureView(probe->Texture, probe->Viewpoint, probe->FOV);
 		}
 	}
 }

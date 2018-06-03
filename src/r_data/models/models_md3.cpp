@@ -22,12 +22,10 @@
 
 #include "w_wad.h"
 #include "cmdlib.h"
-#include "sc_man.h"
-#include "m_crc32.h"
 #include "r_data/models/models.h"
 
 #ifdef __MOBILE__
-#include "gl/system/gl_interface.h"
+#include "gl_load/gl_interface.h"
 #endif
 
 #define MAX_QPATH 64
@@ -243,7 +241,7 @@ void FMD3Model::LoadGeometry()
 
 void FMD3Model::BuildVertexBuffer(FModelRenderer *renderer)
 {
-	if (mVBuf == nullptr)
+	if (!GetVertexBuffer(renderer))
 	{
 		LoadGeometry();
 
@@ -257,9 +255,11 @@ void FMD3Model::BuildVertexBuffer(FModelRenderer *renderer)
 			ibufsize += 3 * surf->numTriangles;
 		}
 
-		mVBuf = renderer->CreateVertexBuffer(true, numFrames == 1);
-		FModelVertex *vertptr = mVBuf->LockVertexBuffer(vbufsize);
-		unsigned int *indxptr = mVBuf->LockIndexBuffer(ibufsize);
+		auto vbuf = renderer->CreateVertexBuffer(true, numFrames == 1);
+		SetVertexBuffer(renderer, vbuf);
+
+		FModelVertex *vertptr = vbuf->LockVertexBuffer(vbufsize);
+		unsigned int *indxptr = vbuf->LockIndexBuffer(ibufsize);
 
 		assert(vertptr != nullptr && indxptr != nullptr);
 
@@ -297,8 +297,8 @@ void FMD3Model::BuildVertexBuffer(FModelRenderer *renderer)
 			}
 			surf->UnloadGeometry();
 		}
-		mVBuf->UnlockVertexBuffer();
-		mVBuf->UnlockIndexBuffer();
+		vbuf->UnlockVertexBuffer();
+		vbuf->UnlockIndexBuffer();
 	}
 }
 
@@ -315,7 +315,7 @@ void FMD3Model::AddSkins(uint8_t *hitlist)
 	{
 		if (curSpriteMDLFrame->surfaceskinIDs[curMDLIndex][i].isValid())
 		{
-			hitlist[curSpriteMDLFrame->surfaceskinIDs[curMDLIndex][i].GetIndex()] |= FTexture::TEX_Flat;
+			hitlist[curSpriteMDLFrame->surfaceskinIDs[curMDLIndex][i].GetIndex()] |= FTextureManager::HIT_Flat;
 		}
 
 		MD3Surface * surf = &surfaces[i];
@@ -323,7 +323,7 @@ void FMD3Model::AddSkins(uint8_t *hitlist)
 		{
 			if (surf->skins[j].isValid())
 			{
-				hitlist[surf->skins[j].GetIndex()] |= FTexture::TEX_Flat;
+				hitlist[surf->skins[j].GetIndex()] |= FTextureManager::HIT_Flat;
 			}
 		}
 	}
@@ -377,13 +377,13 @@ void FMD3Model::RenderFrame(FModelRenderer *renderer, FTexture * skin, int frame
 		}
 
 		renderer->SetMaterial(surfaceSkin, false, translation);
-		mVBuf->SetupFrame(renderer, surf->vindex + frameno * surf->numVertices, surf->vindex + frameno2 * surf->numVertices, surf->numVertices);
+		GetVertexBuffer(renderer)->SetupFrame(renderer, surf->vindex + frameno * surf->numVertices, surf->vindex + frameno2 * surf->numVertices, surf->numVertices);
 #ifdef __MOBILE__
         if (!(gl.flags & RFL_UINT_IDX))
             renderer->DrawElements(surf->numTriangles * 3, surf->iindex * sizeof(unsigned short));
         else
 #endif
-            renderer->DrawElements(surf->numTriangles * 3, surf->iindex * sizeof(unsigned int));
+		renderer->DrawElements(surf->numTriangles * 3, surf->iindex * sizeof(unsigned int));
 	}
 	renderer->SetInterpolation(0.f);
 }

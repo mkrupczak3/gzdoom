@@ -36,17 +36,13 @@
 #include "sc_man.h"
 #include "w_wad.h"
 #include "v_video.h"
-#include "v_palette.h"
 #include "cmdlib.h"
 #include "m_random.h"
 #include "weightedlist.h"
 #include "statnums.h"
 #include "templates.h"
 #include "a_sharedglobal.h"
-#include "r_data/r_translate.h"
 #include "gi.h"
-#include "g_level.h"
-#include "colormatcher.h"
 #include "b_bot.h"
 #include "serializer.h"
 #include "g_levellocals.h"
@@ -487,10 +483,10 @@ void FDecalLib::ParseDecal (FScanner &sc)
 
 		case DECAL_PIC:
 			sc.MustGetString ();
-			picnum = TexMan.CheckForTexture (sc.String, FTexture::TEX_Any);
+			picnum = TexMan.CheckForTexture (sc.String, ETextureType::Any);
 			if (!picnum.Exists() && (lumpnum = Wads.CheckNumForName (sc.String, ns_graphics)) >= 0)
 			{
-				picnum = TexMan.CreateTexture (lumpnum, FTexture::TEX_Decal);
+				picnum = TexMan.CreateTexture (lumpnum, ETextureType::Decal);
 			}
 			newdecal.PicNum = picnum;
 			break;

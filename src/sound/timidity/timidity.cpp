@@ -36,7 +36,7 @@
 #include "v_text.h"
 #include "timidity.h"
 
-CUSTOM_CVAR(String, midi_config, CONFIG_FILE, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
+CUSTOM_CVAR(String, midi_config, "gzdoom", CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 {
 	Timidity::FreeAll();
 	if (currSong != nullptr && currSong->GetDeviceType() == MDEV_GUS)
@@ -71,7 +71,7 @@ static bool InitReader(const char *config_file)
 	auto reader = sfmanager.OpenSoundFont(config_file, SF_GUS|SF_SF2);
 	if (reader == nullptr)
 	{
-		Printf(TEXTCOLOR_RED "%s: Unable to load sound font", config_file);
+		Printf(TEXTCOLOR_RED "%s: Unable to load sound font\n", config_file);
 		return false;	// No sound font could be opened.
 	}
 	gus_sfreader.reset(reader);

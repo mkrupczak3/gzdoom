@@ -41,27 +41,20 @@
 #include "rapidjson/rapidjson.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/prettywriter.h"
-#include "rapidjson/stringbuffer.h"
 #include "rapidjson/document.h"
 #include "serializer.h"
-#include "r_data/colormaps.h"
 #include "r_data/r_interpolate.h"
-#include "r_defs.h"
 #include "r_state.h"
 #include "p_lnspec.h"
-#include "i_system.h"
 #include "w_wad.h"
 #include "p_terrain.h"
-#include "c_dispatch.h"
 #include "p_setup.h"
 #include "p_conversation.h"
 #include "dsectoreffect.h"
 #include "d_player.h"
-#include "r_data/r_interpolate.h"
 #include "g_shared/a_sharedglobal.h"
 #include "po_man.h"
 #include "v_font.h"
-#include "w_zip.h"
 #include "doomerrors.h"
 #include "v_text.h"
 #include "cmdlib.h"
@@ -1531,7 +1524,7 @@ FSerializer &Serialize(FSerializer &arc, const char *key, FTextureID &value, FTe
 			arc.WriteKey(key);
 			arc.w->StartArray();
 			arc.w->String(name);
-			arc.w->Int(pic->UseType);
+			arc.w->Int(static_cast<int>(pic->UseType));
 			arc.w->EndArray();
 		}
 	}
@@ -1547,7 +1540,7 @@ FSerializer &Serialize(FSerializer &arc, const char *key, FTextureID &value, FTe
 				assert(nameval.IsString() && typeval.IsInt());
 				if (nameval.IsString() && typeval.IsInt())
 				{
-					value = TexMan.GetTexture(UnicodeToString(nameval.GetString()), typeval.GetInt());
+					value = TexMan.GetTexture(UnicodeToString(nameval.GetString()), static_cast<ETextureType>(typeval.GetInt()));
 				}
 				else
 				{

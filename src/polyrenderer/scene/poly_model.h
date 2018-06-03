@@ -26,13 +26,15 @@
 #include "r_data/matrix.h"
 #include "r_data/models/models.h"
 
-void PolyRenderModel(PolyRenderThread *thread, const TriMatrix &worldToClip, const PolyClipPlane &clipPlane, uint32_t stencilValue, float x, float y, float z, FSpriteModelFrame *smf, AActor *actor);
-void PolyRenderHUDModel(PolyRenderThread *thread, const TriMatrix &worldToClip, const PolyClipPlane &clipPlane, uint32_t stencilValue, DPSprite *psp, float ofsx, float ofsy);
+void PolyRenderModel(PolyRenderThread *thread, const Mat4f &worldToClip, uint32_t stencilValue, float x, float y, float z, FSpriteModelFrame *smf, AActor *actor);
+void PolyRenderHUDModel(PolyRenderThread *thread, const Mat4f &worldToClip, uint32_t stencilValue, DPSprite *psp, float ofsx, float ofsy);
 
 class PolyModelRenderer : public FModelRenderer
 {
 public:
-	PolyModelRenderer(PolyRenderThread *thread, const TriMatrix &worldToClip, const PolyClipPlane &clipPlane, uint32_t stencilValue);
+	PolyModelRenderer(PolyRenderThread *thread, const Mat4f &worldToClip, uint32_t stencilValue);
+
+	ModelRendererType GetType() const override { return PolyModelRendererType; }
 
 	void BeginDrawModel(AActor *actor, FSpriteModelFrame *smf, const VSMatrix &objectToWorldMatrix) override;
 	void EndDrawModel(AActor *actor, FSpriteModelFrame *smf) override;
@@ -46,15 +48,15 @@ public:
 	void SetMaterial(FTexture *skin, bool clampNoFilter, int translation) override;
 	void DrawArrays(int start, int count) override;
 	void DrawElements(int numIndices, size_t offset) override;
-	double GetTimeFloat() override;
+
+	void SetTransform();
 
 	PolyRenderThread *Thread = nullptr;
-	const TriMatrix &WorldToClip;
-	const PolyClipPlane &ClipPlane;
+	const Mat4f &WorldToClip;
 	uint32_t StencilValue = 0;
 
 	AActor *ModelActor = nullptr;
-	TriMatrix ObjectToWorld;
+	Mat4f ObjectToWorld;
 	FTexture *SkinTexture = nullptr;
 	unsigned int *IndexBuffer = nullptr;
 	TriVertex *VertexBuffer = nullptr;

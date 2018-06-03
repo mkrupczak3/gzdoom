@@ -35,7 +35,6 @@
 #include "r_utility.h"
 #include "g_levellocals.h"
 #include "gi.h"
-#include "v_text.h"
 #include "actor.h"
 #include "c_dispatch.h"
 #include "d_net.h"
@@ -174,8 +173,9 @@ bool E_CheckHandler(DStaticEventHandler* handler)
 
 bool E_IsStaticType(PClass* type)
 {
-	return (type->IsDescendantOf(RUNTIME_CLASS(DStaticEventHandler)) && // make sure it's from our hierarchy at all.
-			!type->IsDescendantOf(RUNTIME_CLASS(DEventHandler)));
+	assert(type != nullptr);
+	assert(type->IsDescendantOf(RUNTIME_CLASS(DStaticEventHandler)));
+	return !type->IsDescendantOf(RUNTIME_CLASS(DEventHandler));
 }
 
 void E_SerializeEvents(FSerializer& arc)
@@ -230,27 +230,24 @@ void E_SerializeEvents(FSerializer& arc)
 	}
 }
 
-static void E_InitStaticHandler(PClass* type, FString typestring, bool map)
+static PClass* E_GetHandlerClass(const FString& typeName)
 {
+	PClass* type = PClass::FindClass(typeName);
+
 	if (type == nullptr)
 	{
-		I_Error("Fatal: unknown event handler class %s in MAPINFO!\n", typestring.GetChars());
-		return;
-
+		I_Error("Fatal: unknown event handler class %s", typeName.GetChars());
+	}
+	else if (!type->IsDescendantOf(RUNTIME_CLASS(DStaticEventHandler)))
+	{
+		I_Error("Fatal: event handler class %s is not derived from StaticEventHandler", typeName.GetChars());
 	}
 
-	if (E_IsStaticType(type) && map)
-	{
-		I_Error("Fatal: invalid event handler class %s in MAPINFO!\nMap-specific event handlers cannot be static.\n", typestring.GetChars());
-		return;
-	}
-	/*
-	if (!E_IsStaticType(type) && !map)
-	{
-		Printf("%cGWarning: invalid event handler class %s in MAPINFO!\nMAPINFO event handlers should inherit Static* directly!\n", TEXTCOLOR_ESCAPE, typestring.GetChars());
-		return;
-	}*/
+	return type;
+}
 
+static void E_InitHandler(PClass* type)
+{
 	// check if type already exists, don't add twice.
 	bool typeExists = false;
 	for (DStaticEventHandler* handler = E_FirstEventHandler; handler; handler = handler->next)
@@ -269,41 +266,34 @@ static void E_InitStaticHandler(PClass* type, FString typestring, bool map)
 
 void E_InitStaticHandlers(bool map)
 {
+	// don't initialize map handlers if restoring from savegame.
 	if (savegamerestore)
 		return;
 
 	// just make sure
 	E_Shutdown(map);
 
-	if (map) // don't initialize map handlers if restoring from savegame.
+	// initialize event handlers from gameinfo
+	for (const FString& typeName : gameinfo.EventHandlers)
 	{
-		// load non-static handlers from gameinfo
-		for (unsigned int i = 0; i < gameinfo.EventHandlers.Size(); i++)
-		{
-			FString typestring = gameinfo.EventHandlers[i];
-			PClass* type = PClass::FindClass(typestring);
-			if (!type || E_IsStaticType(type)) // don't init the really global stuff here.
-				continue;
-			E_InitStaticHandler(type, typestring, false);
-		}
-
-		for (unsigned int i = 0; i < level.info->EventHandlers.Size(); i++)
-		{
-			FString typestring = level.info->EventHandlers[i];
-			PClass* type = PClass::FindClass(typestring);
-			E_InitStaticHandler(type, typestring, true);
-		}
+		PClass* type = E_GetHandlerClass(typeName);
+		// don't init the really global stuff here on startup initialization.
+		// don't init map-local global stuff here on level setup.
+		if (map == E_IsStaticType(type))
+			continue;
+		E_InitHandler(type);
 	}
-	else
+
+	if (!map) 
+		return;
+
+	// initialize event handlers from mapinfo
+	for (const FString& typeName : level.info->EventHandlers)
 	{
-		for (unsigned int i = 0; i < gameinfo.EventHandlers.Size(); i++)
-		{
-			FString typestring = gameinfo.EventHandlers[i];
-			PClass* type = PClass::FindClass(typestring);
-			if (!type || !E_IsStaticType(type)) // don't init map-local global stuff here.
-				continue;
-			E_InitStaticHandler(type, typestring, false);
-		}
+		PClass* type = E_GetHandlerClass(typeName);
+		if (E_IsStaticType(type))
+			I_Error("Fatal: invalid event handler class %s in MAPINFO!\nMap-specific event handlers cannot be static.\n", typeName.GetChars());
+		E_InitHandler(type);
 	}
 }
 
@@ -413,16 +403,16 @@ void E_WorldThingDestroyed(AActor* actor)
 		handler->WorldThingDestroyed(actor);
 }
 
-void E_WorldLinePreActivated(line_t* line, AActor* actor, bool* shouldactivate)
+void E_WorldLinePreActivated(line_t* line, AActor* actor, int activationType, bool* shouldactivate)
 {
 	for (DStaticEventHandler* handler = E_FirstEventHandler; handler; handler = handler->next)
-		handler->WorldLinePreActivated(line, actor, shouldactivate);
+		handler->WorldLinePreActivated(line, actor, activationType, shouldactivate);
 }
 
-void E_WorldLineActivated(line_t* line, AActor* actor)
+void E_WorldLineActivated(line_t* line, AActor* actor, int activationType)
 {
 	for (DStaticEventHandler* handler = E_FirstEventHandler; handler; handler = handler->next)
-		handler->WorldLineActivated(line, actor);
+		handler->WorldLineActivated(line, actor, activationType);
 }
 
 void E_PlayerEntered(int num, bool fromhub)
@@ -554,6 +544,7 @@ DEFINE_FIELD_X(WorldEvent, FWorldEvent, DamageType);
 DEFINE_FIELD_X(WorldEvent, FWorldEvent, DamageFlags);
 DEFINE_FIELD_X(WorldEvent, FWorldEvent, DamageAngle);
 DEFINE_FIELD_X(WorldEvent, FWorldEvent, ActivatedLine);
+DEFINE_FIELD_X(WorldEvent, FWorldEvent, ActivationType);
 DEFINE_FIELD_X(WorldEvent, FWorldEvent, ShouldActivate);
 
 DEFINE_FIELD_X(PlayerEvent, FPlayerEvent, PlayerNumber);
@@ -804,7 +795,7 @@ void DStaticEventHandler::WorldThingDestroyed(AActor* actor)
 	}
 }
 
-void DStaticEventHandler::WorldLinePreActivated(line_t* line, AActor* actor, bool* shouldactivate)
+void DStaticEventHandler::WorldLinePreActivated(line_t* line, AActor* actor, int activationType, bool* shouldactivate)
 {
 	IFVIRTUAL(DStaticEventHandler, WorldLinePreActivated)
 	{
@@ -814,6 +805,7 @@ void DStaticEventHandler::WorldLinePreActivated(line_t* line, AActor* actor, boo
 		FWorldEvent e = E_SetupWorldEvent();
 		e.Thing = actor;
 		e.ActivatedLine = line;
+		e.ActivationType = activationType;
 		e.ShouldActivate = *shouldactivate;
 		VMValue params[2] = { (DStaticEventHandler*)this, &e };
 		VMCall(func, params, 2, nullptr, 0);
@@ -821,7 +813,7 @@ void DStaticEventHandler::WorldLinePreActivated(line_t* line, AActor* actor, boo
 	}
 }
 
-void DStaticEventHandler::WorldLineActivated(line_t* line, AActor* actor)
+void DStaticEventHandler::WorldLineActivated(line_t* line, AActor* actor, int activationType)
 {
 	IFVIRTUAL(DStaticEventHandler, WorldLineActivated)
 	{
@@ -831,6 +823,7 @@ void DStaticEventHandler::WorldLineActivated(line_t* line, AActor* actor)
 		FWorldEvent e = E_SetupWorldEvent();
 		e.Thing = actor;
 		e.ActivatedLine = line;
+		e.ActivationType = activationType;
 		VMValue params[2] = { (DStaticEventHandler*)this, &e };
 		VMCall(func, params, 2, nullptr, 0);
 	}

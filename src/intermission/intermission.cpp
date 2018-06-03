@@ -38,16 +38,13 @@
 #include "w_wad.h"
 #include "gi.h"
 #include "v_video.h"
-#include "v_palette.h"
 #include "d_main.h"
 #include "gstrings.h"
 #include "intermission/intermission.h"
 #include "actor.h"
 #include "d_player.h"
 #include "r_state.h"
-#include "r_data/r_translate.h"
 #include "c_bind.h"
-#include "g_level.h"
 #include "p_conversation.h"
 #include "menu/menu.h"
 #include "d_net.h"
@@ -77,8 +74,6 @@ CVAR(Bool, nointerscrollabort, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG);
 
 void DIntermissionScreen::Init(FIntermissionAction *desc, bool first)
 {
-	int lumpnum;
-
 	if (desc->mCdTrack == 0 || !S_ChangeCDMusic (desc->mCdTrack, desc->mCdId))
 	{
 		if (desc->mMusic.IsEmpty())
@@ -117,37 +112,17 @@ void DIntermissionScreen::Init(FIntermissionAction *desc, bool first)
 	}
 	if (texname[0] != 0)
 	{
-		mBackground = TexMan.CheckForTexture(texname, FTexture::TEX_MiscPatch);
+		mBackground = TexMan.CheckForTexture(texname, ETextureType::MiscPatch);
 		mFlatfill = desc->mFlatfill;
 	}
 	S_Sound (CHAN_VOICE | CHAN_UI, desc->mSound, 1.0f, ATTN_NONE);
-	if (desc->mPalette.IsNotEmpty() && (lumpnum = Wads.CheckNumForFullName(desc->mPalette, true)) > 0)
-	{
-		PalEntry *palette;
-		uint8_t palbuffer[768];
-		const uint8_t *orgpal;
-		FMemLump lump;
-		int i;
-
-		ReadPalette(lumpnum, palbuffer);
-		orgpal = (uint8_t *)palbuffer;
-		palette = screen->GetPalette ();
-		for (i = 256; i > 0; i--, orgpal += 3)
-		{
-			*palette++ = PalEntry (orgpal[0], orgpal[1], orgpal[2]);
-		}
-		screen->UpdatePalette ();
-		mPaletteChanged = true;
-		NoWipe = 1;
-		M_EnableMenu(false);
-	}
 	mOverlays.Resize(desc->mOverlays.Size());
 	for (unsigned i=0; i < mOverlays.Size(); i++)
 	{
 		mOverlays[i].x = desc->mOverlays[i].x;
 		mOverlays[i].y = desc->mOverlays[i].y;
 		mOverlays[i].mCondition = desc->mOverlays[i].mCondition;
-		mOverlays[i].mPic = TexMan.CheckForTexture(desc->mOverlays[i].mName, FTexture::TEX_MiscPatch);
+		mOverlays[i].mPic = TexMan.CheckForTexture(desc->mOverlays[i].mName, ETextureType::MiscPatch);
 	}
 	mTicker = 0;
 }
@@ -208,21 +183,6 @@ void DIntermissionScreen::Drawer ()
 
 void DIntermissionScreen::OnDestroy()
 {
-	if (mPaletteChanged)
-	{
-		PalEntry *palette;
-		int i;
-
-		palette = screen->GetPalette ();
-		for (i = 0; i < 256; ++i)
-		{
-			palette[i] = GPalette.BaseColors[i];
-		}
-		screen->UpdatePalette ();
-		NoWipe = 5;
-		mPaletteChanged = false;
-		M_EnableMenu(true);
-	}
 	S_StopSound(CHAN_VOICE);
 	Super::OnDestroy();
 }
@@ -269,21 +229,13 @@ void DIntermissionScreenFader::Drawer ()
 		if (mType == FADE_In) factor = 1.0 - factor;
 		int color = MAKEARGB(int(factor*255), 0,0,0);
 
-		if (screen->Begin2D(false))
+		screen->DrawTexture (TexMan[mBackground], 0, 0, DTA_Fullscreen, true, DTA_ColorOverlay, color, TAG_DONE);
+		for (unsigned i=0; i < mOverlays.Size(); i++)
 		{
-			screen->DrawTexture (TexMan[mBackground], 0, 0, DTA_Fullscreen, true, DTA_ColorOverlay, color, TAG_DONE);
-			for (unsigned i=0; i < mOverlays.Size(); i++)
-			{
-				if (CheckOverlay(i))
-					screen->DrawTexture (TexMan[mOverlays[i].mPic], mOverlays[i].x, mOverlays[i].y, DTA_320x200, true, DTA_ColorOverlay, color, TAG_DONE);
-			}
-			screen->FillBorder (NULL);
+			if (CheckOverlay(i))
+				screen->DrawTexture (TexMan[mOverlays[i].mPic], mOverlays[i].x, mOverlays[i].y, DTA_320x200, true, DTA_ColorOverlay, color, TAG_DONE);
 		}
-		else
-		{
-			V_SetBlend (0,0,0,int(256*factor));
-			Super::Drawer();
-		}
+		screen->FillBorder (NULL);
 	}
 }
 
@@ -640,7 +592,7 @@ void DIntermissionScreenScroller::Init(FIntermissionAction *desc, bool first)
 {
 	Super::Init(desc, first);
 	mFirstPic = mBackground;
-	mSecondPic = TexMan.CheckForTexture(static_cast<FIntermissionActionScroller*>(desc)->mSecondPic, FTexture::TEX_MiscPatch);
+	mSecondPic = TexMan.CheckForTexture(static_cast<FIntermissionActionScroller*>(desc)->mSecondPic, ETextureType::MiscPatch);
 	mScrollDelay = static_cast<FIntermissionActionScroller*>(desc)->mScrollDelay;
 	mScrollTime = static_cast<FIntermissionActionScroller*>(desc)->mScrollTime;
 	mScrollDir = static_cast<FIntermissionActionScroller*>(desc)->mScrollDir;
@@ -793,7 +745,7 @@ bool DIntermissionController::Responder (event_t *ev)
 {
 	if (mScreen != NULL)
 	{
-		if (!mScreen->mPaletteChanged && ev->type == EV_KeyDown)
+		if (ev->type == EV_KeyDown)
 		{
 			const char *cmd = Bindings.GetBind (ev->data1);
 

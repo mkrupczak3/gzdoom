@@ -38,11 +38,8 @@
 #include "doomstat.h"
 #include "i_system.h"
 #include "w_wad.h"
-#include "w_zip.h"
-#include "v_palette.h"
 #include "m_argv.h"
 #include "m_misc.h"
-#include "c_cvars.h"
 #include "sc_man.h"
 #include "v_video.h"
 #include "gameconfigfile.h"
@@ -197,6 +194,12 @@ void FIWadManager::ParseIWadInfo(const char *fn, const char *data, int datasize,
 						iwad->StartupType = FStartupInfo::StrifeStartup;
 					else iwad->StartupType = FStartupInfo::DefaultStartup;
 				}
+				else if (sc.Compare("StartupSong"))
+				{
+					sc.MustGetStringName("=");
+					sc.MustGetString();
+					iwad->Song = sc.String;
+				}
 				else
 				{
 					sc.ScriptError("Unknown keyword '%s'", sc.String);
@@ -348,13 +351,16 @@ int FIWadManager::CheckIWADInfo(const char *fn)
 					FIWADInfo result;
 					ParseIWadInfo(resfile->Filename, (const char*)lmp->CacheLump(), lmp->LumpSize, &result);
 					delete resfile;
-					for (auto &wadinf : mIWadInfos)
+
+					for (unsigned i = 0, count = mIWadInfos.Size(); i < count; ++i)
 					{
-						if (wadinf.Name == result.Name)
+						if (mIWadInfos[i].Name == result.Name)
 						{
-							return -1;	// do not show the same one twice.
+							return i;
 						}
 					}
+
+					mOrderNames.Push(result.Name);
 					return mIWadInfos.Push(result);
 				}
 				catch (CRecoverableError &err)
@@ -434,7 +440,7 @@ void FIWadManager::AddIWADCandidates(const char *dir)
 				if (p != nullptr)
 				{
 					// special IWAD extension.
-					if (!stricmp(p, ".iwad") || !stricmp(p, ".ipk3") || !stricmp(p, "ipk7"))
+					if (!stricmp(p, ".iwad") || !stricmp(p, ".ipk3") || !stricmp(p, ".ipk7"))
 					{
 						mFoundWads.Push(FFoundWadInfo{ slasheddir + FindName, "", -1 });
 					}
@@ -468,7 +474,7 @@ void FIWadManager::ValidateIWADs()
 	{
 		int index;
 		auto x = strrchr(p.mFullPath, '.');
-		if (x != nullptr && (!stricmp(x, ".iwad") || !stricmp(x, ".ipk3") || !stricmp(x, "ipk7")))
+		if (x != nullptr && (!stricmp(x, ".iwad") || !stricmp(x, ".ipk3") || !stricmp(x, ".ipk7")))
 		{
 			index = CheckIWADInfo(p.mFullPath);
 		}
@@ -519,27 +525,38 @@ int FIWadManager::IdentifyVersion (TArray<FString> &wadfiles, const char *iwad, 
 
 	if (iwadparm)
 	{
-		// Check if the given IWAD has an absolute path, in which case the search path will be ignored.
-		custwad = iwadparm;
-		FixPathSeperator(custwad);
-		DefaultExtension(custwad, ".wad");
-		bool isAbsolute = (custwad[0] == '/');
+		const char* const extensions[] = { ".wad", ".pk3", ".iwad", ".ipk3", ".ipk7" };
+
+		for (auto ext : extensions)
+		{
+			// Check if the given IWAD has an absolute path, in which case the search path will be ignored.
+			custwad = iwadparm;
+			FixPathSeperator(custwad);
+			DefaultExtension(custwad, ext);
+			bool isAbsolute = (custwad[0] == '/');
 #ifdef WINDOWS
-		isAbsolute |= (custwad.Len() >= 2 && custwad[1] == ':');
+			isAbsolute |= (custwad.Len() >= 2 && custwad[1] == ':');
 #endif
-		if (isAbsolute)
-		{
-			if (FileExists(custwad)) mFoundWads.Push({ custwad, "", -1 });
-		}
-		else
-		{
-			for (auto &dir : mSearchPaths)
+			if (isAbsolute)
 			{
-				FStringf fullpath("%s/%s", dir.GetChars(), custwad.GetChars());
-				if (FileExists(fullpath))
+				if (FileExists(custwad)) mFoundWads.Push({ custwad, "", -1 });
+			}
+			else
+			{
+				for (auto &dir : mSearchPaths)
 				{
-					mFoundWads.Push({ fullpath, "", -1 });
+					FStringf fullpath("%s/%s", dir.GetChars(), custwad.GetChars());
+					if (FileExists(fullpath))
+					{
+						mFoundWads.Push({ fullpath, "", -1 });
+					}
 				}
+			}
+
+			if (mFoundWads.Size() != numFoundWads)
+			{
+				// Found IWAD with guessed extension
+				break;
 			}
 		}
 	}
@@ -755,6 +772,7 @@ const FIWADInfo *FIWadManager::FindIWAD(TArray<FString> &wadfiles, const char *i
 		DoomStartupInfo.FgColor = iwad_info->FgColor;
 	}
 	if (DoomStartupInfo.Type == 0) DoomStartupInfo.Type = iwad_info->StartupType;
+	if (DoomStartupInfo.Song.IsEmpty()) DoomStartupInfo.Song = iwad_info->Song;
 	I_SetIWADInfo();
 	return iwad_info;
 }

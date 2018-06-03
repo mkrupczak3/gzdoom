@@ -25,14 +25,11 @@
 
 
 #include "w_wad.h"
-#include "tarray.h"
 #include "g_level.h"
-#include "sc_man.h"
 #include "s_sound.h"
 #include "r_sky.h"
 #include "t_script.h"
 #include "cmdlib.h"
-#include "p_lnspec.h"
 #include "gi.h"
 #include "g_levellocals.h"
 #include "xlat/xlat.h"
@@ -192,7 +189,7 @@ void FScriptLoader::ParseInfoCmd(char *line, FString &scriptsrc)
 			sc.MustGetStringName("=");
 			sc.MustGetString();
 		
-			sky2texture = sky1texture = level.skytexture1 = level.skytexture2 = TexMan.GetTexture (sc.String, FTexture::TEX_Wall, FTextureManager::TEXMAN_Overridable|FTextureManager::TEXMAN_ReturnFirst);
+			sky2texture = sky1texture = level.skytexture1 = level.skytexture2 = TexMan.GetTexture (sc.String, ETextureType::Wall, FTextureManager::TEXMAN_Overridable|FTextureManager::TEXMAN_ReturnFirst);
 			R_InitSkyMap ();
 		}
 		else if (sc.Compare("interpic"))

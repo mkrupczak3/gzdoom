@@ -26,36 +26,26 @@
 **
 **/
 
-#include "gl/system/gl_system.h"
+#include "gl_load/gl_system.h"
 #include "w_wad.h"
-#include "cmdlib.h"
-#include "sc_man.h"
-#include "m_crc32.h"
-#include "c_console.h"
 #include "g_game.h"
 #include "doomstat.h"
 #include "g_level.h"
 #include "r_state.h"
 #include "d_player.h"
 #include "g_levellocals.h"
-#include "r_utility.h"
 #include "i_time.h"
-//#include "resources/voxels.h"
-//#include "gl/gl_intern.h"
+#include "hwrenderer/textures/hw_material.h"
 
-#include "gl/system/gl_interface.h"
+#include "gl_load/gl_interface.h"
 #include "gl/renderer/gl_renderer.h"
 #include "gl/scene/gl_drawinfo.h"
 #include "gl/scene/gl_portal.h"
 #include "gl/models/gl_models.h"
-#include "gl/textures/gl_material.h"
-#include "gl/utility/gl_convert.h"
 #include "gl/renderer/gl_renderstate.h"
 #include "gl/shaders/gl_shader.h"
 
 CVAR(Bool, gl_light_models, true, CVAR_ARCHIVE)
-
-extern int modellightindex;
 
 VSMatrix FGLModelRenderer::GetViewToWorldMatrix()
 {
@@ -161,11 +151,6 @@ void FGLModelRenderer::DrawElements(int numIndices, size_t offset)
         glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, (void*)(intptr_t)offset);
 }
 
-double FGLModelRenderer::GetTimeFloat()
-{
-	return (double)I_msTime() * (double)TICRATE / 1000.;
-}
-
 //===========================================================================
 //
 // Uses a hardware buffer if either single frame (i.e. no interpolation needed)
@@ -178,7 +163,7 @@ double FGLModelRenderer::GetTimeFloat()
 
 FModelVertexBuffer::FModelVertexBuffer(bool needindex, bool singleframe)
 #ifdef __MOBILE__
-	: FVertexBuffer((singleframe || !gl.legacyMode) && !gl.novbo) // so gles1 doesn't crash, need to fix this
+	: FVertexBuffer((singleframe || !gl.legacyMode) && (gl.es != 1)) // so gles1 doesn't crash, need to fix this
 #else
 	: FVertexBuffer(singleframe || !gl.legacyMode)
 #endif
@@ -407,9 +392,9 @@ void FModelVertexBuffer::SetupFrame(FModelRenderer *renderer, unsigned int frame
 //
 //===========================================================================
 
-void gl_RenderModel(GLSprite * spr)
+void gl_RenderModel(GLSprite * spr, int mli)
 {
-	FGLModelRenderer renderer;
+	FGLModelRenderer renderer(mli);
 	renderer.RenderModel(spr->x, spr->y, spr->z, spr->modelframe, spr->actor);
 }
 
@@ -419,8 +404,8 @@ void gl_RenderModel(GLSprite * spr)
 //
 //===========================================================================
 
-void gl_RenderHUDModel(DPSprite *psp, float ofsX, float ofsY)
+void gl_RenderHUDModel(DPSprite *psp, float ofsX, float ofsY, int mli)
 {
-	FGLModelRenderer renderer;
+	FGLModelRenderer renderer(mli);
 	renderer.RenderHUDModel(psp, ofsX, ofsY);
 }

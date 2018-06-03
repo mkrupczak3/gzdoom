@@ -74,10 +74,8 @@ The FON2 header is followed by variable length data:
 // HEADER FILES ------------------------------------------------------------
 
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include <ctype.h>
 
 #include "templates.h"
 #include "doomtype.h"
@@ -85,15 +83,10 @@ The FON2 header is followed by variable length data:
 #include "v_font.h"
 #include "v_video.h"
 #include "w_wad.h"
-#include "i_system.h"
 #include "gi.h"
 #include "cmdlib.h"
 #include "sc_man.h"
 #include "hu_stuff.h"
-#include "textures/textures.h"
-#include "r_data/r_translate.h"
-#include "colormatcher.h"
-#include "v_palette.h"
 #include "v_text.h"
 #include "vm.h"
 
@@ -332,7 +325,7 @@ FFont *V_GetFont(const char *name)
 		}
 		if (font == NULL)
 		{
-			FTextureID picnum = TexMan.CheckForTexture (name, FTexture::TEX_Any);
+			FTextureID picnum = TexMan.CheckForTexture (name, ETextureType::Any);
 			if (picnum.isValid())
 			{
 				font = new FSinglePicFont (name);
@@ -390,15 +383,15 @@ FFont::FFont (const char *name, const char *nametemplate, int first, int count, 
 		charlumps[i] = NULL;
 		mysnprintf (buffer, countof(buffer), nametemplate, i + start);
 
-		lump = TexMan.CheckForTexture(buffer, FTexture::TEX_MiscPatch);
+		lump = TexMan.CheckForTexture(buffer, ETextureType::MiscPatch);
 		if (doomtemplate && lump.isValid() && i + start == 121)
 		{ // HACKHACK: Don't load STCFN121 in doom(2), because
 		  // it's not really a lower-case 'y' but a '|'.
 		  // Because a lot of wads with their own font seem to foolishly
 		  // copy STCFN121 and make it a '|' themselves, wads must
 		  // provide STCFN120 (x) and STCFN122 (z) for STCFN121 to load as a 'y'.
-			if (!TexMan.CheckForTexture("STCFN120", FTexture::TEX_MiscPatch).isValid() ||
-				!TexMan.CheckForTexture("STCFN122", FTexture::TEX_MiscPatch).isValid())
+			if (!TexMan.CheckForTexture("STCFN120", ETextureType::MiscPatch).isValid() ||
+				!TexMan.CheckForTexture("STCFN122", ETextureType::MiscPatch).isValid())
 			{
 				// insert the incorrectly named '|' graphic in its correct position.
 				if (count > 124-start) charlumps[124-start] = TexMan[lump];
@@ -417,7 +410,7 @@ FFont::FFont (const char *name, const char *nametemplate, int first, int count, 
 					charlumps[i] = pic;
 
 				int height = pic->GetScaledHeight();
-				int yoffs = pic->GetScaledTopOffset();
+				int yoffs = pic->GetScaledTopOffset(0);
 
 				if (yoffs > maxyoffs)
 				{
@@ -963,54 +956,6 @@ void FFont::LoadTranslations()
 	BuildTranslations (luminosity, identity, &TranslationParms[0][0], ActiveColors, NULL);
 
 	delete[] luminosity;
-}
-
-//==========================================================================
-//
-// FFont :: Preload
-//
-// Loads most of the 7-bit ASCII characters. In the case of D3DFB, this
-// means all the characters of a font have a better chance of being packed
-// into the same hardware texture.
-//
-// (Note that this is a rather dumb implementation. The atlasing should
-// occur at a higher level, independently of the renderer being used.)
-//
-//==========================================================================
-
-void FFont::Preload() const
-{
-	// First and last char are the same? Wait until it's actually needed
-	// since nothing is gained by preloading now.
-	if (FirstChar == LastChar)
-	{
-		return;
-	}
-	for (int i = MAX(FirstChar, 0x21); i < MIN(LastChar, 0x7e); ++i)
-	{
-		int foo;
-		FTexture *pic = GetChar(i, &foo);
-		if (pic != NULL)
-		{
-			pic->GetNative(pic->GetFormat(), false);
-		}
-	}
-}
-
-//==========================================================================
-//
-// FFont :: StaticPreloadFonts
-//
-// Preloads all the defined fonts.
-//
-//==========================================================================
-
-void FFont::StaticPreloadFonts()
-{
-	for (FFont *font = FirstFont; font != NULL; font = font->Next)
-	{
-		font->Preload();
-	}
 }
 
 //==========================================================================
@@ -1572,7 +1517,7 @@ void FSingleLumpFont::FixupPalette (uint8_t *identity, double *luminosity, const
 FSinglePicFont::FSinglePicFont(const char *picname) :
 	FFont(-1) // Since lump is only needed for priority information we don't need to worry about this here.
 {
-	FTextureID picnum = TexMan.CheckForTexture (picname, FTexture::TEX_Any);
+	FTextureID picnum = TexMan.CheckForTexture (picname, ETextureType::Any);
 
 	if (!picnum.isValid())
 	{
@@ -1639,7 +1584,7 @@ int FSinglePicFont::GetCharWidth (int code) const
 FFontChar1::FFontChar1 (FTexture *sourcelump)
 : SourceRemap (NULL)
 {
-	UseType = FTexture::TEX_FontChar;
+	UseType = ETextureType::FontChar;
 	BaseTexture = sourcelump;
 
 	// now copy all the properties from the base texture
@@ -1758,11 +1703,11 @@ FFontChar1::~FFontChar1 ()
 FFontChar2::FFontChar2 (int sourcelump, int sourcepos, int width, int height, int leftofs, int topofs)
 : SourceLump (sourcelump), SourcePos (sourcepos), Pixels (0), Spans (0), SourceRemap(NULL)
 {
-	UseType = TEX_FontChar;
+	UseType = ETextureType::FontChar;
 	Width = width;
 	Height = height;
-	LeftOffset = leftofs;
-	TopOffset = topofs;
+	_LeftOffset[1] = _LeftOffset[0] = leftofs;
+	_TopOffset[1] = _TopOffset[0] = topofs;
 	CalcBitSize ();
 }
 
@@ -2012,7 +1957,7 @@ FSpecialFont::FSpecialFont (const char *name, int first, int count, FTexture **l
 		if (pic != NULL)
 		{
 			int height = pic->GetScaledHeight();
-			int yoffs = pic->GetScaledTopOffset();
+			int yoffs = pic->GetScaledTopOffset(0);
 
 			if (yoffs > maxyoffs)
 			{
@@ -2270,7 +2215,7 @@ void V_InitCustomFonts()
 					if (format == 1) goto wrong;
 					FTexture **p = &lumplist[*(unsigned char*)sc.String];
 					sc.MustGetString();
-					FTextureID texid = TexMan.CheckForTexture(sc.String, FTexture::TEX_MiscPatch);
+					FTextureID texid = TexMan.CheckForTexture(sc.String, ETextureType::MiscPatch);
 					if (texid.Exists())
 					{
 						*p = TexMan[texid];

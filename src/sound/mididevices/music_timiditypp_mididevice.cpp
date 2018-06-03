@@ -33,14 +33,8 @@
 */
 
 #include <string>
-#include <vector>
 
 #include "i_musicinterns.h"
-#include "c_cvars.h"
-#include "cmdlib.h"
-#include "templates.h"
-#include "version.h"
-#include "m_misc.h"
 #include "v_text.h"
 #include "i_system.h"
 
@@ -78,7 +72,7 @@ protected:
 TimidityPlus::Instruments *TimidityPPMIDIDevice::instruments;
 
 // Config file to use
-CUSTOM_CVAR(String, timidity_config, "timidity.cfg", CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
+CUSTOM_CVAR(String, timidity_config, "gzdoom", CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 {
 	if (currSong != nullptr && currSong->GetDeviceType() == MDEV_TIMIDITY)
 	{

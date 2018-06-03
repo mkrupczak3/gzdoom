@@ -40,36 +40,19 @@
 
 #include "gi.h"
 #include "d_player.h"
-#include "info.h"
-#include "tarray.h"
 #include "w_wad.h"
-#include "templates.h"
-#include "r_defs.h"
-#include "a_pickups.h"
-#include "s_sound.h"
 #include "cmdlib.h"
 #include "p_lnspec.h"
 #include "decallib.h"
-#include "m_random.h"
-#include "i_system.h"
 #include "p_local.h"
 #include "p_effect.h"
-#include "v_palette.h"
-#include "doomerrors.h"
-#include "p_conversation.h"
 #include "v_text.h"
 #include "thingdef.h"
-#include "a_sharedglobal.h"
-#include "r_data/r_translate.h"
 #include "a_morph.h"
-#include "colormatcher.h"
 #include "teaminfo.h"
-#include "v_video.h"
-#include "r_data/colormaps.h"
 #include "backend/vmbuilder.h"
 #include "a_keys.h"
 #include "g_levellocals.h"
-#include "d_player.h"
 #include "types.h"
 
 //==========================================================================
@@ -1147,7 +1130,7 @@ static void SetIcon(FTextureID &icon, Baggage &bag, const char *i)
 	}
 	else
 	{
-		icon = TexMan.CheckForTexture(i, FTexture::TEX_MiscPatch);
+		icon = TexMan.CheckForTexture(i, ETextureType::MiscPatch);
 		if (!icon.isValid())
 		{
 			// Don't print warnings if the item is for another game or if this is a shareware IWAD. 
@@ -1609,7 +1592,7 @@ DEFINE_CLASS_PROPERTY_PREFIX(player, sidemove, F_f, PlayerPawn)
 DEFINE_CLASS_PROPERTY_PREFIX(player, scoreicon, S, PlayerPawn)
 {
 	PROP_STRING_PARM(z, 0);
-	defaults->ScoreIcon = TexMan.CheckForTexture(z, FTexture::TEX_MiscPatch);
+	defaults->ScoreIcon = TexMan.CheckForTexture(z, ETextureType::MiscPatch);
 	if (!defaults->ScoreIcon.isValid())
 	{
 		bag.ScriptPosition.Message(MSG_WARNING,

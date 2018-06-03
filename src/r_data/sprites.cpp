@@ -25,20 +25,16 @@
 #include "w_wad.h"
 #include "i_system.h"
 #include "s_sound.h"
-#include "c_console.h"
 #include "d_player.h"
 #include "d_netinf.h"
 #include "gi.h"
-#include "colormatcher.h"
 #include "c_dispatch.h"
-#include "r_defs.h"
 #include "v_text.h"
 #include "r_data/sprites.h"
 #include "r_data/voxels.h"
-#include "textures/textures.h"
 #include "vm.h"
 
-void gl_InitModels();
+void InitModels();
 
 // variables used to look up
 //	and range check thing_t sprites patches
@@ -337,7 +333,7 @@ void R_InitSpriteDefs ()
 	for (i = 0; i < smax; ++i)
 	{
 		FTexture *tex = TexMan.ByIndex(i);
-		if (tex->UseType == FTexture::TEX_Sprite && strlen(tex->Name) >= 6)
+		if (tex->UseType == ETextureType::Sprite && strlen(tex->Name) >= 6)
 		{
 			size_t bucket = TEX_DWNAME(tex) % smax;
 			hashes[i].Next = hashes[bucket].Head;
@@ -856,7 +852,7 @@ void R_InitSkins (void)
 					memcpy(&lnameint, lname, 4);
 					if (lnameint == intname)
 					{
-						FTextureID picnum = TexMan.CreateTexture(k, FTexture::TEX_SkinSprite);
+						FTextureID picnum = TexMan.CreateTexture(k, ETextureType::SkinSprite);
 						bool res = R_InstallSpriteLump (picnum, lname[4] - 'A', lname[5], false, sprtemp, maxframe);
 
 						if (lname[6] && res)
@@ -1052,7 +1048,7 @@ void R_InitSprites ()
 	// [RH] Sort the skins, but leave base as skin 0
 	//qsort (&skins[PlayerClasses.Size ()], numskins-PlayerClasses.Size (), sizeof(FPlayerSkin), skinsorter);
 
-	gl_InitModels();
+	InitModels();
 }
 
 

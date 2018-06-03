@@ -33,40 +33,35 @@
 #include "actorinlines.h"
 #include "i_time.h"
 
-void gl_FlushModels();
-bool polymodelsInUse;
-
-void PolyRenderModel(PolyRenderThread *thread, const TriMatrix &worldToClip, const PolyClipPlane &clipPlane, uint32_t stencilValue, float x, float y, float z, FSpriteModelFrame *smf, AActor *actor)
+void PolyRenderModel(PolyRenderThread *thread, const Mat4f &worldToClip, uint32_t stencilValue, float x, float y, float z, FSpriteModelFrame *smf, AActor *actor)
 {
-	PolyModelRenderer renderer(thread, worldToClip, clipPlane, stencilValue);
+	PolyModelRenderer renderer(thread, worldToClip, stencilValue);
 	renderer.RenderModel(x, y, z, smf, actor);
 }
 
-void PolyRenderHUDModel(PolyRenderThread *thread, const TriMatrix &worldToClip, const PolyClipPlane &clipPlane, uint32_t stencilValue, DPSprite *psp, float ofsx, float ofsy)
+void PolyRenderHUDModel(PolyRenderThread *thread, const Mat4f &worldToClip, uint32_t stencilValue, DPSprite *psp, float ofsx, float ofsy)
 {
-	PolyModelRenderer renderer(thread, worldToClip, clipPlane, stencilValue);
+	PolyModelRenderer renderer(thread, worldToClip, stencilValue);
 	renderer.RenderHUDModel(psp, ofsx, ofsy);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
-PolyModelRenderer::PolyModelRenderer(PolyRenderThread *thread, const TriMatrix &worldToClip, const PolyClipPlane &clipPlane, uint32_t stencilValue) : Thread(thread), WorldToClip(worldToClip), ClipPlane(clipPlane), StencilValue(stencilValue)
+PolyModelRenderer::PolyModelRenderer(PolyRenderThread *thread, const Mat4f &worldToClip, uint32_t stencilValue) : Thread(thread), WorldToClip(worldToClip), StencilValue(stencilValue)
 {
-	if (!polymodelsInUse)
-	{
-		gl_FlushModels();
-		polymodelsInUse = true;
-	}
 }
 
 void PolyModelRenderer::BeginDrawModel(AActor *actor, FSpriteModelFrame *smf, const VSMatrix &objectToWorldMatrix)
 {
 	ModelActor = actor;
-	const_cast<VSMatrix &>(objectToWorldMatrix).copy(ObjectToWorld.matrix);
+	const_cast<VSMatrix &>(objectToWorldMatrix).copy(ObjectToWorld.Matrix);
+	SetTransform();
+	PolyTriangleDrawer::SetTwoSided(Thread->DrawQueue, true);
 }
 
 void PolyModelRenderer::EndDrawModel(AActor *actor, FSpriteModelFrame *smf)
 {
+	PolyTriangleDrawer::SetTwoSided(Thread->DrawQueue, false);
 	ModelActor = nullptr;
 }
 
@@ -85,14 +80,14 @@ void PolyModelRenderer::ResetVertexBuffer()
 
 VSMatrix PolyModelRenderer::GetViewToWorldMatrix()
 {
-	TriMatrix swapYZ = TriMatrix::null();
-	swapYZ.matrix[0 + 0 * 4] = 1.0f;
-	swapYZ.matrix[1 + 2 * 4] = 1.0f;
-	swapYZ.matrix[2 + 1 * 4] = 1.0f;
-	swapYZ.matrix[3 + 3 * 4] = 1.0f;
+	Mat4f swapYZ = Mat4f::Null();
+	swapYZ.Matrix[0 + 0 * 4] = 1.0f;
+	swapYZ.Matrix[1 + 2 * 4] = 1.0f;
+	swapYZ.Matrix[2 + 1 * 4] = 1.0f;
+	swapYZ.Matrix[3 + 3 * 4] = 1.0f;
 
 	VSMatrix worldToView;
-	worldToView.loadMatrix((PolyRenderer::Instance()->WorldToView * swapYZ).matrix);
+	worldToView.loadMatrix((PolyRenderer::Instance()->Scene.CurrentViewpoint->WorldToView * swapYZ).Matrix);
 	
 	VSMatrix objectToWorld;
 	worldToView.inverseMatrix(objectToWorld);
@@ -102,12 +97,17 @@ VSMatrix PolyModelRenderer::GetViewToWorldMatrix()
 void PolyModelRenderer::BeginDrawHUDModel(AActor *actor, const VSMatrix &objectToWorldMatrix)
 {
 	ModelActor = actor;
-	const_cast<VSMatrix &>(objectToWorldMatrix).copy(ObjectToWorld.matrix);
+	const_cast<VSMatrix &>(objectToWorldMatrix).copy(ObjectToWorld.Matrix);
+	SetTransform();
+	PolyTriangleDrawer::SetWeaponScene(Thread->DrawQueue, true);
+	PolyTriangleDrawer::SetTwoSided(Thread->DrawQueue, true);
 }
 
 void PolyModelRenderer::EndDrawHUDModel(AActor *actor)
 {
 	ModelActor = nullptr;
+	PolyTriangleDrawer::SetWeaponScene(Thread->DrawQueue, false);
+	PolyTriangleDrawer::SetTwoSided(Thread->DrawQueue, false);
 }
 
 void PolyModelRenderer::SetInterpolation(double interpolation)
@@ -118,6 +118,17 @@ void PolyModelRenderer::SetInterpolation(double interpolation)
 void PolyModelRenderer::SetMaterial(FTexture *skin, bool clampNoFilter, int translation)
 {
 	SkinTexture = skin;
+}
+
+void PolyModelRenderer::SetTransform()
+{
+	Mat4f swapYZ = Mat4f::Null();
+	swapYZ.Matrix[0 + 0 * 4] = 1.0f;
+	swapYZ.Matrix[1 + 2 * 4] = 1.0f;
+	swapYZ.Matrix[2 + 1 * 4] = 1.0f;
+	swapYZ.Matrix[3 + 3 * 4] = 1.0f;
+
+	PolyTriangleDrawer::SetTransform(Thread->DrawQueue, Thread->FrameMemory->NewObject<Mat4f>(WorldToClip * swapYZ * ObjectToWorld));
 }
 
 void PolyModelRenderer::DrawArrays(int start, int count)
@@ -131,19 +142,8 @@ void PolyModelRenderer::DrawArrays(int start, int count)
 	bool fullbrightSprite = ((ModelActor->renderflags & RF_FULLBRIGHT) || (ModelActor->flags5 & MF5_BRIGHT));
 	int lightlevel = fullbrightSprite ? 255 : ModelActor->Sector->lightlevel + actualextralight;
 
-	TriMatrix swapYZ = TriMatrix::null();
-	swapYZ.matrix[0 + 0 * 4] = 1.0f;
-	swapYZ.matrix[1 + 2 * 4] = 1.0f;
-	swapYZ.matrix[2 + 1 * 4] = 1.0f;
-	swapYZ.matrix[3 + 3 * 4] = 1.0f;
-
-	TriMatrix *transform = Thread->FrameMemory->NewObject<TriMatrix>();
-	*transform = WorldToClip * swapYZ * ObjectToWorld;
-
 	PolyDrawArgs args;
 	args.SetLight(GetColorTable(sector->Colormap, sector->SpecialColors[sector_t::sprites], true), lightlevel, PolyRenderer::Instance()->Light.SpriteGlobVis(foggy), fullbrightSprite);
-	args.SetTransform(transform);
-	args.SetFaceCullCCW(true);
 	args.SetStencilTestValue(StencilValue);
 	args.SetClipPlane(0, PolyClipPlane());
 	args.SetStyle(TriBlendMode::TextureOpaque);
@@ -151,7 +151,7 @@ void PolyModelRenderer::DrawArrays(int start, int count)
 	args.SetDepthTest(true);
 	args.SetWriteDepth(true);
 	args.SetWriteStencil(false);
-	args.DrawArray(Thread, VertexBuffer + start, count);
+	args.DrawArray(Thread->DrawQueue, VertexBuffer + start, count);
 }
 
 void PolyModelRenderer::DrawElements(int numIndices, size_t offset)
@@ -165,19 +165,8 @@ void PolyModelRenderer::DrawElements(int numIndices, size_t offset)
 	bool fullbrightSprite = ((ModelActor->renderflags & RF_FULLBRIGHT) || (ModelActor->flags5 & MF5_BRIGHT));
 	int lightlevel = fullbrightSprite ? 255 : ModelActor->Sector->lightlevel + actualextralight;
 
-	TriMatrix swapYZ = TriMatrix::null();
-	swapYZ.matrix[0 + 0 * 4] = 1.0f;
-	swapYZ.matrix[1 + 2 * 4] = 1.0f;
-	swapYZ.matrix[2 + 1 * 4] = 1.0f;
-	swapYZ.matrix[3 + 3 * 4] = 1.0f;
-
-	TriMatrix *transform = Thread->FrameMemory->NewObject<TriMatrix>();
-	*transform = WorldToClip * swapYZ * ObjectToWorld;
-
 	PolyDrawArgs args;
 	args.SetLight(GetColorTable(sector->Colormap, sector->SpecialColors[sector_t::sprites], true), lightlevel, PolyRenderer::Instance()->Light.SpriteGlobVis(foggy), fullbrightSprite);
-	args.SetTransform(transform);
-	args.SetFaceCullCCW(true);
 	args.SetStencilTestValue(StencilValue);
 	args.SetClipPlane(0, PolyClipPlane());
 	args.SetStyle(TriBlendMode::TextureOpaque);
@@ -185,12 +174,7 @@ void PolyModelRenderer::DrawElements(int numIndices, size_t offset)
 	args.SetDepthTest(true);
 	args.SetWriteDepth(true);
 	args.SetWriteStencil(false);
-	args.DrawElements(Thread, VertexBuffer, IndexBuffer + offset / sizeof(unsigned int), numIndices);
-}
-
-double PolyModelRenderer::GetTimeFloat()
-{
-	return (float)I_msTime() * (float)TICRATE / 1000.0f;
+	args.DrawElements(Thread->DrawQueue, VertexBuffer, IndexBuffer + offset / sizeof(unsigned int), numIndices);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -227,7 +211,7 @@ void PolyModelVertexBuffer::SetupFrame(FModelRenderer *renderer, unsigned int fr
 {
 	PolyModelRenderer *polyrenderer = (PolyModelRenderer *)renderer;
 
-	if (true)//if (frame1 == frame2 || size == 0 || polyrenderer->InterpolationFactor == 0.f)
+	if (frame1 == frame2 || size == 0 || polyrenderer->InterpolationFactor == 0.f)
 	{
 		TriVertex *vertices = polyrenderer->Thread->FrameMemory->AllocMemory<TriVertex>(size);
 
@@ -252,11 +236,12 @@ void PolyModelVertexBuffer::SetupFrame(FModelRenderer *renderer, unsigned int fr
 		TriVertex *vertices = polyrenderer->Thread->FrameMemory->AllocMemory<TriVertex>(size);
 
 		float frac = polyrenderer->InterpolationFactor;
+		float inv_frac = 1.0f - frac;
 		for (unsigned int i = 0; i < size; i++)
 		{
-			vertices[i].x = mVertexBuffer[frame1 + i].x * (1.0f - frac) + mVertexBuffer[frame2 + i].x * frac;
-			vertices[i].y = mVertexBuffer[frame1 + i].y * (1.0f - frac) + mVertexBuffer[frame2 + i].y * frac;
-			vertices[i].z = mVertexBuffer[frame1 + i].z * (1.0f - frac) + mVertexBuffer[frame2 + i].z * frac;
+			vertices[i].x = mVertexBuffer[frame1 + i].x * inv_frac + mVertexBuffer[frame2 + i].x * frac;
+			vertices[i].y = mVertexBuffer[frame1 + i].y * inv_frac + mVertexBuffer[frame2 + i].y * frac;
+			vertices[i].z = mVertexBuffer[frame1 + i].z * inv_frac + mVertexBuffer[frame2 + i].z * frac;
 			vertices[i].w = 1.0f;
 			vertices[i].u = mVertexBuffer[frame1 + i].u;
 			vertices[i].v = mVertexBuffer[frame1 + i].v;

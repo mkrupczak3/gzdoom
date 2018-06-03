@@ -34,20 +34,9 @@
 #include <float.h>
 
 #include "menu/menu.h"
-#include "c_dispatch.h"
 #include "w_wad.h"
-#include "sc_man.h"
-#include "v_font.h"
-#include "g_level.h"
-#include "d_player.h"
-#include "v_video.h"
-#include "i_system.h"
 #include "c_bind.h"
-#include "v_palette.h"
-#include "d_event.h"
-#include "d_gui.h"
 #include "i_music.h"
-#include "m_joy.h"
 #include "gi.h"
 #include "i_sound.h"
 #include "cmdlib.h"
@@ -161,7 +150,7 @@ void DeinitMenus()
 
 static FTextureID GetMenuTexture(const char* const name)
 {
-	const FTextureID texture = TexMan.CheckForTexture(name, FTexture::TEX_MiscPatch);
+	const FTextureID texture = TexMan.CheckForTexture(name, ETextureType::MiscPatch);
 
 	if (!texture.Exists() && mustPrintErrors)
 	{
@@ -250,6 +239,12 @@ static bool CheckSkipOptionBlock(FScanner &sc)
 		else if (sc.Compare("OpenAL"))
 		{
 			filter |= IsOpenALPresent();
+		}
+		else if (sc.Compare("MMX"))
+		{
+			#ifdef HAVE_MMX
+				filter = true;
+			#endif
 		}
 	}
 	while (sc.CheckString(","));
@@ -417,7 +412,7 @@ static void ParseListMenuBody(FScanner &sc, DListMenuDescriptor *desc)
 						}
 						else if (args[i] == TypeTextureID)
 						{
-							auto f = TexMan.CheckForTexture(sc.String, FTexture::TEX_MiscPatch);
+							auto f = TexMan.CheckForTexture(sc.String, ETextureType::MiscPatch);
 							if (!f.Exists())
 							{
 								sc.ScriptMessage("Unknown texture %s", sc.String);
@@ -1429,11 +1424,11 @@ static void InitMusicMenus()
 
 	if (menu != nullptr)
 	{
-		if (soundfonts.Size() > 0)
+		int adl_banks_count = adl_getBanksCount();
+		if (adl_banks_count > 0)
 		{
-			int adl_banks_count = adl_getBanksCount();
 			const char *const *adl_bank_names = adl_getBankNames();
-			for(int i=0; i < adl_banks_count; i++)
+			for (int i=0; i < adl_banks_count; i++)
 			{
 				auto it = CreateOptionMenuItemCommand(adl_bank_names[i], FStringf("adl_bank %d", i), true);
 				static_cast<DOptionMenuDescriptor*>(*menu)->mItems.Push(it);

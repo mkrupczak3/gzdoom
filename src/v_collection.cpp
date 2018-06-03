@@ -35,9 +35,7 @@
 #include "v_collection.h"
 #include "v_font.h"
 #include "v_video.h"
-#include "m_swap.h"
 #include "w_wad.h"
-#include "textures.h"
 
 FImageCollection::FImageCollection ()
 {
@@ -48,14 +46,14 @@ FImageCollection::FImageCollection (const char **patchNames, int numPatches)
 	Add (patchNames, numPatches);
 }
 
-void FImageCollection::Init (const char **patchNames, int numPatches, int namespc)
+void FImageCollection::Init (const char **patchNames, int numPatches, ETextureType namespc)
 {
 	ImageMap.Clear();
 	Add(patchNames, numPatches, namespc);
 }
 
 // [MH] Mainly for mugshots with skins and SBARINFO
-void FImageCollection::Add (const char **patchNames, int numPatches, int namespc)
+void FImageCollection::Add (const char **patchNames, int numPatches, ETextureType namespc)
 {
 	int OldCount = ImageMap.Size();
 
@@ -64,14 +62,6 @@ void FImageCollection::Add (const char **patchNames, int numPatches, int namespc
 	for (int i = 0; i < numPatches; ++i)
 	{
 		FTextureID picnum = TexMan.CheckForTexture(patchNames[i], namespc);
-		if (!picnum.isValid())
-		{
-			int lumpnum = Wads.CheckNumForName(patchNames[i], namespc);
-			if (lumpnum >= 0)
-			{
-				picnum = TexMan.CreateTexture(lumpnum, namespc);
-			}
-		}
 		ImageMap[OldCount + i] = picnum;
 	}
 }

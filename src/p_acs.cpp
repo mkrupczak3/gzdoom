@@ -42,31 +42,21 @@
 #include "p_local.h"
 #include "d_player.h"
 #include "p_spec.h"
-#include "g_level.h"
-#include "s_sound.h"
 #include "p_acs.h"
 #include "p_saveg.h"
 #include "p_lnspec.h"
 #include "p_enemy.h"
-#include "m_random.h"
-#include "doomstat.h"
 #include "c_console.h"
 #include "c_dispatch.h"
 #include "s_sndseq.h"
-#include "i_system.h"
 #include "sbar.h"
-#include "m_swap.h"
 #include "a_sharedglobal.h"
-#include "v_video.h"
 #include "w_wad.h"
 #include "r_sky.h"
 #include "gstrings.h"
 #include "gi.h"
 #include "g_game.h"
-#include "sc_man.h"
 #include "c_bind.h"
-#include "info.h"
-#include "r_data/r_translate.h"
 #include "cmdlib.h"
 #include "m_png.h"
 #include "p_setup.h"
@@ -80,15 +70,10 @@
 #include "r_utility.h"
 #include "a_morph.h"
 #include "i_music.h"
-#include "serializer.h"
 #include "thingdef.h"
-#include "a_pickups.h"
-#include "r_data/colormaps.h"
 #include "g_levellocals.h"
 #include "actorinlines.h"
-#include "stats.h"
 #include "types.h"
-#include "vm.h"
 
 	// P-codes for ACS scripts
 	enum
@@ -3909,7 +3894,7 @@ void DLevelScript::ChangeFlat (int tag, int name, bool floorOrCeiling)
 	if (flatname == NULL)
 		return;
 
-	flat = TexMan.GetTexture (flatname, FTexture::TEX_Flat, FTextureManager::TEXMAN_Overridable);
+	flat = TexMan.GetTexture (flatname, ETextureType::Flat, FTextureManager::TEXMAN_Overridable);
 
 	FSectorTagIterator it(tag);
 	while ((secnum = it.Next()) >= 0)
@@ -3941,7 +3926,7 @@ void DLevelScript::SetLineTexture (int lineid, int side, int position, int name)
 
 	side = !!side;
 
-	texture = TexMan.GetTexture (texname, FTexture::TEX_Wall, FTextureManager::TEXMAN_Overridable);
+	texture = TexMan.GetTexture (texname, ETextureType::Wall, FTextureManager::TEXMAN_Overridable);
 
 	FLineIdIterator itr(lineid);
 	while ((linenum = itr.Next()) >= 0)
@@ -4736,7 +4721,7 @@ bool DLevelScript::DoCheckActorTexture(int tid, AActor *activator, int string, b
 	{
 		return 0;
 	}
-	FTexture *tex = TexMan.FindTexture(FBehavior::StaticLookupString(string), FTexture::TEX_Flat,
+	FTexture *tex = TexMan.FindTexture(FBehavior::StaticLookupString(string), ETextureType::Flat,
 			FTextureManager::TEXMAN_Overridable|FTextureManager::TEXMAN_TryAny|FTextureManager::TEXMAN_DontCreate);
 
 	if (tex == NULL)
@@ -10069,11 +10054,11 @@ scriptwait:
 				sky2name = FBehavior::StaticLookupString (STACK(1));
 				if (sky1name[0] != 0)
 				{
-					sky1texture = level.skytexture1 = TexMan.GetTexture (sky1name, FTexture::TEX_Wall, FTextureManager::TEXMAN_Overridable|FTextureManager::TEXMAN_ReturnFirst);
+					sky1texture = level.skytexture1 = TexMan.GetTexture (sky1name, ETextureType::Wall, FTextureManager::TEXMAN_Overridable|FTextureManager::TEXMAN_ReturnFirst);
 				}
 				if (sky2name[0] != 0)
 				{
-					sky2texture = level.skytexture2 = TexMan.GetTexture (sky2name, FTexture::TEX_Wall, FTextureManager::TEXMAN_Overridable|FTextureManager::TEXMAN_ReturnFirst);
+					sky2texture = level.skytexture2 = TexMan.GetTexture (sky2name, ETextureType::Wall, FTextureManager::TEXMAN_Overridable|FTextureManager::TEXMAN_ReturnFirst);
 				}
 				R_InitSkyMap ();
 				sp -= 2;
@@ -10097,7 +10082,7 @@ scriptwait:
 
 				if (camera != NULL)
 				{
-					FTextureID picnum = TexMan.CheckForTexture (picname, FTexture::TEX_Wall, FTextureManager::TEXMAN_Overridable);
+					FTextureID picnum = TexMan.CheckForTexture (picname, ETextureType::Wall, FTextureManager::TEXMAN_Overridable);
 					if (!picnum.Exists())
 					{
 						Printf ("SetCameraToTexture: %s is not a texture\n", picname);

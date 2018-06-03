@@ -43,9 +43,7 @@
 #include "r_state.h"
 #include "w_wad.h"
 #include "sc_man.h"
-#include "s_sound.h"
 #include "p_local.h"
-#include "templates.h"
 #include "actor.h"
 #include "vm.h"
 
@@ -631,7 +629,7 @@ static void ParseFloor (FScanner &sc)
 	bool opt = sc.CheckString("optional");
 	sc.MustGetString ();
 
-	picnum = TexMan.CheckForTexture (sc.String, FTexture::TEX_Flat,
+	picnum = TexMan.CheckForTexture (sc.String, ETextureType::Flat,
 		FTextureManager::TEXMAN_Overridable|FTextureManager::TEXMAN_TryAny);
 
 	if (!picnum.Exists())

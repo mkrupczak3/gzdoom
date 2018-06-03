@@ -35,7 +35,6 @@
 #include "p_local.h"
 #include "s_sound.h"
 #include "doomstat.h"
-#include "gi.h"
 #include "p_pspr.h"
 #include "templates.h"
 #include "g_level.h"
@@ -153,10 +152,13 @@ DPSprite::DPSprite(player_t *owner, AActor *caller, int id)
 : x(.0), y(.0),
   oldx(.0), oldy(.0),
   firstTic(true),
+  Tics(0),
   Flags(0),
   Caller(caller),
   Owner(owner),
+  State(nullptr),
   Sprite(0),
+  Frame(0),
   ID(id),
   processPending(true)
 {

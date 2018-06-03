@@ -27,21 +27,14 @@
 **/
 
 #include "w_wad.h"
-#include "cmdlib.h"
-#include "sc_man.h"
-#include "m_crc32.h"
-#include "c_console.h"
-#include "g_game.h"
-#include "doomstat.h"
 #include "g_level.h"
 #include "colormatcher.h"
 #include "textures/bitmap.h"
 #include "g_levellocals.h"
 #include "models.h"
-#include "v_palette.h"
 
 #ifdef __MOBILE__
-#include "gl/system/gl_interface.h"
+#include "gl_load/gl_interface.h"
 #endif
 
 #ifdef _MSC_VER
@@ -84,8 +77,7 @@ FVoxelTexture::FVoxelTexture(FVoxel *vox)
 	WidthBits = 4;
 	HeightBits = 4;
 	WidthMask = 15;
-	gl_info.bNoFilter = true;
-	gl_info.bNoCompress = true;
+	bNoCompress = true;
 }
 
 //===========================================================================
@@ -317,7 +309,7 @@ void FVoxelModel::Initialize()
 	FVoxelMipLevel *mip = &mVoxel->Mips[0];
 	for (int x = 0; x < mip->SizeX; x++)
 	{
-		uint8_t *slabxoffs = &mip->SlabData[mip->OffsetX[x]];
+		uint8_t *slabxoffs = &mip->GetSlabData(false)[mip->OffsetX[x]];
 		short *xyoffs = &mip->OffsetXY[x * (mip->SizeY + 1)];
 		for (int y = 0; y < mip->SizeY; y++)
 		{
@@ -339,18 +331,21 @@ void FVoxelModel::Initialize()
 
 void FVoxelModel::BuildVertexBuffer(FModelRenderer *renderer)
 {
-	if (mVBuf == NULL)
+	if (!GetVertexBuffer(renderer))
 	{
 		Initialize();
 
-		mVBuf = renderer->CreateVertexBuffer(true, true);
-		FModelVertex *vertptr = mVBuf->LockVertexBuffer(mVertices.Size());
+		auto vbuf = renderer->CreateVertexBuffer(true, true);
+		SetVertexBuffer(renderer, vbuf);
 
-        memcpy(vertptr, &mVertices[0], sizeof(FModelVertex)* mVertices.Size());
+		FModelVertex *vertptr = vbuf->LockVertexBuffer(mVertices.Size());
+		unsigned int *indxptr = vbuf->LockIndexBuffer(mIndices.Size());
+
+		memcpy(vertptr, &mVertices[0], sizeof(FModelVertex)* mVertices.Size());
 #ifdef __MOBILE__
         if (!(gl.flags & RFL_UINT_IDX))
         {
-		    unsigned short *indxptr = (unsigned short *)mVBuf->LockIndexBuffer(mIndices.Size()/2+2);
+		    unsigned short *indxptr = (unsigned short *)vbuf->LockIndexBuffer(mIndices.Size()/2+2);
 		    for( int n = 0; n < mIndices.Size(); n++ )
 		    {
 		        indxptr[n] = mIndices[n];
@@ -358,15 +353,10 @@ void FVoxelModel::BuildVertexBuffer(FModelRenderer *renderer)
         }
         else
 #endif
-        {
-            unsigned int *indxptr = mVBuf->LockIndexBuffer(mIndices.Size());
-            memcpy(indxptr, &mIndices[0], sizeof(unsigned int)* mIndices.Size());
-        }
+		memcpy(indxptr, &mIndices[0], sizeof(unsigned int)* mIndices.Size());
 
-
-
-		mVBuf->UnlockVertexBuffer();
-		mVBuf->UnlockIndexBuffer();
+		vbuf->UnlockVertexBuffer();
+		vbuf->UnlockIndexBuffer();
 		mNumIndices = mIndices.Size();
 
 		// delete our temporary buffers
@@ -386,7 +376,7 @@ void FVoxelModel::BuildVertexBuffer(FModelRenderer *renderer)
 
 void FVoxelModel::AddSkins(uint8_t *hitlist)
 {
-	hitlist[mPalette.GetIndex()] |= FTexture::TEX_Flat;
+	hitlist[mPalette.GetIndex()] |= FTextureManager::HIT_Flat;
 }
 
 //===========================================================================
@@ -431,7 +421,7 @@ float FVoxelModel::getAspectFactor()
 void FVoxelModel::RenderFrame(FModelRenderer *renderer, FTexture * skin, int frame, int frame2, double inter, int translation)
 {
 	renderer->SetMaterial(skin, true, translation);
-	mVBuf->SetupFrame(renderer, 0, 0, 0);
+	GetVertexBuffer(renderer)->SetupFrame(renderer, 0, 0, 0);
 	renderer->DrawElements(mNumIndices, 0);
 }
 

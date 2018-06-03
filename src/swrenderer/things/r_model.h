@@ -52,7 +52,9 @@ namespace swrenderer
 	class SWModelRenderer : public FModelRenderer
 	{
 	public:
-		SWModelRenderer(RenderThread *thread);
+		SWModelRenderer(RenderThread *thread, Fake3DTranslucent clip3DFloor);
+
+		ModelRendererType GetType() const override { return SWModelRendererType; }
 
 		void BeginDrawModel(AActor *actor, FSpriteModelFrame *smf, const VSMatrix &objectToWorldMatrix) override;
 		void EndDrawModel(AActor *actor, FSpriteModelFrame *smf) override;
@@ -66,12 +68,15 @@ namespace swrenderer
 		void SetMaterial(FTexture *skin, bool clampNoFilter, int translation) override;
 		void DrawArrays(int start, int count) override;
 		void DrawElements(int numIndices, size_t offset) override;
-		double GetTimeFloat() override;
+
+		void SetTransform();
 
 		RenderThread *Thread = nullptr;
+		Fake3DTranslucent Clip3DFloor;
 
 		AActor *ModelActor = nullptr;
-		TriMatrix ObjectToWorld;
+		Mat4f ObjectToWorld;
+		PolyClipPlane ClipTop, ClipBottom;
 		FTexture *SkinTexture = nullptr;
 		unsigned int *IndexBuffer = nullptr;
 		TriVertex *VertexBuffer = nullptr;

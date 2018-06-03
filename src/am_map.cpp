@@ -30,14 +30,11 @@
 #include "doomdef.h"
 #include "templates.h"
 #include "g_level.h"
-#include "doomdef.h"
 #include "st_stuff.h"
 #include "p_local.h"
 #include "p_lnspec.h"
 #include "w_wad.h"
 #include "a_sharedglobal.h"
-#include "statnums.h"
-#include "r_data/r_translate.h"
 #include "d_event.h"
 #include "gi.h"
 #include "p_setup.h"
@@ -50,19 +47,10 @@
 #include "p_blockmap.h"
 
 #include "m_cheat.h"
-#include "i_system.h"
 #include "c_dispatch.h"
-#include "colormatcher.h"
 #include "d_netinf.h"
 
-// Needs access to LFB.
-#include "v_video.h"
-#include "v_palette.h"
-
-#include "v_text.h"
-
 // State.
-#include "doomstat.h"
 #include "r_state.h"
 #include "r_utility.h"
 
@@ -72,7 +60,6 @@
 #include "am_map.h"
 #include "po_man.h"
 #include "a_keys.h"
-#include "r_data/colormaps.h"
 #include "g_levellocals.h"
 #include "actorinlines.h"
 
@@ -335,6 +322,30 @@ struct AMColorset
 	{
 		return c[index].isValid();
 	}
+};
+
+//=============================================================================
+//
+// automap colors forced by linedef
+//
+//=============================================================================
+
+static const int AUTOMAP_LINE_COLORS[AMLS_COUNT] =
+{
+	-1, 								// AMLS_Default (unused)
+	AMColorset::WallColor, 				// AMLS_OneSided,
+	AMColorset::TSWallColor, 			// AMLS_TwoSided
+	AMColorset::FDWallColor, 			// AMLS_FloorDiff
+	AMColorset::CDWallColor, 			// AMLS_CeilingDiff
+	AMColorset::EFWallColor, 			// AMLS_ExtraFloor
+	AMColorset::SpecialWallColor, 		// AMLS_Special
+	AMColorset::SecretWallColor, 		// AMLS_Secret
+	AMColorset::NotSeenColor, 			// AMLS_NotSeen
+	AMColorset::LockedColor, 			// AMLS_Locked
+	AMColorset::IntraTeleportColor, 	// AMLS_IntraTeleport
+	AMColorset::InterTeleportColor, 	// AMLS_InterTeleport
+	AMColorset::UnexploredSecretColor, 	// AMLS_UnexploredSecret
+	AMColorset::PortalColor, 			// AMLS_Portal
 };
 
 //=============================================================================
@@ -771,7 +782,6 @@ static int	f_y;
 // size of window on screen
 static int	f_w;
 static int	f_h;
-static int	f_p;				// [RH] # of bytes from start of a line to start of next
 
 static int	amclock;
 
@@ -952,7 +962,7 @@ void AM_StaticInit()
 	for (int i = 0; i < 10; i++)
 	{
 		mysnprintf (namebuf, countof(namebuf), "AMMNUM%d", i);
-		marknums[i] = TexMan.CheckForTexture (namebuf, FTexture::TEX_MiscPatch);
+		marknums[i] = TexMan.CheckForTexture (namebuf, ETextureType::MiscPatch);
 	}
 	markpointnum = 0;
 	mapback.SetInvalid();
@@ -1356,11 +1366,11 @@ void AM_LevelInit ()
 {
 	if (level.info->MapBackground.Len() == 0)
 	{
-		mapback = TexMan.CheckForTexture("AUTOPAGE", FTexture::TEX_MiscPatch);
+		mapback = TexMan.CheckForTexture("AUTOPAGE", ETextureType::MiscPatch);
 	}
 	else
 	{
-		mapback = TexMan.CheckForTexture(level.info->MapBackground, FTexture::TEX_MiscPatch);
+		mapback = TexMan.CheckForTexture(level.info->MapBackground, ETextureType::MiscPatch);
 	}
 
 	AM_clearMarks();
@@ -1384,7 +1394,6 @@ void AM_Stop ()
 {
 	automapactive = false;
 	stopped = true;
-	V_SetBorderNeedRefresh();
 	viewactive = true;
 }
 
@@ -1958,10 +1967,10 @@ sector_t * AM_FakeFlat(AActor *viewer, sector_t * sec, sector_t * dest)
 	else
 	{
 		in_area = pos.Z <= viewer->Sector->heightsec->floorplane.ZatPoint(pos) ? -1 :
-			(pos.Z > viewer->Sector->heightsec->ceilingplane.ZatPoint(pos) && !(viewer->Sector->heightsec->MoreFlags&SECF_FAKEFLOORONLY)) ? 1 : 0;
+			(pos.Z > viewer->Sector->heightsec->ceilingplane.ZatPoint(pos) && !(viewer->Sector->heightsec->MoreFlags&SECMF_FAKEFLOORONLY)) ? 1 : 0;
 	}
 
-	int diffTex = (sec->heightsec->MoreFlags & SECF_CLIPFAKEPLANES);
+	int diffTex = (sec->heightsec->MoreFlags & SECMF_CLIPFAKEPLANES);
 	sector_t * s = sec->heightsec;
 
 	memcpy(dest, sec, sizeof(sector_t));
@@ -1973,14 +1982,14 @@ sector_t * AM_FakeFlat(AActor *viewer, sector_t * sec, sector_t * dest)
 		if (s->floorplane.CopyPlaneIfValid(&dest->floorplane, &sec->ceilingplane))
 		{
 			dest->SetTexture(sector_t::floor, s->GetTexture(sector_t::floor), false);
-			dest->SetPlaneTexZ(sector_t::floor, s->GetPlaneTexZ(sector_t::floor));
+			dest->SetPlaneTexZQuick(sector_t::floor, s->GetPlaneTexZ(sector_t::floor));
 		}
-		else if (s->MoreFlags & SECF_FAKEFLOORONLY)
+		else if (s->MoreFlags & SECMF_FAKEFLOORONLY)
 		{
 			if (in_area == -1)
 			{
 				dest->Colormap = s->Colormap;
-				if (!(s->MoreFlags & SECF_NOFAKELIGHT))
+				if (!(s->MoreFlags & SECMF_NOFAKELIGHT))
 				{
 					dest->lightlevel = s->lightlevel;
 					dest->SetPlaneLight(sector_t::floor, s->GetPlaneLight(sector_t::floor));
@@ -1993,16 +2002,16 @@ sector_t * AM_FakeFlat(AActor *viewer, sector_t * sec, sector_t * dest)
 	}
 	else
 	{
-		dest->SetPlaneTexZ(sector_t::floor, s->GetPlaneTexZ(sector_t::floor));
+		dest->SetPlaneTexZQuick(sector_t::floor, s->GetPlaneTexZ(sector_t::floor));
 		dest->floorplane = s->floorplane;
 	}
 
 	if (in_area == -1)
 	{
 		dest->Colormap = s->Colormap;
-		dest->SetPlaneTexZ(sector_t::floor, sec->GetPlaneTexZ(sector_t::floor));
+		dest->SetPlaneTexZQuick(sector_t::floor, sec->GetPlaneTexZ(sector_t::floor));
 		dest->floorplane = sec->floorplane;
-		if (!(s->MoreFlags & SECF_NOFAKELIGHT))
+		if (!(s->MoreFlags & SECMF_NOFAKELIGHT))
 		{
 			dest->lightlevel = s->lightlevel;
 		}
@@ -2010,7 +2019,7 @@ sector_t * AM_FakeFlat(AActor *viewer, sector_t * sec, sector_t * dest)
 		dest->SetTexture(sector_t::floor, diffTex ? sec->GetTexture(sector_t::floor) : s->GetTexture(sector_t::floor), false);
 		dest->planes[sector_t::floor].xform = s->planes[sector_t::floor].xform;
 
-		if (!(s->MoreFlags & SECF_NOFAKELIGHT))
+		if (!(s->MoreFlags & SECMF_NOFAKELIGHT))
 		{
 			dest->SetPlaneLight(sector_t::floor, s->GetPlaneLight(sector_t::floor));
 			dest->ChangeFlags(sector_t::floor, -1, s->GetFlags(sector_t::floor));
@@ -2019,9 +2028,9 @@ sector_t * AM_FakeFlat(AActor *viewer, sector_t * sec, sector_t * dest)
 	else if (in_area == 1)
 	{
 		dest->Colormap = s->Colormap;
-		dest->SetPlaneTexZ(sector_t::floor, s->GetPlaneTexZ(sector_t::ceiling));
+		dest->SetPlaneTexZQuick(sector_t::floor, s->GetPlaneTexZ(sector_t::ceiling));
 		dest->floorplane = s->ceilingplane;
-		if (!(s->MoreFlags & SECF_NOFAKELIGHT))
+		if (!(s->MoreFlags & SECMF_NOFAKELIGHT))
 		{
 			dest->lightlevel = s->lightlevel;
 		}
@@ -2034,7 +2043,7 @@ sector_t * AM_FakeFlat(AActor *viewer, sector_t * sec, sector_t * dest)
 			dest->planes[sector_t::floor].xform = s->planes[sector_t::floor].xform;
 		}
 
-		if (!(s->MoreFlags & SECF_NOFAKELIGHT))
+		if (!(s->MoreFlags & SECMF_NOFAKELIGHT))
 		{
 			dest->lightlevel = s->lightlevel;
 			dest->SetPlaneLight(sector_t::floor, s->GetPlaneLight(sector_t::floor));
@@ -2071,7 +2080,7 @@ void AM_drawSubsectors()
 			continue;
 		}
 
-		if ((!(subsectors[i].flags & SSECF_DRAWN) || (subsectors[i].render_sector->MoreFlags & SECF_HIDDEN)) && am_cheat == 0)
+		if ((!(subsectors[i].flags & SSECMF_DRAWN) || (subsectors[i].render_sector->MoreFlags & SECMF_HIDDEN)) && am_cheat == 0)
 		{
 			continue;
 		}
@@ -2142,7 +2151,7 @@ void AM_drawSubsectors()
 			{
 				F3DFloor *rover = sec->e->XFloor.ffloors[i];
 				if (!(rover->flags & FF_EXISTS)) continue;
-				if (rover->flags & FF_FOG) continue;
+				if (rover->flags & (FF_FOG|FF_THISINSIDE)) continue;
 				if (!(rover->flags & FF_RENDERPLANES)) continue;
 				if (rover->alpha == 0) continue;
 				double roverz = rover->top.plane->ZatPoint(secx, secy);
@@ -2192,7 +2201,7 @@ void AM_drawSubsectors()
 
 		// If this subsector has not actually been seen yet (because you are cheating
 		// to see it on the map), tint and desaturate it.
-		if (!(subsectors[i].flags & SSECF_DRAWN))
+		if (!(subsectors[i].flags & SSECMF_DRAWN))
 		{
 			colormap.LightColor = PalEntry(
 				(colormap.LightColor.r + 255) / 2,
@@ -2200,10 +2209,15 @@ void AM_drawSubsectors()
 				(colormap.LightColor.b + 160) / 2);
 			colormap.Desaturation = 255 - (255 - colormap.Desaturation) / 4;
 		}
+		// make table based fog visible on the automap as well.
+		if (level.flags & LEVEL_HASFADETABLE)
+		{
+			colormap.FadeColor = PalEntry(0, 128, 128, 128);
+		}
 
 		// Draw the polygon.
 		FTexture *pic = TexMan(maptex);
-		if (pic != NULL && pic->UseType != FTexture::TEX_Null)
+		if (pic != NULL && pic->UseType != ETextureType::Null)
 		{
 			screen->FillSimplePoly(TexMan(maptex),
 				&points[0], points.Size(),
@@ -2344,6 +2358,7 @@ bool AM_Check3DFloors(line_t *line)
 	for(unsigned i=0;i<ff_front.Size();i++)
 	{
 		F3DFloor *rover = ff_front[i];
+		if (rover->flags & FF_THISINSIDE) continue;
 		if (!(rover->flags & FF_EXISTS)) continue;
 		if (rover->alpha == 0) continue;
 		realfrontcount++;
@@ -2352,6 +2367,7 @@ bool AM_Check3DFloors(line_t *line)
 	for(unsigned i=0;i<ff_back.Size();i++)
 	{
 		F3DFloor *rover = ff_back[i];
+		if (rover->flags & FF_THISINSIDE) continue;
 		if (!(rover->flags & FF_EXISTS)) continue;
 		if (rover->alpha == 0) continue;
 		realbackcount++;
@@ -2362,6 +2378,7 @@ bool AM_Check3DFloors(line_t *line)
 	for(unsigned i=0;i<ff_front.Size();i++)
 	{
 		F3DFloor *rover = ff_front[i];
+		if (rover->flags & FF_THISINSIDE) continue;	// only relevant for software rendering.
 		if (!(rover->flags & FF_EXISTS)) continue;
 		if (rover->alpha == 0) continue;
 
@@ -2369,6 +2386,7 @@ bool AM_Check3DFloors(line_t *line)
 		for(unsigned j=0;j<ff_back.Size();j++)
 		{
 			F3DFloor *rover2 = ff_back[j];
+			if (rover2->flags & FF_THISINSIDE) continue;	// only relevant for software rendering.
 			if (!(rover2->flags & FF_EXISTS)) continue;
 			if (rover2->alpha == 0) continue;
 			if (rover->model == rover2->model && rover->flags == rover2->flags) 
@@ -2544,7 +2562,7 @@ void AM_drawWalls (bool allmap)
 	static mline_t l;
 	int lock, color;
 
-	int numportalgroups = am_portaloverlay ? Displacements.size : 0;
+	int numportalgroups = am_portaloverlay ? level.Displacements.size : 0;
 
 	for (int p = numportalgroups - 1; p >= -1; p--)
 	{
@@ -2568,7 +2586,7 @@ void AM_drawWalls (bool allmap)
 			bool portalmode = numportalgroups > 0 &&  pg != MapPortalGroup;
 			if (pg == p)
 			{
-				offset = Displacements.getOffset(pg, MapPortalGroup);
+				offset = level.Displacements.getOffset(pg, MapPortalGroup);
 			}
 			else if (p == -1 && (pg == MapPortalGroup || !am_portaloverlay))
 			{
@@ -2595,6 +2613,13 @@ void AM_drawWalls (bool allmap)
 					{
 						continue;
 					}
+				}
+
+				if (line.automapstyle > AMLS_Default && line.automapstyle < AMLS_COUNT
+					&& (am_cheat == 0 || am_cheat >= 4))
+				{
+					AM_drawMline(&l, AUTOMAP_LINE_COLORS[line.automapstyle]);
+					continue;
 				}
 
 				if (portalmode)
@@ -2672,7 +2697,7 @@ void AM_drawWalls (bool allmap)
 					AM_drawMline(&l, AMColors.TSWallColor);
 				}
 			}
-			else if (allmap)
+			else if (allmap || (line.flags & ML_REVEALED))
 			{
 				if ((line.flags & ML_DONTDRAW) && (am_cheat == 0 || am_cheat >= 4))
 				{
@@ -3077,7 +3102,7 @@ void AM_drawThings ()
 static void DrawMarker (FTexture *tex, double x, double y, int yadjust,
 	INTBOOL flip, double xscale, double yscale, int translation, double alpha, uint32_t fillcolor, FRenderStyle renderstyle)
 {
-	if (tex == NULL || tex->UseType == FTexture::TEX_Null)
+	if (tex == NULL || tex->UseType == ETextureType::Null)
 	{
 		return;
 	}
@@ -3177,8 +3202,8 @@ void AM_drawAuthorMarkers ()
 			// Use more correct info if we have GL nodes available
 			if (mark->args[1] == 0 ||
 				(mark->args[1] == 1 && (hasglnodes ?
-				 marked->subsector->flags & SSECF_DRAWN :
-				 marked->Sector->MoreFlags & SECF_DRAWN)))
+				 marked->subsector->flags & SSECMF_DRAWN :
+				 marked->Sector->MoreFlags & SECMF_DRAWN)))
 			{
 				DrawMarker (tex, marked->X(), marked->Y(), 0, flip, mark->Scale.X, mark->Scale.Y, mark->Translation,
 					mark->Alpha, mark->fillcolor, mark->RenderStyle);
@@ -3230,7 +3255,6 @@ void AM_Drawer (int bottom)
 		f_x = f_y = 0;
 		f_w = screen->GetWidth ();
 		f_h = bottom;
-		f_p = screen->GetPitch ();
 
 		AM_clearFB(AMColors[AMColors.Background]);
 	}
@@ -3240,7 +3264,6 @@ void AM_Drawer (int bottom)
 		f_y = viewwindowy;
 		f_w = viewwidth;
 		f_h = viewheight;
-		f_p = screen->GetPitch ();
 	}
 	AM_activateNewScale();
 

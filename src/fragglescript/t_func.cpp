@@ -37,26 +37,15 @@
 #include "templates.h"
 #include "p_local.h"
 #include "t_script.h"
-#include "s_sound.h"
-#include "p_lnspec.h"
-#include "m_random.h"
 #include "c_console.h"
 #include "c_dispatch.h"
 #include "d_player.h"
 #include "w_wad.h"
 #include "gi.h"
-#include "zstring.h"
-#include "i_system.h"
-#include "doomstat.h"
-#include "g_level.h"
-#include "v_palette.h"
 #include "v_font.h"
-#include "r_data/colormaps.h"
 #include "serializer.h"
-#include "p_setup.h"
 #include "p_spec.h"
 #include "r_utility.h"
-#include "math/cmath.h"
 #include "g_levellocals.h"
 #include "actorinlines.h"
 
@@ -1890,7 +1879,7 @@ void FParser::SF_FloorTexture(void)
 		if(t_argc > 1)
 		{
 			int i = -1;
-			FTextureID picnum = TexMan.GetTexture(t_argv[1].string, FTexture::TEX_Flat, FTextureManager::TEXMAN_Overridable);
+			FTextureID picnum = TexMan.GetTexture(t_argv[1].string, ETextureType::Flat, FTextureManager::TEXMAN_Overridable);
 			
 			// set all sectors with tag
 			FSSectorTagIterator itr(tagnum);
@@ -1980,7 +1969,7 @@ void FParser::SF_CeilingTexture(void)
 		if(t_argc > 1)
 		{
 			int i = -1;
-			FTextureID picnum = TexMan.GetTexture(t_argv[1].string, FTexture::TEX_Flat, FTextureManager::TEXMAN_Overridable);
+			FTextureID picnum = TexMan.GetTexture(t_argv[1].string, ETextureType::Flat, FTextureManager::TEXMAN_Overridable);
 			
 			// set all sectors with tag
 			FSSectorTagIterator itr(tagnum);
@@ -2233,7 +2222,7 @@ void FParser::SF_SetLineTexture(void)
 			position=3-position;
 			
 			texture = stringvalue(t_argv[3]);
-			texturenum = TexMan.GetTexture(texture, FTexture::TEX_Wall, FTextureManager::TEXMAN_Overridable);
+			texturenum = TexMan.GetTexture(texture, ETextureType::Wall, FTextureManager::TEXMAN_Overridable);
 			
 			FLineIdIterator itr(tag);
 			while ((i = itr.Next()) >= 0)
@@ -2250,7 +2239,7 @@ void FParser::SF_SetLineTexture(void)
 		}
 		else // and an improved legacy version
 		{ 
-			FTextureID picnum = TexMan.GetTexture(t_argv[1].string, FTexture::TEX_Wall, FTextureManager::TEXMAN_Overridable); 
+			FTextureID picnum = TexMan.GetTexture(t_argv[1].string, ETextureType::Wall, FTextureManager::TEXMAN_Overridable); 
 			side = !!intvalue(t_argv[2]); 
 			int sections = intvalue(t_argv[3]); 
 			

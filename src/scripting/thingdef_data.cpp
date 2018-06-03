@@ -42,26 +42,18 @@
 #include "actor.h"
 #include "d_player.h"
 #include "p_effect.h"
-#include "autosegs.h"
-#include "p_maputl.h"
 #include "gi.h"
 #include "p_terrain.h"
 #include "gstrings.h"
-#include "zstring.h"
-#include "d_event.h"
 #include "g_levellocals.h"
 #include "p_checkposition.h"
-#include "r_sky.h"
 #include "v_font.h"
-#include "v_video.h"
-#include "c_bind.h"
 #include "menu/menu.h"
 #include "teaminfo.h"
 #include "r_data/sprites.h"
 #include "serializer.h"
 #include "wi_stuff.h"
 #include "a_dynlight.h"
-#include "vm.h"
 #include "types.h"
 
 static TArray<FPropertyInfo*> properties;
@@ -1204,8 +1196,8 @@ DEFINE_ACTION_FUNCTION(FStringStruct, AppendFormat)
 DEFINE_ACTION_FUNCTION(FStringStruct, Mid)
 {
 	PARAM_SELF_STRUCT_PROLOGUE(FString);
-	PARAM_UINT(pos);
-	PARAM_UINT(len);
+	PARAM_UINT_DEF(pos);
+	PARAM_UINT_DEF(len);
 	FString s = self->Mid(pos, len);
 	ACTION_RETURN_STRING(s);
 }
