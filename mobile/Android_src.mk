@@ -65,7 +65,9 @@ ANDROID_SRC_FILES = \
     ../../common_interface/gzdoom_game_interface.cpp \
     ../../common_interface/touch_interface.cpp \
     ../../common_interface/android_jni.cpp \
-    ../mobile/src/i_specialpaths_android.cpp
+    ../mobile/src/i_specialpaths_android.cpp \
+    gl/textures/etc1.cpp
+
 
 PLAT_POSIX_SOURCES = \
 	posix/i_cd.cpp \

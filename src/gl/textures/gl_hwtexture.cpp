@@ -239,6 +239,25 @@ static int NextPow2( int value )
 	while (i<value) i+=i;
 	return i;
 }
+static int isopaque(GLint width, GLint height, const GLvoid *pixels)
+{
+   unsigned char const *cpixels = (unsigned char const *)pixels;
+
+   int i;
+
+   for (i = 0; i < width * height; i++) {
+      if (cpixels[i*4+3] != 0xff)
+         return 0;
+   }
+
+   return 1;
+}
+static unsigned int etc1_data_size(unsigned int width, unsigned int height) {
+    return (((width + 3) & ~3) * ((height + 3) & ~3)) >> 1;
+	//return ((width >> 2) * (height >> 2)) << 3;
+}
+#include "etc1.h"
+
 #endif
 //===========================================================================
 //
@@ -348,18 +367,47 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 		sourcetype = GL_BGRA;
 	}
 
+
 #ifdef __MOBILE__
     if( ( texformat == GL_BGRA) && !(gl.flags & RFL_BGRA))
     {
-        texformat = GL_RGBA;
+        sourcetype = GL_RGBA;
         BGRAtoRGBA( buffer, rw * rh );
     }
-    sourcetype = texformat;
+    else
+    {
+       texformat = GL_BGRA;
+    }
 #endif
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, rw, rh, 0, GL_BGRA, GL_UNSIGNED_BYTE, buffer);
+/*
+    if( isopaque( rw,rh,buffer) )
+    {
 
-
-	//glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, sourcetype, GL_UNSIGNED_BYTE, buffer);
+        texformat = sourcetype = GL_RGB;
+        while (rw > 1 || rh > 1)
+        {
+            unsigned int size=etc1_data_size(rw,rh);
+            unsigned char *etc1data = (unsigned char *)malloc(size+1);
+            etc1_encode_image(buffer, rw, rh,3, rw*3, etc1data);
+            glCompressedTexImage2D(
+                        GL_TEXTURE_2D,
+                        0,
+                        ETC1_RGB8_OES,
+                        rw,
+                        rh,
+                        0,
+                        size,
+                        etc1data);
+            free(etc1data);
+            rw >>= 1;
+            rh >>= 1;
+        }
+    }
+    else
+    */
+    {
+	    glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, sourcetype, GL_UNSIGNED_BYTE, buffer);
+    }
 
 
 	if (deletebuffer && buffer) free(buffer);

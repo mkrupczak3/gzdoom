@@ -56,6 +56,36 @@ void FDrawInfo::RenderWall(GLWall *wall, int textured)
 #ifdef __MOBILE__
 	if( gl.novbo )
 	{
+
+    // This is faster because the shim can collect
+#if 1
+        glBegin(GL_TRIANGLE_FAN);
+
+        // lower left corner
+        if (textured&1) glTexCoord2f(wall->tcs[0].u,wall->tcs[0].v);
+        glVertex3f(wall->glseg.x1,wall->zbottom[0],wall->glseg.y1);
+
+        //if (split && glseg.fracleft==0) SplitLeftEdge(tcs);
+
+        // upper left corner
+        if (textured&1) glTexCoord2f(wall->tcs[1].u,wall->tcs[1].v);
+        glVertex3f(wall->glseg.x1,wall->ztop[0],wall->glseg.y1);
+
+        // upper right corner
+        if (textured&1) glTexCoord2f(wall->tcs[2].u,wall->tcs[2].v);
+        glVertex3f(wall->glseg.x2,wall->ztop[1],wall->glseg.y2);
+
+        // lower right corner
+        if (textured&1) glTexCoord2f(wall->tcs[3].u,wall->tcs[3].v);
+        glVertex3f(wall->glseg.x2,wall->zbottom[1],wall->glseg.y2);
+
+        //if (split && !(flags & GLWF_NOSPLITLOWER)) SplitLowerEdge(tcs);
+
+        glEnd();
+
+        vertexcount +=  wall->vertcount;
+        return;
+#else
 	  	static FFlatVertex vtx[16]; // Yes this is static. It's only used once, and I think it's faster as the address doesn't keep changing
         FFlatVertex *vtxPrt = &vtx[0];
 
@@ -73,6 +103,7 @@ void FDrawInfo::RenderWall(GLWall *wall, int textured)
 
 		vertexcount +=  wall->vertcount;
 		return;
+#endif
 	}
 #endif
 
