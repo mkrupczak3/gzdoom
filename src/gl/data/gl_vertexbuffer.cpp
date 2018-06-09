@@ -254,7 +254,6 @@ void FFlatVertexBuffer::CreateVBO()
 	if( !gl.novbo )
 #endif
 	FFlatVertexGenerator::CreateVertices();
-
 	mCurIndex = mIndex = vbo_shadowdata.Size();
 	Map();
 	memcpy(map, &vbo_shadowdata[0], vbo_shadowdata.Size() * sizeof(FFlatVertex));

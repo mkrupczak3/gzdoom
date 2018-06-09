@@ -402,7 +402,6 @@ void GLSceneDrawer::RenderTranslucent(FDrawInfo *di)
 {
 	RenderAll.Clock();
 
-	glDepthMask(false);
 	gl_RenderState.SetCameraPos(r_viewpoint.Pos.X, r_viewpoint.Pos.Y, r_viewpoint.Pos.Z);
 
 	// final pass: translucent stuff
@@ -411,6 +410,7 @@ void GLSceneDrawer::RenderTranslucent(FDrawInfo *di)
 
 	gl_RenderState.EnableBrightmap(true);
 	di->drawlists[GLDL_TRANSLUCENTBORDER].Draw(di, GLPASS_TRANSLUCENT);
+	glDepthMask(false);
 	di->DrawSorted(GLDL_TRANSLUCENT);
 	gl_RenderState.EnableBrightmap(false);
 
@@ -663,7 +663,7 @@ sector_t * GLSceneDrawer::RenderViewpoint (AActor * camera, IntRect * bounds, fl
 			SetFixedColormap(camera->player); // reiterate color map for each eye, so night vision goggles work in both eyes
 		const s3d::EyePose * eye = stereo3dMode.getEyePose(eye_ix);
 		eye->SetUp();
-		screen->SetOutputViewport(bounds);
+		screen->SetViewportRects(bounds);
 		Set3DViewport(mainview);
 		GLRenderer->mDrawingScene2D = true;
 		GLRenderer->mCurrentFoV = fov;
@@ -735,20 +735,24 @@ uint8_t * gles_convertRGB(uint8_t * data, int width, int height)
 void GLSceneDrawer::WriteSavePic (player_t *player, FileWriter *file, int width, int height)
 {
 	IntRect bounds;
+	bounds.left = 0;
+	bounds.top = 0;
+	bounds.width = width;
+	bounds.height = height;
+
+	// if GLRenderer->mVBO is persistently mapped we must be sure the GPU finished reading from it before we fill it with new data.
+	glFinish();
+
+	// Switch to render buffers dimensioned for the savepic
+	GLRenderer->mBuffers = GLRenderer->mSaveBuffers;
 
 	P_FindParticleSubsectors();	// make sure that all recently spawned particles have a valid subsector.
-	bounds.left=0;
-	bounds.top=0;
-	bounds.width=width;
-	bounds.height=height;
-	glFlush();
 	SetFixedColormap(player);
 	gl_RenderState.SetVertexBuffer(GLRenderer->mVBO);
 	GLRenderer->mVBO->Reset();
 	if (!gl.legacyMode) GLRenderer->mLights->Clear();
 
-	sector_t *viewsector = RenderViewpoint(players[consoleplayer].camera, &bounds,
-								r_viewpoint.FieldOfView.Degrees, 1.6f, 1.6f, true, false);
+	sector_t *viewsector = RenderViewpoint(players[consoleplayer].camera, &bounds, r_viewpoint.FieldOfView.Degrees, 1.6f, 1.6f, true, false);
 	glDisable(GL_STENCIL_TEST);
 	gl_RenderState.SetFixedColormap(CM_DEFAULT);
 	gl_RenderState.SetSoftLightLevel(-1);
@@ -759,6 +763,7 @@ void GLSceneDrawer::WriteSavePic (player_t *player, FileWriter *file, int width,
 		screen->Draw2D();
 	}
 	GLRenderer->CopyToBackbuffer(&bounds, false);
+
 	glFlush();
 #ifdef __MOBILE__ //Some androids do not like GL_RGB
 	uint8_t * scr = (uint8_t *)M_Malloc(width * height * 4);
@@ -766,9 +771,15 @@ void GLSceneDrawer::WriteSavePic (player_t *player, FileWriter *file, int width,
 	gles_convertRGB(scr,width,height);
     M_CreatePNG (file, scr + ((height-1) * width * 3), NULL, SS_RGB, width, height, -width * 3, Gamma);
 #else
+	// strictly speaking not needed as the glReadPixels should block until the scene is rendered, but this is to safeguard against shitty drivers
+	glFinish();
 	uint8_t * scr = (uint8_t *)M_Malloc(width * height * 3);
 	glReadPixels(0,0,width, height,GL_RGB,GL_UNSIGNED_BYTE,scr);
 	M_CreatePNG (file, scr + ((height-1) * width * 3), NULL, SS_RGB, width, height, -width * 3, Gamma);
 #endif
 	M_Free(scr);
+
+	// Switch back the screen render buffers
+	screen->SetViewportRects(nullptr);
+	GLRenderer->mBuffers = GLRenderer->mScreenBuffers;
 }

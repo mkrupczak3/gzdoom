@@ -47,12 +47,22 @@ namespace swrenderer
 		if (tz < MINZ)
 			return;
 
-		// too far off the side?
 		double tx = tr_x * thread->Viewport->viewpoint.Sin - tr_y * thread->Viewport->viewpoint.Cos;
+
+		// Flip for mirrors
+		if (thread->Portal->MirrorFlags & RF_XFLIP)
+		{
+			tx = viewwidth - tx - 1;
+		}
+
+		// too far off the side?
 		if (fabs(tx / 64) > fabs(tz))
 			return;
 
 		RenderModel *vis = thread->FrameMemory->NewObject<RenderModel>(x, y, z, smf, actor, float(1 / tz));
+		vis->CurrentPortalUniq = thread->Portal->CurrentPortalUniq;
+		vis->WorldToClip = thread->Viewport->WorldToClip;
+		vis->MirrorWorldToClip = !!(thread->Portal->MirrorFlags & RF_XFLIP);
 		thread->SpriteList->Push(vis);
 	}
 
@@ -64,7 +74,7 @@ namespace swrenderer
 
 	void RenderModel::Render(RenderThread *thread, short *cliptop, short *clipbottom, int minZ, int maxZ, Fake3DTranslucent clip3DFloor)
 	{
-		SWModelRenderer renderer(thread, clip3DFloor);
+		SWModelRenderer renderer(thread, clip3DFloor, &WorldToClip, MirrorWorldToClip);
 		renderer.RenderModel(x, y, z, smf, actor);
 	}
 
@@ -72,17 +82,18 @@ namespace swrenderer
 
 	void RenderHUDModel(RenderThread *thread, DPSprite *psp, float ofsx, float ofsy)
 	{
-		SWModelRenderer renderer(thread, Fake3DTranslucent());
+		SWModelRenderer renderer(thread, Fake3DTranslucent(), &thread->Viewport->WorldToClip, false);
 		renderer.RenderHUDModel(psp, ofsx, ofsy);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
 
-	SWModelRenderer::SWModelRenderer(RenderThread *thread, Fake3DTranslucent clip3DFloor) : Thread(thread), Clip3DFloor(clip3DFloor)
+	SWModelRenderer::SWModelRenderer(RenderThread *thread, Fake3DTranslucent clip3DFloor, Mat4f *worldToClip, bool mirrorWorldToClip)
+		: Thread(thread), Clip3DFloor(clip3DFloor), WorldToClip(worldToClip), MirrorWorldToClip(mirrorWorldToClip)
 	{
 	}
 
-	void SWModelRenderer::BeginDrawModel(AActor *actor, FSpriteModelFrame *smf, const VSMatrix &objectToWorldMatrix)
+	void SWModelRenderer::BeginDrawModel(AActor *actor, FSpriteModelFrame *smf, const VSMatrix &objectToWorldMatrix, bool mirrored)
 	{
 		ModelActor = actor;
 		const_cast<VSMatrix &>(objectToWorldMatrix).copy(ObjectToWorld.Matrix);
@@ -120,13 +131,19 @@ namespace swrenderer
 		}
 
 		SetTransform();
-		PolyTriangleDrawer::SetTwoSided(Thread->DrawQueue, true);
+
+		if (actor->RenderStyle == LegacyRenderStyles[STYLE_Normal] || !!(smf->flags & MDL_DONTCULLBACKFACES))
+			PolyTriangleDrawer::SetTwoSided(Thread->DrawQueue, true);
+		PolyTriangleDrawer::SetCullCCW(Thread->DrawQueue, !(mirrored ^ MirrorWorldToClip));
 	}
 
 	void SWModelRenderer::EndDrawModel(AActor *actor, FSpriteModelFrame *smf)
 	{
+		if (actor->RenderStyle == LegacyRenderStyles[STYLE_Normal] || !!(smf->flags & MDL_DONTCULLBACKFACES))
+			PolyTriangleDrawer::SetTwoSided(Thread->DrawQueue, false);
+		PolyTriangleDrawer::SetCullCCW(Thread->DrawQueue, true);
+
 		ModelActor = nullptr;
-		PolyTriangleDrawer::SetTwoSided(Thread->DrawQueue, false);
 	}
 
 	IModelVertexBuffer *SWModelRenderer::CreateVertexBuffer(bool needindex, bool singleframe)
@@ -177,7 +194,7 @@ namespace swrenderer
 		return objectToWorld;
 	}
 
-	void SWModelRenderer::BeginDrawHUDModel(AActor *actor, const VSMatrix &objectToWorldMatrix)
+	void SWModelRenderer::BeginDrawHUDModel(AActor *actor, const VSMatrix &objectToWorldMatrix, bool mirrored)
 	{
 		ModelActor = actor;
 		const_cast<VSMatrix &>(objectToWorldMatrix).copy(ObjectToWorld.Matrix);
@@ -185,14 +202,20 @@ namespace swrenderer
 		ClipBottom = {};
 		SetTransform();
 		PolyTriangleDrawer::SetWeaponScene(Thread->DrawQueue, true);
-		PolyTriangleDrawer::SetTwoSided(Thread->DrawQueue, true);
+
+		if (actor->RenderStyle == LegacyRenderStyles[STYLE_Normal])
+			PolyTriangleDrawer::SetTwoSided(Thread->DrawQueue, true);
+		PolyTriangleDrawer::SetCullCCW(Thread->DrawQueue, !(mirrored ^ MirrorWorldToClip));
 	}
 
 	void SWModelRenderer::EndDrawHUDModel(AActor *actor)
 	{
 		ModelActor = nullptr;
 		PolyTriangleDrawer::SetWeaponScene(Thread->DrawQueue, false);
-		PolyTriangleDrawer::SetTwoSided(Thread->DrawQueue, false);
+
+		if (actor->RenderStyle == LegacyRenderStyles[STYLE_Normal])
+			PolyTriangleDrawer::SetTwoSided(Thread->DrawQueue, false);
+		PolyTriangleDrawer::SetCullCCW(Thread->DrawQueue, true);
 	}
 
 	void SWModelRenderer::SetInterpolation(double interpolation)
@@ -213,7 +236,7 @@ namespace swrenderer
 		swapYZ.Matrix[2 + 1 * 4] = 1.0f;
 		swapYZ.Matrix[3 + 3 * 4] = 1.0f;
 
-		PolyTriangleDrawer::SetTransform(Thread->DrawQueue, Thread->FrameMemory->NewObject<Mat4f>(Thread->Viewport->WorldToClip * swapYZ * ObjectToWorld));
+		PolyTriangleDrawer::SetTransform(Thread->DrawQueue, Thread->FrameMemory->NewObject<Mat4f>((*WorldToClip) * swapYZ * ObjectToWorld));
 	}
 
 	void SWModelRenderer::DrawArrays(int start, int count)
@@ -229,13 +252,7 @@ namespace swrenderer
 
 		PolyDrawArgs args;
 		args.SetLight(GetColorTable(sector->Colormap, sector->SpecialColors[sector_t::sprites], true), lightlevel, Thread->Light->SpriteGlobVis(foggy), fullbrightSprite);
-		args.SetStyle(TriBlendMode::TextureOpaque);
-
-		if (Thread->Viewport->RenderTarget->IsBgra())
-			args.SetTexture((const uint8_t *)SkinTexture->GetPixelsBgra(), SkinTexture->GetWidth(), SkinTexture->GetHeight());
-		else
-			args.SetTexture(SkinTexture->GetPixels(DefaultRenderStyle()), SkinTexture->GetWidth(), SkinTexture->GetHeight());
-
+		args.SetStyle(ModelActor->RenderStyle, ModelActor->Alpha, ModelActor->fillcolor, ModelActor->Translation, SkinTexture, fullbrightSprite);
 		args.SetDepthTest(true);
 		args.SetWriteDepth(true);
 		args.SetWriteStencil(false);
@@ -259,13 +276,7 @@ namespace swrenderer
 
 		PolyDrawArgs args;
 		args.SetLight(GetColorTable(sector->Colormap, sector->SpecialColors[sector_t::sprites], true), lightlevel, Thread->Light->SpriteGlobVis(foggy), fullbrightSprite);
-		args.SetStyle(TriBlendMode::TextureOpaque);
-
-		if (Thread->Viewport->RenderTarget->IsBgra())
-			args.SetTexture((const uint8_t *)SkinTexture->GetPixelsBgra(), SkinTexture->GetWidth(), SkinTexture->GetHeight());
-		else
-			args.SetTexture(SkinTexture->GetPixels(DefaultRenderStyle()), SkinTexture->GetWidth(), SkinTexture->GetHeight());
-
+		args.SetStyle(ModelActor->RenderStyle, ModelActor->Alpha, ModelActor->fillcolor, ModelActor->Translation, SkinTexture, fullbrightSprite);
 		args.SetDepthTest(true);
 		args.SetWriteDepth(true);
 		args.SetWriteStencil(false);
