@@ -348,7 +348,19 @@ bool FWadFile::Open(bool quiet)
 		// Check again to detect broken wads
 		if (InfoTableOfs + NumLumps*sizeof(wadlump_t) > (unsigned)wadSize)
 		{
+#ifdef __MOBILE__
+            if( !stricmp(Filename, "./freedoom1.wad") || !stricmp(Filename, "./freedoom2.wad") )
+            {
+                remove(Filename);
+                I_Error("Cannot load broken WAD file %s. Deleting WAD file, please re-download\n", Filename);
+            }
+            else
+            {
+                I_Error("Cannot load broken WAD file %s\n", Filename);
+            }
+#else
 			I_Error("Cannot load broken WAD file %s\n", Filename);
+#endif
 		}
 	}
 
