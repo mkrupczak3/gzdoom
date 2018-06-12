@@ -446,6 +446,19 @@ public:
 		glBufferData(GL_ARRAY_BUFFER, vertcount * sizeof(vertices[0]), vertices, GL_STREAM_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
+#ifdef __MOBILE__
+        if (!(gl.flags & RFL_UINT_IDX))
+        {
+            GLshort * indicesShort = ( GLshort * )malloc( sizeof(GLshort) * indexcount );
+            for( int n = 0; n < indexcount; n++ )
+            {
+                indicesShort[n] = indices[n];
+            }
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexcount * sizeof(GLshort), indicesShort, GL_STREAM_DRAW);
+            free(indicesShort);
+            return;
+        }
+#endif
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexcount * sizeof(indices[0]), indices, GL_STREAM_DRAW);
 	}
 
@@ -613,6 +626,13 @@ void FGLRenderer::Draw2D(F2DDrawer *drawer)
 		switch (cmd.mType)
 		{
 		case F2DDrawer::DrawTypeTriangles:
+#ifdef __MOBILE__
+            if (!(gl.flags & RFL_UINT_IDX))
+            {
+                glDrawElements(GL_TRIANGLES, cmd.mIndexCount, GL_UNSIGNED_SHORT, (const void *)(cmd.mIndexIndex * sizeof(GLshort)));
+            }
+            else
+#endif
 			glDrawElements(GL_TRIANGLES, cmd.mIndexCount, GL_UNSIGNED_INT, (const void *)(cmd.mIndexIndex * sizeof(unsigned int)));
 			if (gl.legacyMode && cmd.mColor1 != 0)
 			{
