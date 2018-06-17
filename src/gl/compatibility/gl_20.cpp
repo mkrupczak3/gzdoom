@@ -143,6 +143,9 @@ void gl_SetTextureMode(int type)
 		// Type 2 (unaltered true color) can be done without activating the shader.
 		if (shader != 2)
 		{
+#ifdef __MOBILE__
+            if( gl.es != 1 )
+#endif
 			GLRenderer->legacyShaders->BindShader(shader, c1, c2);
 			return;
 		}

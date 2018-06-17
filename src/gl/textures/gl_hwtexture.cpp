@@ -439,6 +439,10 @@ void FHardwareTexture::AllocateBuffer(int w, int h, int texelsize)
 	int rh = GetTexDimension(h);
 	if (texelsize < 1 || texelsize > 4) texelsize = 4;
 	glTextureBytes = texelsize;
+#ifdef NO_PIX_BUFF
+    texBuffer = (uint8_t *)malloc(w*h*texelsize);
+    return;
+#endif
 	if (rw == w || rh == h)
 	{
 		glGenBuffers(1, &glBufferID);
@@ -451,6 +455,9 @@ void FHardwareTexture::AllocateBuffer(int w, int h, int texelsize)
 
 uint8_t *FHardwareTexture::MapBuffer()
 {
+#ifdef NO_PIX_BUFF
+    return texBuffer;
+#endif
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, glBufferID);
 	return (uint8_t*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_READ_WRITE);
 }
@@ -544,7 +551,11 @@ void FHardwareTexture::CleanUnused(SpriteHits &usedtranslations)
 //===========================================================================
 FHardwareTexture::~FHardwareTexture() 
 { 
-	Clean(true); 
+	Clean(true);
+#ifdef NO_PIX_BUFF
+    if( texBuffer )
+        free( texBuffer );
+#endif
 	glDeleteBuffers(1, &glBufferID);
 }
 
