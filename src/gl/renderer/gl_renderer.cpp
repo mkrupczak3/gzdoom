@@ -627,6 +627,7 @@ void FGLRenderer::Draw2D(F2DDrawer *drawer)
 		{
 		case F2DDrawer::DrawTypeTriangles:
 #ifdef __MOBILE__
+            vb->BindVBO(); // Bug in JWZGLES, breaks VBO state when LegacyColorOverlay is called. This is a hack to re-bind stuff. SHOULD BE FIXED IN JWZGLES
             if (!(gl.flags & RFL_UINT_IDX))
             {
                 glDrawElements(GL_TRIANGLES, cmd.mIndexCount, GL_UNSIGNED_SHORT, (const void *)(cmd.mIndexIndex * sizeof(GLshort)));

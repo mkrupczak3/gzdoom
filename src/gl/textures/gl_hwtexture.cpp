@@ -470,7 +470,9 @@ uint8_t *FHardwareTexture::MapBuffer()
 FHardwareTexture::FHardwareTexture(bool nocompression) 
 {
 	forcenocompression = nocompression;
-
+#ifdef NO_PIX_BUFF
+    texBuffer = NULL;
+#endif
 	glDefTex.glTexID = 0;
 	glDefTex.translation = 0;
 	glDefTex.mipmapped = false;
