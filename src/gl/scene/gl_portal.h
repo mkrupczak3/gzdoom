@@ -140,6 +140,9 @@ public:
 
 struct GLLinePortal : public GLPortal
 {
+#ifdef __MOBILE__
+    uint32_t test;  // OK this is needed to realign the following items to 8 byte boundry, otherwise the doubles don't get cast properly. This breaks line_t *line()
+#endif
 	// this must be the same as at the start of line_t, so that we can pass in this structure directly to P_ClipLineToPortal.
 	vertex_t	*v1, *v2;	// vertices, from v1 to v2
 	DVector2	delta;		// precalculated v2 - v1 for side checking
