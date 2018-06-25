@@ -55,9 +55,9 @@ LOCAL_C_INCLUDES := \
 
 
 ANDROID_SRC_FILES = \
-    ../../common_interface/touch_interface.cpp \
-    ../../common_interface/android_jni.cpp \
-    ../../common_interface/gzdoom_game_interface.cpp \
+    ../../../Clibs_OpenTouch/idtech1/touch_interface.cpp \
+    ../../../Clibs_OpenTouch/idtech1/android_jni.cpp \
+    ../../../Clibs_OpenTouch/idtech1/gzdoom_game_interface.cpp \
 
 
 #ANDROID_SRC_FILES =
