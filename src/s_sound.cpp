@@ -1727,12 +1727,20 @@ bool S_IsActorPlayingSomething (AActor *actor, int channel, int sound_id)
 //
 // Stop music and sound effects, during game PAUSE.
 //==========================================================================
-
+ #include <unistd.h>
 void S_PauseSound (bool notmusic, bool notsfx)
 {
 	if (!notmusic && mus_playing.handle && !MusicPaused)
 	{
+#ifdef __ANDROID__ // FMOD does not properly pause msuic, need to force stop :(
+		if (mus_playing.handle != NULL)
+        {
+            mus_playing.handle->Stop();
+        }
+		usleep(1000 * 1000 * 1);
+#else
 		mus_playing.handle->Pause();
+#endif
 		MusicPaused = true;
 	}
 	if (!notsfx)
@@ -1753,7 +1761,12 @@ void S_ResumeSound (bool notsfx)
 {
 	if (mus_playing.handle && MusicPaused)
 	{
+#ifdef __ANDROID__ //See above
+		mus_playing.handle->Play(true, 0);
+#else
 		mus_playing.handle->Resume();
+#endif
+
 		MusicPaused = false;
 	}
 	if (!notsfx)
