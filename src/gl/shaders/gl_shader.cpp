@@ -173,6 +173,9 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 	// On the shader side there is no difference between LM_DEFERRED and LM_DIRECT, it only decides how the buffer is initialized.
 	unsigned int lightbuffertype = GLRenderer->mLights->GetBufferType();
 	unsigned int lightbuffersize = GLRenderer->mLights->GetBlockSize();
+#ifdef __MOBILE__
+    vp_comb.Format("#version 310 es\n#define NUM_UBO_LIGHTS %d\n", lightbuffersize);
+#else
 	if (lightbuffertype == GL_UNIFORM_BUFFER)
 	{
 		vp_comb.Format("#version 330 core\n#define NUM_UBO_LIGHTS %d\n", lightbuffersize);
@@ -185,7 +188,7 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 		else
 			vp_comb = "#version 430 core\n#define SHADER_STORAGE_LIGHTS\n";
 	}
-
+#endif
 	if (gl.buffermethod == BM_DEFERRED)
 	{
 		vp_comb << "#define USE_QUAD_DRAWER\n";
@@ -456,7 +459,20 @@ FShader *FShaderCollection::Compile (const char *ShaderName, const char *ShaderP
 
 void FShader::ApplyMatrices(HWViewpointUniforms *u)
 {
-	Bind();
+#if 1
+    GLuint prog = this->GetHandle();
+	glProgramUniformMatrix4fv(prog, projectionmatrix_index, 1, false, u->mProjectionMatrix.get());
+    glProgramUniformMatrix4fv(prog, viewmatrix_index, 1, false, u->mViewMatrix.get());
+    glProgramUniformMatrix4fv(prog, normalviewmatrix_index, 1, false, u->mNormalViewMatrix.get());
+
+    glProgramUniform4fv(prog, camerapos_index, 1, &u->mCameraPos[0] );
+    glProgramUniform1i(prog, viewheight_index, u->mViewHeight);
+    glProgramUniform1i(prog, pallightlevels_index, u->mPalLightLevels);
+    glProgramUniform1f(prog, globvis_index, u->mGlobVis);
+    glProgramUniform1f(prog, clipheight_index, u->mClipHeight);
+    glProgramUniform1f(prog, clipheightdirection_index, u->mClipHeightDirection);
+#else
+    Bind();
 	glUniformMatrix4fv(projectionmatrix_index, 1, false, u->mProjectionMatrix.get());
 	glUniformMatrix4fv(viewmatrix_index, 1, false, u->mViewMatrix.get());
 	glUniformMatrix4fv(normalviewmatrix_index, 1, false, u->mNormalViewMatrix.get());
@@ -467,6 +483,7 @@ void FShader::ApplyMatrices(HWViewpointUniforms *u)
 	glUniform1f(globvis_index, u->mGlobVis);
 	glUniform1f(clipheight_index, u->mClipHeight);
 	glUniform1f(clipheightdirection_index, u->mClipHeightDirection);
+#endif
 }
 
 //==========================================================================

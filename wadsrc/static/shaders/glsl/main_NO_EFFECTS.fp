@@ -442,63 +442,8 @@ vec3 AmbientOcclusionColor()
 
 void main()
 {
-	Material material = ProcessMaterial();
-	vec4 frag = material.Base;
-	
-#ifndef NO_ALPHATEST
-	if (frag.a <= uAlphaThreshold) discard;
-#endif
 
-	if (uFogEnabled != -3)	// check for special 2D 'fog' mode.
-	{
-		float fogdist = 0.0;
-		float fogfactor = 0.0;
-		
-		//
-		// calculate fog factor
-		//
-		if (uFogEnabled != 0)
-		{
-			if (uFogEnabled == 1 || uFogEnabled == -1) 
-			{
-				fogdist = pixelpos.w;
-			}
-			else 
-			{
-				fogdist = max(16.0, distance(pixelpos.xyz, uCameraPos.xyz));
-			}
-			fogfactor = exp2 (uFogDensity * fogdist);
-		}
-		
-		if (uTextureMode != 7)
-		{
-			frag = getLightColor(material, fogdist, fogfactor);
-			//
-			// colored fog
-			//
-			if (uFogEnabled < 0) 
-			{
-				frag = applyFog(frag, fogfactor);
-			}
-		}
-		else
-		{
-			frag = vec4(uFogColor.rgb, (1.0 - fogfactor) * frag.a * 0.75 * vColor.a);
-		}
-	}
-	else // simple 2D (uses the fog color to add a color overlay)
-	{
-		// EMILE, fix me
-		//if (uTextureMode == 7)
-		//{
-		//	float gray = grayscale(frag);
-		//	vec4 cm = (uObjectColor + gray * (uObjectColor2 - uObjectColor)) * 2;
-		//	frag = vec4(clamp(cm.rgb, 0.0, 1.0), frag.a);
-		//}
-			frag = frag * ProcessLight(material, vColor);
-		frag.rgb = frag.rgb + uFogColor.rgb;
-	}
-	FragColor = frag;
+	FragColor = texture(tex, vTexCoord.st);
 #ifdef GBUFFER_PASS
 	FragFog = vec4(AmbientOcclusionColor(), 1.0);
 	FragNormal = vec4(vEyeNormal.xyz * 0.5 + 0.5, 1.0);

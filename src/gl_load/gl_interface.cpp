@@ -151,6 +151,11 @@ void gl_LoadExtensions()
 
 	float gl_version = (float)strtod(version, NULL) + 0.01f;
 
+#ifdef __MOBILE__
+    gl_version = 3.31;
+    gl.flags |= RFL_NO_CLIP_PLANES;
+    gl.flags |= RFL_INVALIDATE_BUFFER;
+#endif
 	// Don't even start if it's lower than 2.0 or no framebuffers are available (The framebuffer extension is needed for glGenerateMipmapsEXT!)
 	if (gl_version < 3.3f)
 	{
