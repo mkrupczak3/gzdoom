@@ -49,16 +49,22 @@ enum
 };
 
 
+#define NBR_BUFFERS 4
 class FVertexBuffer
 {
 protected:
 	unsigned int vbo_id;
+	unsigned int vbo_id_double[NBR_BUFFERS];
+	bool double_buffer;
 
 public:
-	FVertexBuffer(bool wantbuffer = true);
+	FVertexBuffer(bool wantbuffer = true, bool doublebuffer = false);
 	virtual ~FVertexBuffer();
 	virtual void BindVBO() = 0;
 	void EnableBufferArrays(int enable, int disable);
+	bool IsDoubleBuffer();
+	void SelectBuffer(unsigned int b);
+	void ToggleBuffer();
 };
 
 struct FSimpleVertex
@@ -185,6 +191,11 @@ public:
 
 	void Reset()
 	{
+		if (IsDoubleBuffer())
+		{
+			// Swap VBO
+			ToggleBuffer();
+		}
 		mCurIndex = mIndex;
 	}
 

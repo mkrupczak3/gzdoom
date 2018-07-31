@@ -155,6 +155,7 @@ void gl_LoadExtensions()
     gl_version = 3.31;
     gl.flags |= RFL_NO_CLIP_PLANES;
     gl.flags |= RFL_INVALIDATE_BUFFER;
+    gl.flags |= RFL_DOUBLE_BUFFER_VBO;
 #endif
 	// Don't even start if it's lower than 2.0 or no framebuffers are available (The framebuffer extension is needed for glGenerateMipmapsEXT!)
 	if (gl_version < 3.3f)

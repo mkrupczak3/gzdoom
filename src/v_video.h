@@ -60,6 +60,8 @@ enum EHWCaps
 
 	RFL_INVALIDATE_BUFFER = 64,
 	RFL_DEBUG = 128,
+
+	RFL_DOUBLE_BUFFER_VBO = 256,
 };
 
 struct IntRect

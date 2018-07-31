@@ -41,12 +41,46 @@
 //
 //==========================================================================
 
-FVertexBuffer::FVertexBuffer(bool wantbuffer)
+FVertexBuffer::FVertexBuffer(bool wantbuffer, bool doublebuffer)
 {
 	vbo_id = 0;
 	if (wantbuffer) glGenBuffers(1, &vbo_id);
+
+	if (doublebuffer)
+	{
+		vbo_id_double[0] = vbo_id;
+		for (int n = 1; n < NBR_BUFFERS; n++)
+		{
+			glGenBuffers(1, &vbo_id_double[n]);
+		}
+	}
+
+    double_buffer = doublebuffer;
 }
+
+bool FVertexBuffer::IsDoubleBuffer()
+{
+	return double_buffer;
+}
+
+void FVertexBuffer::SelectBuffer(unsigned int b)
+{
+	vbo_id = vbo_id_double[b];
+}
+
+void FVertexBuffer::ToggleBuffer()
+{
+	int n = 0;
+	while (vbo_id != vbo_id_double[n])
+		n++;
+	//Next
+	n++;
+	if (n >= NBR_BUFFERS)
+		n = 0;
 	
+	vbo_id = vbo_id_double[n];
+}
+
 FVertexBuffer::~FVertexBuffer()
 {
 	if (vbo_id != 0)
@@ -97,7 +131,7 @@ void FSimpleVertexBuffer::set(FSimpleVertex *verts, int count)
 //==========================================================================
 
 FFlatVertexBuffer::FFlatVertexBuffer(int width, int height)
-: FVertexBuffer(true), FFlatVertexGenerator(width, height)
+: FVertexBuffer(true, (gl.flags & RFL_DOUBLE_BUFFER_VBO)), FFlatVertexGenerator(width, height)
 {
 	ibo_id = 0;
 	glGenBuffers(1, &ibo_id);
@@ -114,6 +148,17 @@ FFlatVertexBuffer::FFlatVertexBuffer(int width, int height)
 		unsigned int bytesize = BUFFER_SIZE * sizeof(FFlatVertex);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
 		glBufferData(GL_ARRAY_BUFFER, bytesize, NULL, GL_STREAM_DRAW);
+
+		if (IsDoubleBuffer())
+		{
+			for (int n = 1; n < NBR_BUFFERS; n++)
+			{
+				ToggleBuffer();
+				glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+				glBufferData(GL_ARRAY_BUFFER, bytesize, NULL, GL_STREAM_DRAW);
+			}
+		}
+
 		map = nullptr;
 		DPrintf(DMSG_NOTIFY, "Using deferred buffer\n");
 	}
@@ -165,17 +210,41 @@ void FFlatVertexBuffer::BindVBO()
 
 void FFlatVertexBuffer::Map()
 {
+#if 0
+    unsigned int bytesize = BUFFER_SIZE * sizeof(FFlatVertex);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+    gl_RenderState.ResetVertexBuffer();
+    mSubStart = mCurIndex;
+    if( !mMap )
+        mMap = map = (FFlatVertex*)malloc(bytesize);
+    return;
+#else
 	if (gl.buffermethod == BM_DEFERRED)
 	{
 		unsigned int bytesize = BUFFER_SIZE * sizeof(FFlatVertex);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
 		gl_RenderState.ResetVertexBuffer();
 		mMap = map = (FFlatVertex*)glMapBufferRange(GL_ARRAY_BUFFER, 0, bytesize, GL_MAP_WRITE_BIT|GL_MAP_UNSYNCHRONIZED_BIT);
+	    //mMap = map = (FFlatVertex*)glMapBufferRange(GL_ARRAY_BUFFER, mPipelineNbr * bytesize, bytesize, GL_MAP_WRITE_BIT|GL_MAP_UNSYNCHRONIZED_BIT);
+
 	}
+
+#endif
 }
 
 void FFlatVertexBuffer::Unmap()
 {
+#if 0
+    unsigned int bytesize = BUFFER_SIZE *   sizeof(FFlatVertex);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+    //glBufferData(GL_ARRAY_BUFFER, bytesize, map, GL_STREAM_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, mSubStart * sizeof(FFlatVertex), (mCurIndex - mSubStart) * sizeof(FFlatVertex), &mMap[mSubStart]);
+
+    gl_RenderState.ResetVertexBuffer();
+    //free( map );
+    //mMap = map = nullptr;
+    return;
+#else
 	if (gl.buffermethod == BM_DEFERRED)
 	{
 		unsigned int bytesize = BUFFER_SIZE * sizeof(FFlatVertex);
@@ -184,6 +253,7 @@ void FFlatVertexBuffer::Unmap()
 		glUnmapBuffer(GL_ARRAY_BUFFER);
 		mMap = map = nullptr;
 	}
+#endif
 }
 
 //==========================================================================
@@ -200,6 +270,19 @@ void FFlatVertexBuffer::CreateVBO()
 	Map();
 	memcpy(map, &vbo_shadowdata[0], vbo_shadowdata.Size() * sizeof(FFlatVertex));
 	Unmap();
+
+	// Copy shadow data to both buffers
+	if (IsDoubleBuffer())
+	{
+		for (int n = 1; n < NBR_BUFFERS; n++)
+		{
+			Reset();
+			Map();
+			memcpy(map, &vbo_shadowdata[0], vbo_shadowdata.Size() * sizeof(FFlatVertex));
+			Unmap();
+		}
+	}
+
 	if (ibo_id > 0)
 	{
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);

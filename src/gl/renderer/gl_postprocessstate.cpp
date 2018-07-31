@@ -46,8 +46,11 @@ FGLPostProcessState::FGLPostProcessState()
 	glGetBooleanv(GL_BLEND, &blendEnabled);
 	glGetBooleanv(GL_SCISSOR_TEST, &scissorEnabled);
 	glGetBooleanv(GL_DEPTH_TEST, &depthEnabled);
+#ifndef __MOBILE__
 	glGetBooleanv(GL_MULTISAMPLE, &multisampleEnabled);
+#endif
 	glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
+#ifndef __MOBILE__
 	glGetIntegerv(GL_BLEND_EQUATION_RGB, &blendEquationRgb);
 	glGetIntegerv(GL_BLEND_EQUATION_ALPHA, &blendEquationAlpha);
 	glGetIntegerv(GL_BLEND_SRC_RGB, &blendSrcRgb);
@@ -56,6 +59,7 @@ FGLPostProcessState::FGLPostProcessState()
 	glGetIntegerv(GL_BLEND_DST_ALPHA, &blendDestAlpha);
 
 	glDisable(GL_MULTISAMPLE);
+#endif
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_SCISSOR_TEST);
 	glDisable(GL_BLEND);
@@ -104,6 +108,7 @@ FGLPostProcessState::~FGLPostProcessState()
 	else
 		glDisable(GL_DEPTH_TEST);
 
+#ifndef __MOBILE__
 	if (multisampleEnabled)
 		glEnable(GL_MULTISAMPLE);
 	else
@@ -111,6 +116,7 @@ FGLPostProcessState::~FGLPostProcessState()
 
 	glBlendEquationSeparate(blendEquationRgb, blendEquationAlpha);
 	glBlendFuncSeparate(blendSrcRgb, blendDestRgb, blendSrcAlpha, blendDestAlpha);
+#endif
 
 	glUseProgram(currentProgram);
 

@@ -10,6 +10,9 @@ class FLightBuffer
 	unsigned int mBufferId;
 	float * mBufferPointer;
 
+    bool mDoubleBuffer;
+    unsigned int mBufferIdDouble[2];
+
 	unsigned int mBufferType;
 	unsigned int mIndex;
 	unsigned int mUploadIndex;

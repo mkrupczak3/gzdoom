@@ -174,7 +174,7 @@ bool FShader::Load(const char * name, const char * vert_prog_lump, const char * 
 	unsigned int lightbuffertype = GLRenderer->mLights->GetBufferType();
 	unsigned int lightbuffersize = GLRenderer->mLights->GetBlockSize();
 #ifdef __MOBILE__
-    vp_comb.Format("#version 310 es\n#define NUM_UBO_LIGHTS %d\n", lightbuffersize);
+    vp_comb.Format("#version 320 es\n#define NUM_UBO_LIGHTS %d\n", lightbuffersize);
 #else
 	if (lightbuffertype == GL_UNIFORM_BUFFER)
 	{

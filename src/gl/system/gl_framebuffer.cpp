@@ -127,11 +127,17 @@ void OpenGLFrameBuffer::InitializeState()
 	glEnable(GL_DITHER);
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_POLYGON_OFFSET_FILL);
+#ifndef __MOBILE__
 	glEnable(GL_POLYGON_OFFSET_LINE);
+#endif
 	glEnable(GL_BLEND);
+#ifndef __MOBILE__
 	glEnable(GL_DEPTH_CLAMP);
+#endif
 	glDisable(GL_DEPTH_TEST);
+#ifndef __MOBILE__
 	glDisable(GL_LINE_SMOOTH);
+#endif
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -263,7 +269,10 @@ void OpenGLFrameBuffer::Swap()
 #ifndef __MOBILE__
 	if (swapbefore) glFinish();
 #endif
+ //glFinish();
+ LOGI("SwapBuffers..");
 	SwapBuffers();
+ LOGI("..SwapBuffers Done");
 #ifndef __MOBILE__
 	if (!swapbefore) glFinish();
 #endif

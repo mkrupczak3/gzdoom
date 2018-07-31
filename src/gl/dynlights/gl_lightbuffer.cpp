@@ -32,10 +32,11 @@
 #include "hwrenderer/dynlights/hw_dynlightdata.h"
 #include "hwrenderer/data/shaderuniforms.h"
 
-static const int INITIAL_BUFFER_SIZE = 160000;	// This means 80000 lights per frame and 160000*16 bytes == 2.56 MB.
+static const int INITIAL_BUFFER_SIZE = 160000 * 2;	// This means 80000 lights per frame and 160000*16 bytes == 2.56 MB.
 
 FLightBuffer::FLightBuffer()
 {
+    mDoubleBuffer = (gl.flags & RFL_DOUBLE_BUFFER_VBO);
 
 	mBufferSize = INITIAL_BUFFER_SIZE;
 	mByteSize = mBufferSize * sizeof(float);
@@ -67,6 +68,16 @@ FLightBuffer::FLightBuffer()
 		mBufferPointer = NULL;
 	}
 
+    if(mDoubleBuffer)
+    {
+        mBufferIdDouble[0] = mBufferId;
+
+        glGenBuffers(1, &mBufferIdDouble[1]);
+        glBindBufferBase(mBufferType, LIGHTBUF_BINDINGPOINT, mBufferIdDouble[1]);
+        glBindBuffer(mBufferType, mBufferIdDouble[1]);
+    	glBufferData(mBufferType, mByteSize, NULL, GL_DYNAMIC_DRAW);
+    }
+
 	Clear();
 	mLastMappedIndex = UINT_MAX;
 }
@@ -82,6 +93,12 @@ void FLightBuffer::Clear()
 	mIndex = 0;
 	mIndices.Clear();
 	mUploadIndex = 0;
+
+	if(mDoubleBuffer)
+	{
+	    mBufferId = (mBufferId == mBufferIdDouble[0] ? mBufferIdDouble[1] : mBufferIdDouble[0] );
+	    glBindBufferBase(mBufferType, LIGHTBUF_BINDINGPOINT, mBufferId);
+	}
 }
 
 int FLightBuffer::UploadLights(FDynLightData &data)
@@ -178,7 +195,11 @@ void FLightBuffer::Begin()
 	if (gl.lightmethod == LM_DEFERRED)
 	{
 		glBindBuffer(mBufferType, mBufferId);
-		mBufferPointer = (float*)glMapBufferRange(mBufferType, 0, mByteSize, GL_MAP_WRITE_BIT);
+
+		if(mDoubleBuffer)
+		    mBufferPointer = (float*)glMapBufferRange(mBufferType, 0, mByteSize, GL_MAP_WRITE_BIT|GL_MAP_UNSYNCHRONIZED_BIT);
+        else
+            mBufferPointer = (float*)glMapBufferRange(mBufferType, 0, mByteSize, GL_MAP_WRITE_BIT);
 	}
 }
 

@@ -437,8 +437,9 @@ void FGLRenderer::Set3DViewport()
     glScissor(bounds.left, bounds.top, bounds.width, bounds.height);
     
     glEnable(GL_SCISSOR_TEST);
-    
+#ifndef __MOBILE__
     glEnable(GL_MULTISAMPLE);
+#endif
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_STENCIL_TEST);
     glStencilFunc(GL_ALWAYS,0,~0);    // default stencil
