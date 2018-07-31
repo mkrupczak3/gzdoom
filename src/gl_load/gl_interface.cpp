@@ -276,6 +276,27 @@ void gl_LoadExtensions()
 		}
 	}
 
+	// Double buffer on by default, turn it OFF with -doublebuffer 0
+	const char *db = Args->CheckValue("-doublebuffer");
+	if (db != NULL)
+	{
+		if (!stricmp(db, "on"))
+		{
+			gl.flags |= RFL_DOUBLE_BUFFER;
+
+			// Persistent mode does not work for some reason..this is still way faster on my machines
+			gl.buffermethod = BM_DEFERRED;
+			gl.flags &= ~RFL_BUFFER_STORAGE;
+
+			// Not fixed light buffer for double buffering yet
+			//gl.lightmethod = LM_DEFERRED;
+			gl.flags &= ~RFL_SHADER_STORAGE_BUFFER;
+
+			Printf("Experimental double buffering ON\n");
+		}
+	}
+	
+
 	int v;
 	
 	if (!gl.legacyMode && !(gl.flags & RFL_SHADER_STORAGE_BUFFER))

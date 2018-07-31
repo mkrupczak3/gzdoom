@@ -270,9 +270,9 @@ void OpenGLFrameBuffer::Swap()
 	bool swapbefore = gl_finishbeforeswap && camtexcount == 0;
 	Finish.Reset();
 	Finish.Clock();
-	if (swapbefore) glFinish();
+	if (!(gl.flags & RFL_DOUBLE_BUFFER) && swapbefore) glFinish();
 	SwapBuffers();
-	if (!swapbefore) glFinish();
+	if (!(gl.flags & RFL_DOUBLE_BUFFER) && !swapbefore) glFinish();
 	Finish.Unclock();
 	camtexcount = 0;
 	FHardwareTexture::UnbindAll();
