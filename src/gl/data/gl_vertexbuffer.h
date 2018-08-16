@@ -183,7 +183,7 @@ public:
 	}
 
 #endif
-
+ 
 	uint32_t *GetIndexPointer() const
 	{
 		return ibo_id == 0 ? &ibo_data[0] : nullptr;
