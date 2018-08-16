@@ -35,8 +35,8 @@ public:
 	sector_t *RenderView(player_t *player) override;
 	void SetTextureFilterMode() override;
 	IHardwareTexture *CreateHardwareTexture(FTexture *tex) override;
+	void PrecacheMaterial(FMaterial *mat, int translation) override;
 	FModelRenderer *CreateModelRenderer(int mli) override;
-	void UnbindTexUnit(int no) override;
 	void FlushTextures() override;
 	void TextureFilterChanged() override;
 	void ResetFixedColormap() override;
@@ -44,6 +44,9 @@ public:
 	bool RenderBuffersEnabled() override;
 	void SetViewportRects(IntRect *bounds) override;
 	void BlurScene(float amount) override;
+    IUniformBuffer *CreateUniformBuffer(size_t size, bool staticuse = false) override;
+	IShaderProgram *CreateShaderProgram() override;
+
 
 	// Retrieves a buffer containing image data for a screenshot.
 	// Hint: Pitch can be negative for upside-down images, in which case buffer

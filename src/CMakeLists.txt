@@ -81,6 +81,11 @@ if( WIN32 )
 		find_library( DX_dinput8_LIBRARY dinput8
 			PATHS ENV DXSDK_DIR
 			PATH_SUFFIXES Lib Lib/${XBITS} )
+		if( ZD_CMAKE_COMPILER_IS_GNUCXX_COMPATIBLE )
+			find_library( DX_dxguid_LIBRARY dxguid
+				PATHS ENV DXSDK_DIR
+				PATH_SUFFIXES Lib Lib/${XBITS} )
+		endif()
 
 		# Modern versions of the Windows SDK include dinput8.lib. Unfortunately,
 		# CMake cannot find these libraries via find_library.
@@ -89,6 +94,13 @@ if( WIN32 )
 			set( DX_dinput8_LIBRARY dinput8 )
 		endif()
 
+		if( ZD_CMAKE_COMPILER_IS_GNUCXX_COMPATIBLE )
+			# Modern versions of the Windows SDK do NOT include dxguid.lib. Its contents
+			# were moved to dinput8.lib.
+			if( NOT DX_dxguid_LIBRARY )
+				message( STATUS "Could not find dxguid.lib. Build may fail on old Windows SDKs.")
+			endif()
+		endif()
 	endif()
 
 	set( ZDOOM_LIBS
@@ -109,6 +121,11 @@ if( WIN32 )
 		set( ZDOOM_LIBS ${ZDOOM_LIBS} DelayImp )
 	endif()
 
+	if( ZD_CMAKE_COMPILER_IS_GNUCXX_COMPATIBLE )
+		if( DX_dxguid_LIBRARY )
+			list( APPEND ZDOOM_LIBS "${DX_dxguid_LIBRARY}" )
+		endif()
+	endif()
 else()
 	if( APPLE )
 		set( NO_GTK ON )
@@ -621,8 +638,8 @@ add_definitions(-DOPNMIDI_USE_LEGACY_EMULATOR)
 add_definitions(-DADLMIDI_DISABLE_MUS_SUPPORT -DADLMIDI_DISABLE_XMI_SUPPORT -DADLMIDI_DISABLE_MIDI_SEQUENCER)
 add_definitions(-DOPNMIDI_DISABLE_MUS_SUPPORT -DOPNMIDI_DISABLE_XMI_SUPPORT -DOPNMIDI_DISABLE_MIDI_SEQUENCER)
 
-# Disable ADLMIDI's MIDI Sequencer, MUS and XMI converters
-add_definitions(-DADLMIDI_DISABLE_MUS_SUPPORT -DADLMIDI_DISABLE_XMI_SUPPORT -DADLMIDI_DISABLE_MIDI_SEQUENCER)
+# Disable OPNMIDI's experimental yet emulator (using of it has some issues and missing notes in playback)
+add_definitions(-DOPNMIDI_DISABLE_GX_EMULATOR)
 
 # Project files should be aware of the header files. We can GLOB these since
 # there's generally a new cpp for every header so this file will get changed
@@ -678,9 +695,10 @@ file( GLOB HEADER_FILES
 	polyrenderer/scene/*.h
 	hwrenderer/data/*.h
 	hwrenderer/dynlights/*.h
+	hwrenderer/postprocessing/*.h
 	hwrenderer/scene/*.h
 	hwrenderer/textures/*.h
-	hwrenderer/utilities/*.h
+	hwrenderer/utility/*.h
 	gl/*.h
 	gl/data/*.h
 	gl/dynlights/*.h
@@ -691,7 +709,6 @@ file( GLOB HEADER_FILES
 	gl/shaders/*.h
 	gl/system/*.h
 	gl/textures/*.h
-	gl/utility/*.h
 	gl_load/*.h
 	*.h
 )
@@ -838,14 +855,25 @@ set( FASTMATH_SOURCES
 	sound/adlmidi/adlmidi_midiplay.cpp
 	sound/adlmidi/adlmidi_opl3.cpp
 	sound/adlmidi/adlmidi_private.cpp
-	sound/adlmidi/dbopl.cpp
-	sound/adlmidi/nukedopl3.c
+	sound/adlmidi/chips/dosbox/dbopl.cpp
+	sound/adlmidi/chips/dosbox_opl3.cpp
+	sound/adlmidi/chips/nuked/nukedopl3_174.c
+	sound/adlmidi/chips/nuked/nukedopl3.c
+	sound/adlmidi/chips/nuked_opl3.cpp
+	sound/adlmidi/chips/nuked_opl3_v174.cpp
+	sound/adlmidi/wopl/wopl_file.c
+	sound/opnmidi/chips/gens_opn2.cpp
+	sound/opnmidi/chips/gens/Ym2612_Emu.cpp
+	sound/opnmidi/chips/mame/mame_ym2612fm.c
+	sound/opnmidi/chips/mame_opn2.cpp
+	sound/opnmidi/chips/nuked_opn2.cpp
+	sound/opnmidi/chips/nuked/ym3438.c
 	sound/opnmidi/opnmidi.cpp
 	sound/opnmidi/opnmidi_load.cpp
 	sound/opnmidi/opnmidi_midiplay.cpp
 	sound/opnmidi/opnmidi_opn2.cpp
 	sound/opnmidi/opnmidi_private.cpp
-	sound/opnmidi/Ym2612_ChipEmu.cpp
+
 )
 
 set (PCH_SOURCES
@@ -874,7 +902,7 @@ set (PCH_SOURCES
 	d_dehacked.cpp
 	d_iwad.cpp
 	d_main.cpp
-	d_stats.cpp
+	d_anonstats.cpp
 	d_net.cpp
 	d_netinfo.cpp
 	d_protocol.cpp
@@ -1013,6 +1041,7 @@ set (PCH_SOURCES
 	gl/compatibility/gl_20.cpp
 	gl/compatibility/gl_swshader20.cpp
 	gl/data/gl_vertexbuffer.cpp
+	gl/data/gl_uniformbuffer.cpp
 	gl/dynlights/gl_lightbuffer.cpp
 	gl/dynlights/gl_shadowmap.cpp
 	gl/models/gl_models.cpp
@@ -1026,20 +1055,9 @@ set (PCH_SOURCES
 	gl/shaders/gl_shader.cpp
 	gl/shaders/gl_shaderprogram.cpp
 	gl/shaders/gl_postprocessshader.cpp
-	gl/shaders/gl_shadowmapshader.cpp
-	gl/shaders/gl_presentshader.cpp
-	gl/shaders/gl_present3dRowshader.cpp
-	gl/shaders/gl_bloomshader.cpp
-	gl/shaders/gl_ambientshader.cpp
-	gl/shaders/gl_blurshader.cpp
-	gl/shaders/gl_colormapshader.cpp
-	gl/shaders/gl_tonemapshader.cpp
-	gl/shaders/gl_lensshader.cpp
-	gl/shaders/gl_fxaashader.cpp
 	gl/stereo3d/gl_stereo3d.cpp
 	gl/stereo3d/gl_stereo_cvars.cpp
 	gl/stereo3d/gl_stereo_leftright.cpp
-	gl/stereo3d/scoped_view_shifter.cpp
 	gl/stereo3d/gl_anaglyph.cpp
 	gl/stereo3d/gl_quadstereo.cpp
 	gl/stereo3d/gl_sidebyside3d.cpp
@@ -1056,12 +1074,23 @@ set (PCH_SOURCES
 	hwrenderer/scene/hw_skydome.cpp
 	hwrenderer/postprocessing/hw_postprocess_cvars.cpp
 	hwrenderer/postprocessing/hw_postprocessshader.cpp
+	hwrenderer/postprocessing/hw_shadowmapshader.cpp
+	hwrenderer/postprocessing/hw_presentshader.cpp
+	hwrenderer/postprocessing/hw_present3dRowshader.cpp
+	hwrenderer/postprocessing/hw_bloomshader.cpp
+	hwrenderer/postprocessing/hw_ambientshader.cpp
+	hwrenderer/postprocessing/hw_blurshader.cpp
+	hwrenderer/postprocessing/hw_colormapshader.cpp
+	hwrenderer/postprocessing/hw_tonemapshader.cpp
+	hwrenderer/postprocessing/hw_lensshader.cpp
+	hwrenderer/postprocessing/hw_fxaashader.cpp
 	hwrenderer/textures/hw_material.cpp
 	hwrenderer/textures/hw_precache.cpp
 	hwrenderer/utility/hw_clock.cpp
 	hwrenderer/utility/hw_cvars.cpp
 	hwrenderer/utility/hw_lighting.cpp
-	
+	hwrenderer/utility/hw_shaderpatcher.cpp
+
 	menu/joystickmenu.cpp
 	menu/loadsavemenu.cpp
 	menu/menu.cpp
@@ -1389,6 +1418,7 @@ source_group("Hardware Renderer" REGULAR_EXPRESSION "^${CMAKE_CURRENT_SOURCE_DIR
 source_group("Hardware Renderer\\Data" REGULAR_EXPRESSION "^${CMAKE_CURRENT_SOURCE_DIR}/hwrenderer/data/.+")
 source_group("Hardware Renderer\\Dynamic Lights" REGULAR_EXPRESSION "^${CMAKE_CURRENT_SOURCE_DIR}/hwrenderer/dynlights/.+")
 source_group("Hardware Renderer\\Models" REGULAR_EXPRESSION "^${CMAKE_CURRENT_SOURCE_DIR}/hwrenderer/models/.+")
+source_group("Hardware Renderer\\Postprocessing" REGULAR_EXPRESSION "^${CMAKE_CURRENT_SOURCE_DIR}/hwrenderer/postprocessing/.+")
 source_group("Hardware Renderer\\Renderer" REGULAR_EXPRESSION "^${CMAKE_CURRENT_SOURCE_DIR}/hwrenderer/renderer/.+")
 source_group("Hardware Renderer\\Scene" REGULAR_EXPRESSION "^${CMAKE_CURRENT_SOURCE_DIR}/hwrenderer/scene/.+")
 source_group("Hardware Renderer\\Stereo3D" REGULAR_EXPRESSION "^${CMAKE_CURRENT_SOURCE_DIR}/hwrenderer/stereo3d/.+")

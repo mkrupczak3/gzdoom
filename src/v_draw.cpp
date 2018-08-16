@@ -191,6 +191,50 @@ void DFrameBuffer::DrawTextureParms(FTexture *img, DrawParms &parms)
 
 //==========================================================================
 //
+// ZScript arbitrary textured shape drawing functions
+//
+//==========================================================================
+
+void DFrameBuffer::DrawShape(FTexture *img, DShape2D *shape, int tags_first, ...)
+{
+	Va_List tags;
+	va_start(tags.list, tags_first);
+	DrawParms parms;
+
+	bool res = ParseDrawTextureTags(img, 0, 0, tags_first, tags, &parms, false);
+	va_end(tags.list);
+	if (!res) return;
+	m2DDrawer.AddShape(img, shape, parms);
+}
+
+void DFrameBuffer::DrawShape(FTexture *img, DShape2D *shape, VMVa_List &args)
+{
+	DrawParms parms;
+	uint32_t tag = ListGetInt(args);
+
+	bool res = ParseDrawTextureTags(img, 0, 0, tag, args, &parms, false);
+	if (!res) return;
+	m2DDrawer.AddShape(img, shape, parms);
+}
+
+DEFINE_ACTION_FUNCTION(_Screen, DrawShape)
+{
+	PARAM_PROLOGUE;
+	PARAM_INT(texid);
+	PARAM_BOOL(animate);
+	PARAM_POINTER(shape, DShape2D);
+
+	if (!screen->HasBegun2D()) ThrowAbortException(X_OTHER, "Attempt to draw to screen outside a draw function");
+
+	FTexture *tex = animate ? TexMan(FSetTextureID(texid)) : TexMan[FSetTextureID(texid)];
+	VMVa_List args = { param + 3, 0, numparam - 3 };
+
+	screen->DrawShape(tex, shape, args);
+	return 0;
+}
+
+//==========================================================================
+//
 // Clipping rect
 //
 //==========================================================================
@@ -794,6 +838,10 @@ bool DFrameBuffer::ParseDrawTextureTags(FTexture *img, double x, double y, uint3
 			parms->style.AsDWORD = ListGetInt(tags);
 			break;
 
+		case DTA_LegacyRenderStyle:	// mainly for ZScript which does not handle FRenderStyle that well.
+			parms->style = (ERenderStyle)ListGetInt(tags);
+			break;
+
 		case DTA_SpecialColormap:
 			parms->specialcolormap = ListGetSpecialColormap(tags);
 			break;
@@ -1341,12 +1389,13 @@ void DFrameBuffer::DrawBlend(sector_t * viewsector)
 	// don't draw sector based blends when any fullbright screen effect is active.
 	if (!fullbright)
 	{
+        const auto &vpp = r_viewpoint.Pos;
 		if (!viewsector->e->XFloor.ffloors.Size())
 		{
 			if (viewsector->GetHeightSec())
 			{
 				auto s = viewsector->heightsec;
-				blendv = s->floorplane.PointOnSide(r_viewpoint.Pos) < 0 ? s->bottommap : s->ceilingplane.PointOnSide(r_viewpoint.Pos) < 0 ? s->topmap : s->midmap;
+				blendv = s->floorplane.PointOnSide(vpp) < 0 ? s->bottommap : s->ceilingplane.PointOnSide(vpp) < 0 ? s->topmap : s->midmap;
 			}
 		}
 		else
@@ -1357,11 +1406,11 @@ void DFrameBuffer::DrawBlend(sector_t * viewsector)
 			{
 				double lightbottom;
 				if (i < lightlist.Size() - 1)
-					lightbottom = lightlist[i + 1].plane.ZatPoint(r_viewpoint.Pos);
+					lightbottom = lightlist[i + 1].plane.ZatPoint(vpp);
 				else
-					lightbottom = viewsector->floorplane.ZatPoint(r_viewpoint.Pos);
+					lightbottom = viewsector->floorplane.ZatPoint(vpp);
 
-				if (lightbottom < r_viewpoint.Pos.Z && (!lightlist[i].caster || !(lightlist[i].caster->flags&FF_FADEWALLS)))
+				if (lightbottom < vpp.Z && (!lightlist[i].caster || !(lightlist[i].caster->flags&FF_FADEWALLS)))
 				{
 					// 3d floor 'fog' is rendered as a blending value
 					blendv = lightlist[i].blend;
@@ -1417,7 +1466,11 @@ void DFrameBuffer::DrawBlend(sector_t * viewsector)
 		V_AddBlend(player->BlendR, player->BlendG, player->BlendB, player->BlendA, blend);
 	}
 
-	screen->Dim(PalEntry(255, uint8_t(blend[0] * 255), uint8_t(blend[1] * 255), uint8_t(blend[2] * 255)), blend[3], 0, 0, screen->GetWidth(), screen->GetHeight());
+	const float br = clamp(blend[0] * 255.f, 0.f, 255.f);
+	const float bg = clamp(blend[1] * 255.f, 0.f, 255.f);
+	const float bb = clamp(blend[2] * 255.f, 0.f, 255.f);
+	const PalEntry bcolor(255, uint8_t(br), uint8_t(bg), uint8_t(bb));
+	screen->Dim(bcolor, blend[3], 0, 0, screen->GetWidth(), screen->GetHeight());
 }
 
 

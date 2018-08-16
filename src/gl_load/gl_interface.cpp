@@ -264,6 +264,7 @@ void gl_LoadExtensions()
 		gl.glslversion = strtod((char*)glGetString(GL_SHADING_LANGUAGE_VERSION), NULL) + 0.01f;
 
 		gl.vendorstring = (char*)glGetString(GL_VENDOR);
+		gl.modelstring = (char*)glGetString(GL_RENDERER);
 
 		// first test for optional features
 		if (CheckExtension("GL_ARB_texture_compression")) gl.flags |= RFL_TEXTURE_COMPRESSION;
@@ -297,6 +298,7 @@ void gl_LoadExtensions()
 					gl.flags |= RFL_NO_CLIP_PLANES;	// gl_ClipDistance is horribly broken on ATI GL3 drivers for Windows.
 				}
 #endif
+				gl.glslversion = 3.31f;	// Force GLSL down to 3.3.
 			}
 			else if (gl_version < 4.5f)
 			{
@@ -307,16 +309,7 @@ void gl_LoadExtensions()
 					// Recent drivers, GL 4.4 don't have this problem, these can easily be recognized by also supporting the GL_ARB_buffer_storage extension.
 					if (CheckExtension("GL_ARB_shader_storage_buffer_object"))
 					{
-						// Intel's GLSL compiler is a bit broken with extensions, so unlock the feature only if not on Intel or having GL 4.3.
-						if (strstr(gl.vendorstring, "Intel") == NULL || gl_version >= 4.3f)
-						{
-							// Mesa implements shader storage only for fragment shaders.
-							// Just disable the feature there. The light buffer may just use a uniform buffer without any adverse effects.
-							int v;
-							glGetIntegerv(GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS, &v);
-							if (v > 0)
-								gl.flags |= RFL_SHADER_STORAGE_BUFFER;
-						}
+						gl.flags |= RFL_SHADER_STORAGE_BUFFER;
 					}
 					gl.flags |= RFL_BUFFER_STORAGE;
 					gl.lightmethod = LM_DIRECT;
@@ -330,6 +323,13 @@ void gl_LoadExtensions()
 				gl.lightmethod =	LM_DIRECT;
 				gl.buffermethod = BM_PERSISTENT;
 			}
+
+			// Mesa implements shader storage only for fragment shaders.
+			// Just disable the feature there. The light buffer may just use a uniform buffer without any adverse effects.
+			int v;
+			glGetIntegerv(GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS, &v);
+			if (v == 0)
+				gl.flags &= ~RFL_SHADER_STORAGE_BUFFER;
 
 			if (gl_version >= 4.3f || CheckExtension("GL_ARB_invalidate_subdata")) gl.flags |= RFL_INVALIDATE_BUFFER;
 			if (gl_version >= 4.3f || CheckExtension("GL_KHR_debug")) gl.flags |= RFL_DEBUG;
@@ -351,7 +351,7 @@ void gl_LoadExtensions()
 
 	int v;
 	
-	if (!gl.legacyMode && !(gl.flags & RFL_SHADER_STORAGE_BUFFER))
+	if (!gl.legacyMode)
 	{
 		glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &v);
 		gl.maxuniforms = v;

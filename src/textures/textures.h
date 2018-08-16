@@ -44,6 +44,9 @@
 #include "r_data/r_translate.h"
 #include <vector>
 
+// 15 because 0th texture is our texture
+#define MAX_CUSTOM_HW_SHADER_TEXTURES 15
+
 typedef TMap<int, bool> SpriteHits;
 
 enum MaterialShaderIndex
@@ -69,6 +72,12 @@ enum MaterialShaderIndex
 	FIRST_USER_SHADER
 };
 
+struct UserShaderDesc
+{
+	FString shader;
+	MaterialShaderIndex shaderType;
+	FString defines;
+};
 
 struct FloatRect
 {
@@ -244,6 +253,8 @@ public:
 	FTexture *Metallic = nullptr;						// Metalness texture for the physically based rendering (PBR) light model
 	FTexture *Roughness = nullptr;						// Roughness texture for PBR
 	FTexture *AmbientOcclusion = nullptr;				// Ambient occlusion texture for PBR
+	
+	FTexture *CustomShaderTextures[MAX_CUSTOM_HW_SHADER_TEXTURES] = { nullptr }; // Custom texture maps for custom hardware shaders
 
 	FString Name;
 	ETextureType UseType;	// This texture's primary purpose

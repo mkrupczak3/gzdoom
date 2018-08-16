@@ -45,6 +45,7 @@
 #include "v_2ddrawer.h"
 
 struct sector_t;
+class IShaderProgram;
 
 enum EHWCaps
 {
@@ -122,6 +123,7 @@ struct FColormap;
 class FileWriter;
 enum FTextureFormat : uint32_t;
 class FModelRenderer;
+struct SamplerUniform;
 
 // TagItem definitions for DrawTexture. As far as I know, tag lists
 // originated on the Amiga.
@@ -201,7 +203,8 @@ enum
 	DTA_SrcX,			// specify a source rectangle (this supersedes the poorly implemented DTA_WindowLeft/Right
 	DTA_SrcY,
 	DTA_SrcWidth,
-	DTA_SrcHeight
+	DTA_SrcHeight,
+	DTA_LegacyRenderStyle,	// takes an old-style STYLE_* constant instead of an FRenderStyle
 
 };
 
@@ -324,6 +327,7 @@ public:
 class FUniquePalette;
 class IHardwareTexture;
 class FTexture;
+class IUniformBuffer;
 
 // A canvas that represents the actual display. The video code is responsible
 // for actually implementing this. Built on top of SimpleCanvas, because it
@@ -353,6 +357,7 @@ protected:
 
 public:
 	int hwcaps = 0;
+	float glslversion = 0;			// This is here so that the differences between old OpenGL and new OpenGL/Vulkan can be handled by platform independent code.
 	int instack[2] = { 0,0 };	// this is globally maintained state for portal recursion avoidance.
 	bool enable_quadbuffered = false;
 
@@ -406,6 +411,7 @@ public:
 	virtual void CleanForRestart() {}
 	virtual void SetTextureFilterMode() {}
 	virtual IHardwareTexture *CreateHardwareTexture(FTexture *tex) { return nullptr; }
+	virtual void PrecacheMaterial(FMaterial *mat, int translation) {}
 	virtual FModelRenderer *CreateModelRenderer(int mli) { return nullptr; }
 	virtual void UnbindTexUnit(int no) {}
 	virtual void FlushTextures() {}
@@ -417,6 +423,10 @@ public:
 	virtual int GetClientHeight() = 0;
 	virtual bool RenderBuffersEnabled() { return false; };
 	virtual void BlurScene(float amount) {}
+    
+    // Interface to hardware rendering resources
+    virtual IUniformBuffer *CreateUniformBuffer(size_t size, bool staticuse = false) { return nullptr; }
+	virtual IShaderProgram *CreateShaderProgram() { return nullptr; }
 
 	// Begin 2D drawing operations.
 	// Returns true if hardware-accelerated 2D has been entered, false if not.
@@ -481,6 +491,8 @@ public:
 	bool SetTextureParms(DrawParms *parms, FTexture *img, double x, double y) const;
 	void DrawTexture(FTexture *img, double x, double y, int tags, ...);
 	void DrawTexture(FTexture *img, double x, double y, VMVa_List &);
+	void DrawShape(FTexture *img, DShape2D *shape, int tags, ...);
+	void DrawShape(FTexture *img, DShape2D *shape, VMVa_List &);
 	void FillBorder(FTexture *img);	// Fills the border around a 4:3 part of the screen on non-4:3 displays
 	void VirtualToRealCoords(double &x, double &y, double &w, double &h, double vwidth, double vheight, bool vbottom = false, bool handleaspect = true) const;
 

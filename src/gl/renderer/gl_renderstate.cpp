@@ -36,6 +36,7 @@
 #include "gl/renderer/gl_renderer.h"
 #include "gl/dynlights//gl_lightbuffer.h"
 #include "gl/renderer/gl_renderbuffers.h"
+#include "gl/textures/gl_hwtexture.h"
 
 void gl_SetTextureMode(int type);
 
@@ -221,25 +222,9 @@ bool FRenderState::ApplyShader()
 		activeShader->currentcliplinestate = 0;
 	}
 
-	if (mColormapState < -1)	// 2D operations
+	if (mColormapState == CM_PLAIN2D)	// 2D operations
 	{
-		if (mColormapState != CM_SPECIAL2D)
-		{
-			activeShader->muColormapStart.Set(m2DColors[0]);
-			activeShader->muFixedColormap.Set(4);
-		}
-		else
-		{
-			float startr = m2DColors[0].r / 255.f;
-			float startg = m2DColors[0].g / 255.f;
-			float startb = m2DColors[0].b / 255.f;
-			float ranger = m2DColors[1].r / 255.f - startr;
-			float rangeg = m2DColors[1].g / 255.f - startg;
-			float rangeb = m2DColors[1].b / 255.f - startb;
-			activeShader->muColormapStart.Set(startr, startg, startb, 0.f);
-			activeShader->muColormapRange.Set(ranger, rangeg, rangeb, 0.f);
-			activeShader->muFixedColormap.Set(1);
-		}
+		activeShader->muFixedColormap.Set(4);
 		activeShader->currentfixedcolormap = mColormapState;
 	}
 	else if (mColormapState != activeShader->currentfixedcolormap)
@@ -440,3 +425,65 @@ void FRenderState::SetClipHeight(float height, float direction)
 		glDisable(GL_CLIP_DISTANCE0);	// GL_CLIP_PLANE0 is the same value so no need to make a distinction
 	}
 }
+
+//===========================================================================
+// 
+//	Binds a texture to the renderer
+//
+//===========================================================================
+
+void FRenderState::SetMaterial(FMaterial *mat, int clampmode, int translation, int overrideshader, bool alphatexture)
+{
+	// alpha textures need special treatment in the legacy renderer because without shaders they need a different texture. This will also override all other translations.
+	if (alphatexture &&  gl.legacyMode) translation = -STRange_AlphaTexture;
+
+	if (mat->tex->bHasCanvas)
+	{
+		mTempTM = TM_OPAQUE;
+	}
+	else
+	{
+		mTempTM = TM_MODULATE;
+	}
+	mEffectState = overrideshader >= 0 ? overrideshader : mat->mShaderIndex;
+	mShaderTimer = mat->tex->shaderspeed;
+	SetSpecular(mat->tex->Glossiness, mat->tex->SpecularLevel);
+
+	auto tex = mat->tex;
+	if (tex->UseType == ETextureType::SWCanvas) clampmode = CLAMP_NOFILTER;
+	if (tex->bHasCanvas) clampmode = CLAMP_CAMTEX;
+	else if ((tex->bWarped || tex->shaderindex >= FIRST_USER_SHADER) && clampmode <= CLAMP_XY) clampmode = CLAMP_NONE;
+	
+	// avoid rebinding the same texture multiple times.
+	if (mat == lastMaterial && lastClamp == clampmode && translation == lastTranslation) return;
+	lastMaterial = mat;
+	lastClamp = clampmode;
+	lastTranslation = translation;
+
+	int usebright = false;
+	int maxbound = 0;
+
+	// Textures that are already scaled in the texture lump will not get replaced by hires textures.
+	int flags = mat->isExpanded() ? CTF_Expand : (gl_texture_usehires && tex->Scale.X == 1 && tex->Scale.Y == 1 && clampmode <= CLAMP_XY) ? CTF_CheckHires : 0;
+	int numLayers = mat->GetLayers();
+	auto base = static_cast<FHardwareTexture*>(mat->GetLayer(0));
+
+	if (base->BindOrCreate(tex, 0, clampmode, translation, flags))
+	{
+		for (int i = 1; i<numLayers; i++)
+		{
+			FTexture *layer;
+			auto systex = static_cast<FHardwareTexture*>(mat->GetLayer(i, &layer));
+			systex->BindOrCreate(layer, i, clampmode, 0, mat->isExpanded() ? CTF_Expand : 0);
+			maxbound = i;
+		}
+	}
+	// unbind everything from the last texture that's still active
+	for (int i = maxbound + 1; i <= maxBoundMaterial; i++)
+	{
+		FHardwareTexture::Unbind(i);
+		maxBoundMaterial = maxbound;
+	}
+}
+
+

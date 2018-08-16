@@ -34,31 +34,21 @@
 #ifndef __VERSION_H__
 #define __VERSION_H__
 
-#ifdef _WIN32
-#include "gitinfo.h"
-#endif // _WIN32
-
 const char *GetGitDescription();
 const char *GetGitHash();
 const char *GetGitTime();
 const char *GetVersionString();
 
 /** Lots of different version numbers **/
-
-#ifdef GIT_DESCRIPTION
-#define VERSIONSTR GIT_DESCRIPTION
-#else
-#define VERSIONSTR "g3.4.1"
-#endif
+#define VERSIONSTR "g3.5.0_legacy"
 
 // The version as seen in the Windows resource
-#define RC_FILEVERSION 3,4,1,0
-#define RC_PRODUCTVERSION 3,4,1,0
-
+#define RC_FILEVERSION 3,5,0,0
+#define RC_PRODUCTVERSION 3,5,00
 #define RC_PRODUCTVERSION2 VERSIONSTR
-// These are for content versioning. The current state is '3.4'.
+// These are for content versioning.
 #define VER_MAJOR 3
-#define VER_MINOR 4
+#define VER_MINOR 5
 #define VER_REVISION 0
 
 // Version identifier for network games.

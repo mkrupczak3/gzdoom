@@ -38,8 +38,10 @@
 #include "gl/textures/gl_samplers.h"
 #include "hwrenderer/utility/hw_clock.h"
 #include "gl/data/gl_vertexbuffer.h"
+#include "gl/data/gl_uniformbuffer.h"
 #include "gl/models/gl_models.h"
 #include "gl/stereo3d/gl_stereo3d.h"
+#include "gl/shaders/gl_shaderprogram.h"
 #include "gl_debug.h"
 #include "r_videoscale.h"
 
@@ -71,7 +73,6 @@ OpenGLFrameBuffer::OpenGLFrameBuffer(void *hMonitor, int width, int height, int 
 
 	// Make sure all global variables tracking OpenGL context state are reset..
 	FHardwareTexture::InitGlobalState();
-	FMaterial::InitGlobalState();
 	gl_RenderState.Reset();
 
 	GLRenderer = new FGLRenderer(this);
@@ -81,8 +82,11 @@ OpenGLFrameBuffer::OpenGLFrameBuffer(void *hMonitor, int width, int height, int 
 	mDebug = std::make_shared<FGLDebug>();
 	mDebug->Update();
 	SetGamma();
+
+	// Move some state to the framebuffer object for easier access.
 	hwcaps = gl.flags;
 	if (gl.legacyMode) hwcaps |= RFL_NO_SHADERS;
+	glslversion = gl.glslversion;
 }
 
 OpenGLFrameBuffer::~OpenGLFrameBuffer()
@@ -185,6 +189,8 @@ void OpenGLFrameBuffer::Update()
 	int initialHeight = IsFullscreen() ? VideoHeight : GetClientHeight();
 	int clientWidth = ViewportScaledWidth(initialWidth, initialHeight);
 	int clientHeight = ViewportScaledHeight(initialWidth, initialHeight);
+	if (clientWidth < 320) clientWidth = 320;
+	if (clientHeight < 200) clientHeight = 200;
 	if (clientWidth > 0 && clientHeight > 0 && (Width != clientWidth || Height != clientHeight))
 	{
 		Width = clientWidth;
@@ -377,16 +383,26 @@ IHardwareTexture *OpenGLFrameBuffer::CreateHardwareTexture(FTexture *tex)
 	return new FHardwareTexture(tex->bNoCompress);
 }
 
+void OpenGLFrameBuffer::PrecacheMaterial(FMaterial *mat, int translation)
+{
+	gl_RenderState.SetMaterial(mat, CLAMP_NONE, translation, false, false);
+}
+
 FModelRenderer *OpenGLFrameBuffer::CreateModelRenderer(int mli) 
 {
 	return new FGLModelRenderer(mli);
 }
 
-
-void OpenGLFrameBuffer::UnbindTexUnit(int no)
+IUniformBuffer *OpenGLFrameBuffer::CreateUniformBuffer(size_t size, bool staticuse)
 {
-	FHardwareTexture::Unbind(no);
+    return new GLUniformBuffer(size, staticuse);
 }
+
+IShaderProgram *OpenGLFrameBuffer::CreateShaderProgram() 
+{ 
+	return new FShaderProgram; 
+}
+
 
 void OpenGLFrameBuffer::FlushTextures()
 {

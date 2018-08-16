@@ -28,6 +28,10 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#ifdef _WIN32
+#include <direct.h>
+#endif
+
 #ifdef HAVE_FPU_CONTROL
 #include <fpu_control.h>
 #endif
@@ -223,8 +227,8 @@ int eventhead;
 int eventtail;
 gamestate_t wipegamestate = GS_DEMOSCREEN;	// can be -1 to force a wipe
 bool PageBlank;
-FTexture *Page;
 FTexture *Advisory;
+FTextureID Page;
 bool nospriterename;
 FStartupInfo DoomStartupInfo;
 FString lastIWAD;
@@ -675,6 +679,7 @@ void D_Display ()
 		players[consoleplayer].camera = players[consoleplayer].mo;
 	}
 
+    auto &vp = r_viewpoint;
 	if (viewactive)
 	{
 		DAngle fov = 90.f;
@@ -685,7 +690,7 @@ void D_Display ()
 				fov = cam->player->FOV;
 			else fov = cam->CameraFOV;
 		}
-		R_SetFOV(r_viewpoint, fov);
+		R_SetFOV(vp, fov);
 	}
 
 	// [RH] change the screen mode if needed
@@ -714,7 +719,7 @@ void D_Display ()
 	// change the view size if needed
 	if (setsizeneeded && StatusBar != NULL)
 	{
-		R_ExecuteSetViewSize (r_viewpoint, r_viewwindow);
+		R_ExecuteSetViewSize (vp, r_viewwindow);
 	}
 	setmodeneeded = false;
 
@@ -781,7 +786,7 @@ void D_Display ()
 			//
 
 			// Check for the presence of dynamic lights at the start of the frame once.
-			if (gl_lights)
+			if ((gl_lights && vid_rendermode == 4) || (r_dynlights && vid_rendermode != 4))
 			{
 				TThinkerIterator<ADynamicLight> it(STAT_DLIGHT);
 				level.HasDynamicLights = !!it.Next();
@@ -813,7 +818,7 @@ void D_Display ()
 				{
 					StatusBar->DrawCrosshair();
 				}
-				StatusBar->CallDraw (HUD_AltHud);
+				StatusBar->CallDraw (HUD_AltHud, vp.TicFrac);
 				StatusBar->DrawTopStuff (HUD_AltHud);
 			}
 			else 
@@ -821,13 +826,13 @@ void D_Display ()
 			{
 				EHudState state = DrawFSHUD ? HUD_Fullscreen : HUD_None;
 				StatusBar->DrawBottomStuff (state);
-				StatusBar->CallDraw (state);
+				StatusBar->CallDraw (state, vp.TicFrac);
 				StatusBar->DrawTopStuff (state);
 			}
 			else
 			{
 				StatusBar->DrawBottomStuff (HUD_StatusBar);
-				StatusBar->CallDraw (HUD_StatusBar);
+				StatusBar->CallDraw (HUD_StatusBar, vp.TicFrac);
 				StatusBar->DrawTopStuff (HUD_StatusBar);
 			}
 			//stb.Unclock();
@@ -988,7 +993,8 @@ void D_DoomLoop ()
 
 	// Clamp the timer to TICRATE until the playloop has been entered.
 	r_NoInterpolate = true;
-	Page = Advisory = NULL;
+	Page.SetInvalid();
+	Advisory = nullptr;
 
 	vid_cursor.Callback();
 
@@ -1073,9 +1079,9 @@ void D_PageTicker (void)
 void D_PageDrawer (void)
 {
 	screen->Clear(0, 0, SCREENWIDTH, SCREENHEIGHT, 0, 0);
-	if (Page != NULL)
+	if (Page.Exists())
 	{
-		screen->DrawTexture (Page, 0, 0,
+		screen->DrawTexture (TexMan(Page), 0, 0,
 			DTA_Fullscreen, true,
 			DTA_Masked, false,
 			DTA_BilinearFilter, true,
@@ -1217,18 +1223,7 @@ void D_DoStrifeAdvanceDemo ()
 	if (demosequence == 9 && !(gameinfo.flags & GI_SHAREWARE))
 		demosequence = 10;
 
-	if (pagename)
-	{
-		if (Page != NULL)
-		{
-			Page->Unload ();
-			Page = NULL;
-		}
-		if (pagename[0])
-		{
-			Page = TexMan[pagename];
-		}
-	}
+	if (pagename != nullptr) Page = TexMan.CheckForTexture(pagename, ETextureType::MiscPatch);
 }
 
 //==========================================================================
@@ -1326,13 +1321,10 @@ void D_DoAdvanceDemo (void)
 		break;
 	}
 
+
 	if (pagename.IsNotEmpty())
 	{
-		if (Page != NULL)
-		{
-			Page->Unload ();
-		}
-		Page = TexMan(pagename);
+		Page = TexMan.CheckForTexture(pagename, ETextureType::MiscPatch);
 	}
 }
 

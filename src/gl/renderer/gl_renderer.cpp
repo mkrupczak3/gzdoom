@@ -50,16 +50,16 @@
 #include "gl/data/gl_vertexbuffer.h"
 #include "gl/scene/gl_drawinfo.h"
 #include "gl/scene/gl_scenedrawer.h"
-#include "gl/shaders/gl_ambientshader.h"
-#include "gl/shaders/gl_bloomshader.h"
-#include "gl/shaders/gl_blurshader.h"
-#include "gl/shaders/gl_tonemapshader.h"
-#include "gl/shaders/gl_colormapshader.h"
-#include "gl/shaders/gl_lensshader.h"
-#include "gl/shaders/gl_fxaashader.h"
-#include "gl/shaders/gl_presentshader.h"
-#include "gl/shaders/gl_present3dRowshader.h"
-#include "gl/shaders/gl_shadowmapshader.h"
+#include "hwrenderer/postprocessing/hw_ambientshader.h"
+#include "hwrenderer/postprocessing/hw_bloomshader.h"
+#include "hwrenderer/postprocessing/hw_blurshader.h"
+#include "hwrenderer/postprocessing/hw_tonemapshader.h"
+#include "hwrenderer/postprocessing/hw_colormapshader.h"
+#include "hwrenderer/postprocessing/hw_lensshader.h"
+#include "hwrenderer/postprocessing/hw_fxaashader.h"
+#include "hwrenderer/postprocessing/hw_presentshader.h"
+#include "hwrenderer/postprocessing/hw_present3dRowshader.h"
+#include "hwrenderer/postprocessing/hw_shadowmapshader.h"
 #include "gl/shaders/gl_postprocessshaderinstance.h"
 #include "gl/stereo3d/gl_stereo3d.h"
 #include "gl/textures/gl_samplers.h"
@@ -90,7 +90,6 @@ FGLRenderer::FGLRenderer(OpenGLFrameBuffer *fb)
 	mMirrorCount = 0;
 	mPlaneMirrorCount = 0;
 	mAngles = FRotator(0.f, 0.f, 0.f);
-	mViewVector = FVector2(0,0);
 	mVBO = nullptr;
 	mSkyVBO = nullptr;
 	mShaderManager = nullptr;
@@ -350,6 +349,26 @@ sector_t *FGLRenderer::RenderView(player_t* player)
 
 //===========================================================================
 //
+//
+//
+//===========================================================================
+
+void FGLRenderer::BindToFrameBuffer(FMaterial *mat)
+{
+	auto BaseLayer = static_cast<FHardwareTexture*>(mat->GetLayer(0));
+
+	if (BaseLayer == nullptr)
+	{
+		// must create the hardware texture first
+		BaseLayer->BindOrCreate(mat->sourcetex, 0, 0, 0, 0);
+		FHardwareTexture::Unbind(0);
+		gl_RenderState.ClearLastMaterial();
+	}
+	BaseLayer->BindToFrameBuffer(mat->GetWidth(), mat->GetHeight());
+}
+
+//===========================================================================
+//
 // Camera texture rendering
 //
 //===========================================================================
@@ -370,7 +389,7 @@ void FGLRenderer::RenderTextureView(FCanvasTexture *tex, AActor *Viewpoint, doub
 	else
 	{
 		StartOffscreen();
-		gltex->BindToFrameBuffer();
+		BindToFrameBuffer(gltex);
 	}
 
 	IntRect bounds;
@@ -580,7 +599,7 @@ void FGLRenderer::Draw2D(F2DDrawer *drawer)
 		{
 			if (!gl.legacyMode)
 			{
-				gl_RenderState.Set2DOverlayColor(cmd.mColor1);
+				gl_RenderState.SetFog(cmd.mColor1, 0);
 				gl_RenderState.SetFixedColormap(CM_PLAIN2D);
 			}
 			else if (cmd.mDesaturate > 0)
@@ -656,6 +675,8 @@ void FGLRenderer::Draw2D(F2DDrawer *drawer)
 	}
 	glDisable(GL_SCISSOR_TEST);
 
+	gl_RenderState.BlendEquation(GL_FUNC_ADD);
+	gl_RenderState.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	gl_RenderState.SetVertexBuffer(GLRenderer->mVBO);
 	gl_RenderState.EnableTexture(true);
 	gl_RenderState.EnableBrightmap(true);

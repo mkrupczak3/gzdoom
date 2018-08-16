@@ -230,29 +230,6 @@ public:
 	}
 };
 
-class FBufferedUniformSampler
-{
-	int mBuffer;
-	int mIndex;
-
-public:
-	void Init(GLuint hShader, const GLchar *name)
-	{
-		mIndex = glGetUniformLocation(hShader, name);
-		mBuffer = -1;
-	}
-
-	void Set(int newvalue)
-	{
-		if (newvalue != mBuffer)
-		{
-			mBuffer = newvalue;
-			glUniform1i(mIndex, newvalue);
-		}
-	}
-};
-
-
 class FShader
 {
 	friend class FShaderCollection;
@@ -403,11 +380,6 @@ public:
 		}
 		return NULL;
 	}
-};
-
-enum
-{
-	LIGHTBUF_BINDINGPOINT = 1
 };
 
 #endif

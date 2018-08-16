@@ -112,7 +112,6 @@ class FRenderState
 	PalEntry mFogColor;
 	PalEntry mObjectColor;
 	PalEntry mObjectColor2;
-	PalEntry m2DColors[2];	// in the shader these will reuse the colormap ramp uniforms.
 	FStateVec4 mDynColor;
 	float mClipSplit[2];
 
@@ -132,6 +131,13 @@ class FRenderState
 
 	bool ApplyShader();
 
+	// Texture binding state
+	FMaterial *lastMaterial = nullptr;
+	int lastClamp = 0;
+	int lastTranslation = 0;
+	int maxBoundMaterial = -1;
+
+
 public:
 
 	VSMatrix mProjectionMatrix;
@@ -147,24 +153,12 @@ public:
 
 	void Reset();
 
-	void SetMaterial(FMaterial *mat, int clampmode, int translation, int overrideshader, bool alphatexture)
+	void ClearLastMaterial()
 	{
-		// alpha textures need special treatment in the legacy renderer because without shaders they need a different texture. This will also override all other translations.
-		if (alphatexture &&  gl.legacyMode) translation = -STRange_AlphaTexture;
-		
-		if (mat->tex->bHasCanvas)
-		{
-			mTempTM = TM_OPAQUE;
-		}
-		else
-		{
-			mTempTM = TM_MODULATE;
-		}
-		mEffectState = overrideshader >= 0? overrideshader : mat->mShaderIndex;
-		mShaderTimer = mat->tex->shaderspeed;
-		SetSpecular(mat->tex->Glossiness, mat->tex->SpecularLevel);
-		mat->Bind(clampmode, translation);
+		lastMaterial = nullptr;
 	}
+
+	void SetMaterial(FMaterial *mat, int clampmode, int translation, int overrideshader, bool alphatexture);
 
 	void Apply();
 	void ApplyColorMask();
@@ -400,11 +394,6 @@ public:
 	void SetObjectColor2(PalEntry pe)
 	{
 		mObjectColor2 = pe;
-	}
-
-	void Set2DOverlayColor(PalEntry pe)
-	{
-		m2DColors[0] = pe;
 	}
 
 	void SetSpecular(float glossiness, float specularLevel)

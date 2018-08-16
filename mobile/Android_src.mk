@@ -5,7 +5,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := gzdoom_dev
 
-LOCAL_CFLAGS   :=  -D__MOBILE__ -DNO_PIX_BUFF -DGZDOOM  -DGZDOOM_DEV -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
+LOCAL_CFLAGS   :=  -D__MOBILE__ -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_DEV -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
 
 
 LOCAL_CPPFLAGS := -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14 -DHAVE_JWZGLES  -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
@@ -33,6 +33,7 @@ LOCAL_C_INCLUDES := \
  $(GZDOOM_TOP_PATH)/src/sound \
  $(GZDOOM_TOP_PATH)/src/sound/oplsynth \
  $(GZDOOM_TOP_PATH)/src/sound/adlmidi \
+ $(GZDOOM_TOP_PATH)/src/sound/opnmidi \
  $(GZDOOM_TOP_PATH)/src/textures \
  $(GZDOOM_TOP_PATH)/src/thingdef \
  $(GZDOOM_TOP_PATH)/src/sdl \
@@ -65,9 +66,7 @@ ANDROID_SRC_FILES = \
     ../../../Clibs_OpenTouch/idtech1/gzdoom_game_interface.cpp \
     ../../../Clibs_OpenTouch/idtech1/touch_interface.cpp \
     ../../../Clibs_OpenTouch/idtech1/android_jni.cpp \
-    ../mobile/src/i_specialpaths_android.cpp \
-    gl/textures/etc1.cpp
-
+    ../mobile/src/i_specialpaths_android.cpp
 
 PLAT_POSIX_SOURCES = \
 	posix/i_cd.cpp \
@@ -135,14 +134,24 @@ FASTMATH_SOURCES = \
 	sound/adlmidi/adlmidi_midiplay.cpp \
 	sound/adlmidi/adlmidi_opl3.cpp \
 	sound/adlmidi/adlmidi_private.cpp \
-	sound/adlmidi/dbopl.cpp \
-	sound/adlmidi/nukedopl3.c \
+	sound/adlmidi/chips/dosbox/dbopl.cpp \
+	sound/adlmidi/chips/dosbox_opl3.cpp \
+	sound/adlmidi/chips/nuked/nukedopl3_174.c \
+	sound/adlmidi/chips/nuked/nukedopl3.c \
+	sound/adlmidi/chips/nuked_opl3.cpp \
+	sound/adlmidi/chips/nuked_opl3_v174.cpp \
+	sound/adlmidi/wopl/wopl_file.c \
+	sound/opnmidi/chips/gens_opn2.cpp \
+	sound/opnmidi/chips/gens/Ym2612_Emu.cpp \
+	sound/opnmidi/chips/mame/mame_ym2612fm.c \
+	sound/opnmidi/chips/mame_opn2.cpp \
+	sound/opnmidi/chips/nuked_opn2.cpp \
+	sound/opnmidi/chips/nuked/ym3438.c \
 	sound/opnmidi/opnmidi.cpp \
 	sound/opnmidi/opnmidi_load.cpp \
 	sound/opnmidi/opnmidi_midiplay.cpp \
 	sound/opnmidi/opnmidi_opn2.cpp \
 	sound/opnmidi/opnmidi_private.cpp \
-	sound/opnmidi/Ym2612_ChipEmu.cpp \
 
 
 PCH_SOURCES = \
@@ -171,7 +180,7 @@ PCH_SOURCES = \
 	d_dehacked.cpp \
 	d_iwad.cpp \
 	d_main.cpp \
-	d_stats.cpp \
+	d_anonstats.cpp \
 	d_net.cpp \
 	d_netinfo.cpp \
 	d_protocol.cpp \
@@ -310,6 +319,7 @@ PCH_SOURCES = \
 	gl/compatibility/gl_20.cpp \
 	gl/compatibility/gl_swshader20.cpp \
 	gl/data/gl_vertexbuffer.cpp \
+	gl/data/gl_uniformbuffer.cpp \
 	gl/dynlights/gl_lightbuffer.cpp \
 	gl/dynlights/gl_shadowmap.cpp \
 	gl/models/gl_models.cpp \
@@ -323,24 +333,13 @@ PCH_SOURCES = \
 	gl/shaders/gl_shader.cpp \
 	gl/shaders/gl_shaderprogram.cpp \
 	gl/shaders/gl_postprocessshader.cpp \
-	gl/shaders/gl_shadowmapshader.cpp \
-	gl/shaders/gl_presentshader.cpp \
-	gl/shaders/gl_present3dRowshader.cpp \
-	gl/shaders/gl_bloomshader.cpp \
-	gl/shaders/gl_ambientshader.cpp \
-	gl/shaders/gl_blurshader.cpp \
-	gl/shaders/gl_colormapshader.cpp \
-	gl/shaders/gl_tonemapshader.cpp \
-	gl/shaders/gl_lensshader.cpp \
-	gl/shaders/gl_fxaashader.cpp \
-	gl/stereo3d/gl_stereo3d.cpp \
-	gl/stereo3d/gl_stereo_cvars.cpp \
-	gl/stereo3d/gl_stereo_leftright.cpp \
-	gl/stereo3d/scoped_view_shifter.cpp \
-	gl/stereo3d/gl_anaglyph.cpp \
-	gl/stereo3d/gl_quadstereo.cpp \
-	gl/stereo3d/gl_sidebyside3d.cpp \
-	gl/stereo3d/gl_interleaved3d.cpp \
+    gl/stereo3d/gl_stereo3d.cpp \
+    gl/stereo3d/gl_stereo_cvars.cpp \
+    gl/stereo3d/gl_stereo_leftright.cpp \
+    gl/stereo3d/gl_anaglyph.cpp \
+    gl/stereo3d/gl_quadstereo.cpp \
+    gl/stereo3d/gl_sidebyside3d.cpp \
+    gl/stereo3d/gl_interleaved3d.cpp \
 	gl_load/gl_interface.cpp \
 	gl/system/gl_framebuffer.cpp \
 	gl/system/gl_debug.cpp \
@@ -351,11 +350,22 @@ PCH_SOURCES = \
 	hwrenderer/dynlights/hw_aabbtree.cpp \
 	hwrenderer/dynlights/hw_shadowmap.cpp \
 	hwrenderer/scene/hw_skydome.cpp \
+	hwrenderer/postprocessing/hw_shadowmapshader.cpp \
+	hwrenderer/postprocessing/hw_presentshader.cpp \
+	hwrenderer/postprocessing/hw_present3dRowshader.cpp \
+	hwrenderer/postprocessing/hw_bloomshader.cpp \
+	hwrenderer/postprocessing/hw_ambientshader.cpp \
+	hwrenderer/postprocessing/hw_blurshader.cpp \
+	hwrenderer/postprocessing/hw_colormapshader.cpp \
+	hwrenderer/postprocessing/hw_tonemapshader.cpp \
+	hwrenderer/postprocessing/hw_lensshader.cpp \
+	hwrenderer/postprocessing/hw_fxaashader.cpp \
 	hwrenderer/textures/hw_material.cpp \
 	hwrenderer/textures/hw_precache.cpp \
 	hwrenderer/utility/hw_clock.cpp \
 	hwrenderer/utility/hw_cvars.cpp \
 	hwrenderer/utility/hw_lighting.cpp \
+	hwrenderer/utility/hw_shaderpatcher.cpp \
 	menu/joystickmenu.cpp \
 	menu/loadsavemenu.cpp \
 	menu/menu.cpp \
@@ -514,6 +524,7 @@ PCH_SOURCES = \
 	sound/wildmidi/wildmidi_lib.cpp \
 	sound/wildmidi/wm_error.cpp \
 	events.cpp \
+
 
 
 LOCAL_SRC_FILES = \

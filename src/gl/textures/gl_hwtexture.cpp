@@ -36,6 +36,7 @@
 #include "hwrenderer/utility/hw_cvars.h"
 #include "gl/system/gl_debug.h"
 #include "gl/renderer/gl_renderer.h"
+#include "gl/renderer/gl_renderstate.h"
 #include "gl/textures/gl_samplers.h"
 
 
@@ -281,7 +282,8 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 	}
 	*/
 	TranslatedTexture * glTex=GetTexID(translation);
-	if (glTex->glTexID==0) glGenTextures(1,&glTex->glTexID);
+	bool firstCall = glTex->glTexID == 0;
+	if (firstCall) glGenTextures(1,&glTex->glTexID);
 	if (texunit != 0) glActiveTexture(GL_TEXTURE0+texunit);
 	glBindTexture(GL_TEXTURE_2D, glTex->glTexID);
 	FGLDebug::LabelObject(GL_TEXTURE, glTex->glTexID, name);
@@ -367,7 +369,6 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 		sourcetype = GL_BGRA;
 	}
 
-
 #ifdef __MOBILE__
     if( ( texformat == GL_BGRA) && !(gl.flags & RFL_BGRA))
     {
@@ -379,36 +380,13 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
        texformat = GL_BGRA;
     }
 #endif
-/*
-    if( isopaque( rw,rh,buffer) )
-    {
 
-        texformat = sourcetype = GL_RGB;
-        while (rw > 1 || rh > 1)
-        {
-            unsigned int size=etc1_data_size(rw,rh);
-            unsigned char *etc1data = (unsigned char *)malloc(size+1);
-            etc1_encode_image(buffer, rw, rh,3, rw*3, etc1data);
-            glCompressedTexImage2D(
-                        GL_TEXTURE_2D,
-                        0,
-                        ETC1_RGB8_OES,
-                        rw,
-                        rh,
-                        0,
-                        size,
-                        etc1data);
-            free(etc1data);
-            rw >>= 1;
-            rh >>= 1;
-        }
-    }
-    else
-    */
-    {
-	    glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, sourcetype, GL_UNSIGNED_BYTE, buffer);
-    }
 
+	
+	if (!firstCall && glBufferID > 0)
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rw, rh, sourcetype, GL_UNSIGNED_BYTE, buffer);
+	else
+		glTexImage2D(GL_TEXTURE_2D, 0, texformat, rw, rh, 0, sourcetype, GL_UNSIGNED_BYTE, buffer);
 
 	if (deletebuffer && buffer) free(buffer);
 	else if (glBufferID)
@@ -447,7 +425,7 @@ void FHardwareTexture::AllocateBuffer(int w, int h, int texelsize)
 	{
 		glGenBuffers(1, &glBufferID);
 		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, glBufferID);
-		glBufferData(GL_PIXEL_UNPACK_BUFFER, w*h*texelsize, nullptr, GL_DYNAMIC_DRAW);
+		glBufferData(GL_PIXEL_UNPACK_BUFFER, w*h*texelsize, nullptr, GL_STREAM_DRAW);
 		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 	}
 }
@@ -459,7 +437,7 @@ uint8_t *FHardwareTexture::MapBuffer()
     return texBuffer;
 #endif
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, glBufferID);
-	return (uint8_t*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_READ_WRITE);
+	return (uint8_t*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
 }
 
 //===========================================================================
@@ -521,6 +499,7 @@ void FHardwareTexture::Clean(bool all)
 	}
 	glTex_Translated.Clear();
 	if (glDepthID != 0) glDeleteRenderbuffers(1, &glDepthID);
+	glDepthID = 0;
 }
 
 //===========================================================================
@@ -642,7 +621,7 @@ void FHardwareTexture::UnbindAll()
 	{
 		Unbind(texunit);
 	}
-	FMaterial::ClearLastTexture();
+	gl_RenderState.ClearLastMaterial();
 }
 
 //===========================================================================

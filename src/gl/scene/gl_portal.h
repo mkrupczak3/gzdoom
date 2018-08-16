@@ -37,6 +37,7 @@
 #define __GL_PORTAL_H
 
 #include "tarray.h"
+#include "r_utility.h"
 #include "actor.h"
 #include "gl/renderer/gl_renderer.h"
 #include "gl/scene/gl_drawinfo.h"
@@ -67,15 +68,19 @@ public:
 	static bool	inskybox;
 
 private:
-	void DrawPortalStencil();
 
-	DVector3 savedviewpath[2];
-	DVector3 savedViewPos;
-	DVector3 savedViewActorPos;
-	DRotator savedAngles;
-	bool savedshowviewer;
+	enum
+	{
+		STP_Stencil,
+		STP_DepthClear,
+		STP_DepthRestore,
+		STP_AllInOne
+	};
+	void DrawPortalStencil(int pass);
+
 	AActor * savedviewactor;
 	ActorRenderFlags savedvisibility;
+	FRenderViewpoint savedviewpoint;
 	GLPortal *PrevPortal;
 	TArray<unsigned int> mPrimIndices;
 

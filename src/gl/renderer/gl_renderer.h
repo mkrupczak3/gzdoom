@@ -50,6 +50,7 @@ class FShadowMapShader;
 class FCustomPostProcessShaders;
 class GLSceneDrawer;
 class SWSceneDrawer;
+#define NOQUEUE nullptr	// just some token to be used as a placeholder
 
 enum
 {
@@ -92,7 +93,6 @@ public:
 	int mMirrorCount;
 	int mPlaneMirrorCount;
 	float mCurrentFoV;
-	AActor *mViewActor;
 	FShaderManager *mShaderManager;
 	FSamplerManager *mSamplerManager;
 	unsigned int mFBID;
@@ -128,7 +128,6 @@ public:
 	FShadowMap mShadowMap;
 
 	FRotator mAngles;
-	FVector2 mViewVector;
 
 	FFlatVertexBuffer *mVBO;
 	FSkyVertexBuffer *mSkyVBO;
@@ -178,10 +177,8 @@ public:
 	bool StartOffscreen();
 	void EndOffscreen();
 
-	void FillSimplePoly(FTexture *texture, FVector2 *points, int npoints,
-		double originx, double originy, double scalex, double scaley,
-		DAngle rotation, const FColormap &colormap, PalEntry flatcolor, int lightlevel, int bottomclip);
-
+	void BindToFrameBuffer(FMaterial *mat);
+		
 	static float GetZNear() { return 5.f; }
 	static float GetZFar() { return 65536.f; }
 };
