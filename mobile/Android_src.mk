@@ -17,7 +17,7 @@ endif
 	
 LOCAL_C_INCLUDES := \
  $(TOP_DIR)/ \
- $(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth/include_from_prboom \
+  $(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth-lite/include \
  $(GZDOOM_TOP_PATH)/src/  \
  $(GZDOOM_TOP_PATH)/mobile/src/extrafiles  \
  $(GZDOOM_TOP_PATH)/game-music-emu/ \
@@ -38,7 +38,6 @@ LOCAL_C_INCLUDES := \
  $(GZDOOM_TOP_PATH)/src/posix \
  $(GZDOOM_TOP_PATH)/src/posix\sdl \
  $(SDL_INCLUDE_PATHS) \
- $(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth/include_from_prboom \
  $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
  $(TOP_DIR)/AudioLibs_OpenTouch/libsndfile-android/jni/ \
  $(TOP_DIR)/AudioLibs_OpenTouch/libmpg123 \
