@@ -46,7 +46,7 @@ LOCAL_C_INCLUDES := \
  $(GZDOOM_TOP_PATH)/src/posix \
  $(GZDOOM_TOP_PATH)/src/posix\sdl \
  $(SDL_INCLUDE_PATHS) \
- $(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth/include_from_prboom \
+ $(TOP_DIR)/AudioLibs_OpenTouch/fluidsynth-lite/include \
  $(TOP_DIR)/AudioLibs_OpenTouch/openal/include/AL \
  $(TOP_DIR)/AudioLibs_OpenTouch/libsndfile-android/jni/ \
  $(TOP_DIR)/AudioLibs_OpenTouch/libmpg123 \
@@ -567,7 +567,7 @@ LOCAL_LDLIBS +=-lGLESv1_CM
 LOCAL_LDLIBS +=  -lEGL
 
 # This is stop a linker warning for mp123 lib failing build
-LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
+#LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
 
 LOCAL_STATIC_LIBRARIES :=  sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_dev lzma_dev gdtoa_dev dumb_dev gme_dev bzip2_dev logwritter
 LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 jwzgles_shared
