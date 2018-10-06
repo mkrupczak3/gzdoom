@@ -81,6 +81,13 @@ void FDrawInfo::DrawSprite(GLSprite *sprite, int pass)
 	int rel = sprite->fullbright? 0 : getExtraLight();
     auto &vp = r_viewpoint;
 
+#ifdef __MOBILE__ /// HACK fixes black foot steps in brutaldoom v21. Need to find proper fix
+    if( (gl.es == 1) && (RenderStyle.Flags & STYLEF_RedIsAlpha) )
+    {
+        RenderStyle.DestAlpha = STYLEALPHA_One;
+    }
+#endif
+
 	if (pass==GLPASS_TRANSLUCENT)
 	{
 		// The translucent pass requires special setup for the various modes.

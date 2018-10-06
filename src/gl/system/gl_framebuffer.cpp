@@ -100,11 +100,24 @@ OpenGLFrameBuffer::~OpenGLFrameBuffer()
 // Initializes the GL renderer
 //
 //==========================================================================
-
+#ifdef __MOBILE__
+#include "m_argv.h"
+extern "C" int glesLoad;
+#endif
 void OpenGLFrameBuffer::InitializeState()
 {
 	static bool first=true;
-
+#ifdef __MOBILE__
+	const char *version = Args->CheckValue("-glversion");
+	if( !strcmp(version, "gles3") )
+	{
+		glesLoad = 3;
+	}
+	else
+	{
+		glesLoad = 1;
+	}
+#endif
 	if (first)
 	{
 		if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
@@ -123,14 +136,23 @@ void OpenGLFrameBuffer::InitializeState()
 	}
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+#ifdef __MOBILE__
+	if( gl.es != 3 )
+#endif
 	glClearDepth(1.0f);
 	glDepthFunc(GL_LESS);
 
 	glEnable(GL_DITHER);
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_POLYGON_OFFSET_FILL);
+#ifdef __MOBILE__
+	if( gl.es != 1 )
+#endif
 	glEnable(GL_POLYGON_OFFSET_LINE);
 	glEnable(GL_BLEND);
+#ifdef __MOBILE__
+	if( gl.es != 1 )
+#endif
 	glEnable(GL_DEPTH_CLAMP);
 	glDisable(GL_DEPTH_TEST);
 	if (gl.legacyMode) glEnable(GL_TEXTURE_2D);
@@ -276,9 +298,13 @@ void OpenGLFrameBuffer::Swap()
 	bool swapbefore = gl_finishbeforeswap && camtexcount == 0;
 	Finish.Reset();
 	Finish.Clock();
+#ifndef __MOBILE__ // Massive performance hit, why are these here?
 	if (swapbefore) glFinish();
+#endif
 	SwapBuffers();
+#ifndef __MOBILE__
 	if (!swapbefore) glFinish();
+#endif
 	Finish.Unclock();
 	camtexcount = 0;
 	FHardwareTexture::UnbindAll();

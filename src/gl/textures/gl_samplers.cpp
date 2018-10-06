@@ -103,6 +103,9 @@ uint8_t FSamplerManager::Bind(int texunit, int num, int lastval)
 			{
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TexFilter[filter].minfilter);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, TexFilter[filter].magfilter);
+#ifdef __MOBILE__
+				if (gl.es != 1 )
+#endif
 				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, gl_texture_filter_anisotropic);
 			}
 			break;
@@ -114,6 +117,9 @@ uint8_t FSamplerManager::Bind(int texunit, int num, int lastval)
 			{
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TexFilter[filter].minfilter);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, TexFilter[filter].magfilter);
+#ifdef __MOBILE__
+				if (gl.es != 1 )
+#endif
 				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, gl_texture_filter_anisotropic);
 			}
 			break;
@@ -125,6 +131,9 @@ uint8_t FSamplerManager::Bind(int texunit, int num, int lastval)
 			{
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TexFilter[filter].minfilter);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, TexFilter[filter].magfilter);
+#ifdef __MOBILE__
+				if (gl.es != 1 )
+#endif
 				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, gl_texture_filter_anisotropic);
 			}
 			break;
@@ -136,6 +145,9 @@ uint8_t FSamplerManager::Bind(int texunit, int num, int lastval)
 			{
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TexFilter[filter].minfilter);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, TexFilter[filter].magfilter);
+#ifdef __MOBILE__
+				if (gl.es != 1 )
+#endif
 				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, gl_texture_filter_anisotropic);
 			}
 			break;
@@ -145,6 +157,9 @@ uint8_t FSamplerManager::Bind(int texunit, int num, int lastval)
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TexFilter[filter].magfilter);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, TexFilter[filter].magfilter);
+#ifdef __MOBILE__
+			if (gl.es != 1 )
+#endif
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
 			break;
 
@@ -153,6 +168,9 @@ uint8_t FSamplerManager::Bind(int texunit, int num, int lastval)
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+#ifdef __MOBILE__
+			if (gl.es != 1 )
+#endif
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
 			break;
 
@@ -161,6 +179,9 @@ uint8_t FSamplerManager::Bind(int texunit, int num, int lastval)
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, TexFilter[filter].magfilter);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, TexFilter[filter].magfilter);
+#ifdef __MOBILE__
+			if (gl.es != 1 )
+#endif
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
 			break;
 		}
@@ -181,6 +202,9 @@ void FSamplerManager::SetTextureFilterMode()
 		{
 			glSamplerParameteri(mSamplers[i], GL_TEXTURE_MIN_FILTER, TexFilter[filter].minfilter);
 			glSamplerParameteri(mSamplers[i], GL_TEXTURE_MAG_FILTER, TexFilter[filter].magfilter);
+#ifdef __MOBILE__
+			if (gl.es != 1 )
+#endif
 			glSamplerParameterf(mSamplers[i], GL_TEXTURE_MAX_ANISOTROPY_EXT, gl_texture_filter_anisotropic);
 		}
 		glSamplerParameteri(mSamplers[4], GL_TEXTURE_MIN_FILTER, TexFilter[filter].magfilter);

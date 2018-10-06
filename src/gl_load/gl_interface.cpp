@@ -40,6 +40,10 @@ static TArray<FString>  m_Extensions;
 RenderContext gl;
 static double realglversion;	// this is public so the statistics code can access it.
 
+#ifdef __MOBILE__
+    CVAR(Bool, force_uint_idx, false, 0)
+#endif
+
 //==========================================================================
 //
 // 
@@ -51,6 +55,9 @@ static void CollectExtensions()
 	const char *extension;
 
 	int max = 0;
+#ifdef __MOBILE__
+	if( gl.es )
+#endif
 	glGetIntegerv(GL_NUM_EXTENSIONS, &max);
 
 	if (max == 0)
@@ -127,6 +134,71 @@ void gl_LoadExtensions()
 {
 	InitContext();
 	CollectExtensions();
+
+
+#ifdef __MOBILE__
+	const char *version = Args->CheckValue("-glversion");
+	if( !strcmp(version, "gles1") )
+	{
+		gl.es = 1;
+
+		gl.legacyMode = true;
+		gl.lightmethod = LM_LEGACY;
+		gl.buffermethod = LM_LEGACY;
+		gl.glslversion = 0;
+		gl.flags |= RFL_NO_CLIP_PLANES;
+
+		if(CheckExtension("GL_OES_texture_npot"))
+		{
+			Printf("NPOT allowed");
+			gl.flags |= RFL_NPOT;
+		}
+
+		if(CheckExtension("GL_EXT_texture_format_BGRA8888"))
+		{
+			Printf("BGRA allowed");
+			gl.flags |= RFL_BGRA;
+		}
+
+		if(CheckExtension("GL_OES_element_index_uint"))
+		{
+			Printf("UINT element index allowed");
+			gl.flags |= RFL_UINT_IDX;
+		}
+
+		if(force_uint_idx == true)
+		{
+			Printf("FORCING UINT element index allowed");
+			gl.flags |= RFL_UINT_IDX;
+		}
+
+		gl.novbo = true;
+
+        //This is needed to the fix the brutal doom white lines?!
+        glDisable(GL_CLIP_PLANE0);
+        glEnable(GL_CLIP_PLANE0);
+	}
+	else if ( !strcmp(version, "gles3") )
+	{
+		gl.es = 3;
+
+		gl.novbo = false;
+
+		gl.flags |= RFL_UINT_IDX;
+		gl.flags |= RFL_NPOT;
+
+		gl.legacyMode = false;
+		gl.lightmethod = LM_DEFERRED;
+		gl.buffermethod = BM_DEFERRED;
+		gl.flags |= RFL_NO_CLIP_PLANES;
+		gl.glslversion = 300;
+
+		//gl.lightmethod = LM_LEGACY;
+        //gl.buffermethod = LM_LEGACY;
+        //gl.novbo = true;
+
+	}
+#else
 
 	const char *glversion = (const char*)glGetString(GL_VERSION);
 	gl.es = false;
@@ -275,6 +347,7 @@ void gl_LoadExtensions()
 			}
 		}
 	}
+#endif
 
 	int v;
 	
@@ -337,6 +410,9 @@ void gl_PrintStartupLog()
 	Printf ("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
 	Printf ("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
 	Printf ("GL_VERSION: %s (%s profile)\n", glGetString(GL_VERSION), (v & GL_CONTEXT_CORE_PROFILE_BIT)? "Core" : "Compatibility");
+#ifdef __MOBILE__
+	if( gl.es != 1 )
+#endif
 	Printf ("GL_SHADING_LANGUAGE_VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 	Printf (PRINT_LOG, "GL_EXTENSIONS:");
 	for (unsigned i = 0; i < m_Extensions.Size(); i++)
@@ -346,11 +422,18 @@ void gl_PrintStartupLog()
 
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &v);
 	Printf("\nMax. texture size: %d\n", v);
+#ifdef __MOBILE__
+	if( gl.es != 1 )
+	{
+#endif
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &v);
 	Printf ("Max. texture units: %d\n", v);
 	glGetIntegerv(GL_MAX_VARYING_FLOATS, &v);
 	Printf ("Max. varying: %d\n", v);
 	
+#ifdef __MOBILE__
+	}
+#endif
 	if (!gl.legacyMode && !(gl.flags & RFL_SHADER_STORAGE_BUFFER))
 	{
 		glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &v);

@@ -40,6 +40,72 @@ static void* PosixGetProcAddress (const GLubyte* name)
 }
 #endif /* __sgi || __sun || __unix__ */
 
+
+#ifdef __MOBILE__
+
+#include <android/log.h>
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"JNITouchControlsUtils", __VA_ARGS__))
+
+static void CATCH(int a, int b, int c, int d, int e)
+{
+	LOGI("CAUGHT BAD");
+}
+
+int glesLoad = 1; // TODO tifx this!
+
+void* SDL_GL_GetProcAddress(const char* proc);
+static void *MOBILE_GetProcAddress(const char* name)
+{
+
+	if( glesLoad == 3 )
+	{
+		return SDL_GL_GetProcAddress( name );
+	}
+	else if ( glesLoad == 1 )
+	{
+		static int jwzLoaded = 0;
+		if( ! jwzLoaded )
+		{
+          	void jwzgles_reset (void);
+          	jwzgles_reset ();
+			jwzLoaded = 1;
+		}
+
+
+		static void* h = NULL;
+
+		if (h == NULL)
+		{
+			if ((h = dlopen("libjwzgles_shared.so", RTLD_LAZY | RTLD_LOCAL)) == NULL)
+			{
+				LOGI("ERROR loading libjwzgles_shared");
+				return NULL;
+			}
+		}
+
+		char newName[64];
+		memset(newName,0,64);
+		sprintf(newName,"jwzgles_%s",name);
+
+		void * ret = 0;
+		ret =  dlsym(h, (const char*)newName);
+
+		if( !ret )
+		{
+			//LOGI("Loading.. %s    FAIL", newName);
+			ret = CATCH;
+		}
+		else
+		{
+			//LOGI("Loading.. %s    OK", newName);
+		}
+		return ret;
+	}
+	return 0;
+}
+
+#endif
+
 #if defined(_WIN32)
 
 #ifdef APIENTRY
@@ -84,7 +150,9 @@ static PROC WinGetProcAddress(const char *name)
 	#if defined(__APPLE__)
 		#define IntGetProcAddress(name) AppleGLGetProcAddress(name)
 	#else
-		#if defined(__sgi) || defined(__sun) || defined(__unix__)
+		#if defined (__MOBILE__)
+			#define IntGetProcAddress(name) MOBILE_GetProcAddress((const char*)name)
+		#elif defined(__sgi) || defined(__sun) || defined(__unix__)
 			void* SDL_GL_GetProcAddress(const char* proc);
 			#define IntGetProcAddress(name) SDL_GL_GetProcAddress((const char*)name)
 			//#define IntGetProcAddress(name) PosixGetProcAddress((const GLubyte*)name)
@@ -1391,6 +1459,10 @@ static int Load_Version_4_5(void)
 	if(!_ptrc_glDepthMask) numFailed++;
 	_ptrc_glDepthRange = (void (CODEGEN_FUNCPTR *)(GLdouble, GLdouble))IntGetProcAddress("glDepthRange");
 	if(!_ptrc_glDepthRange) numFailed++;
+	#ifdef __MOBILE__
+    _ptrc_glDepthRangef = (void (CODEGEN_FUNCPTR *)(GLfloat, GLfloat))IntGetProcAddress("glDepthRangef");
+    if(!_ptrc_glDepthRangef) numFailed++;
+	#endif
 	_ptrc_glDisable = (void (CODEGEN_FUNCPTR *)(GLenum))IntGetProcAddress("glDisable");
 	if(!_ptrc_glDisable) numFailed++;
 	_ptrc_glDrawBuffer = (void (CODEGEN_FUNCPTR *)(GLenum))IntGetProcAddress("glDrawBuffer");

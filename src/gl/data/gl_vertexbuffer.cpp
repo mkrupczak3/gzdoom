@@ -241,6 +241,10 @@ void FFlatVertexBuffer::Unmap()
 void FFlatVertexBuffer::CreateVBO()
 {
 	vbo_shadowdata.Resize(mNumReserved);
+
+#ifdef __MOBILE__
+	if( !gl.novbo )
+#endif
 	FFlatVertexGenerator::CreateVertices();
 	mCurIndex = mIndex = vbo_shadowdata.Size();
 	Map();

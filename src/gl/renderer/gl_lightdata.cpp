@@ -79,6 +79,9 @@ void gl_GetRenderStyle(FRenderStyle style, bool drawopaque, bool allowcolorblend
 
 	if (allowcolorblending && srcblend == GL_SRC_ALPHA && dstblend == GL_ONE && blendequation == GL_FUNC_ADD)
 	{
+#ifdef __MOBILE__
+		if (gl.es != 1 )
+#endif
 		srcblend = GL_SRC_COLOR;
 	}
 
@@ -88,7 +91,9 @@ void gl_GetRenderStyle(FRenderStyle style, bool drawopaque, bool allowcolorblend
 	*db = dstblend;
 }
 
-
+#ifdef __MOBILE__
+EXTERN_CVAR(Float, vid_brightness)
+#endif
 //==========================================================================
 //
 // set current light color

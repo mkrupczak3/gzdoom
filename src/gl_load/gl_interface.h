@@ -52,7 +52,12 @@ struct RenderContext
 	char * vendorstring;
 	char * modelstring;
 	bool legacyMode;
+#ifdef __MOBILE__
+	int es;
+	bool novbo;
+#else
 	bool es;
+#endif
 
 	int MaxLights() const
 	{

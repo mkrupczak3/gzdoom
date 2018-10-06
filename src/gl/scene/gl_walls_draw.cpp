@@ -53,6 +53,61 @@ void FDrawInfo::RenderWall(GLWall *wall, int textured)
 	assert(wall->vertcount > 0);
 	gl_RenderState.Apply();
 	gl_RenderState.ApplyLightIndex(wall->dynlightindex);
+#ifdef __MOBILE__
+	if( gl.novbo )
+	{
+
+    // This is faster because the shim can collect
+#if 1
+        glBegin(GL_TRIANGLE_FAN);
+
+        // lower left corner
+        if (textured&1) glTexCoord2f(wall->tcs[0].u,wall->tcs[0].v);
+        glVertex3f(wall->glseg.x1,wall->zbottom[0],wall->glseg.y1);
+
+        //if (split && glseg.fracleft==0) SplitLeftEdge(tcs);
+
+        // upper left corner
+        if (textured&1) glTexCoord2f(wall->tcs[1].u,wall->tcs[1].v);
+        glVertex3f(wall->glseg.x1,wall->ztop[0],wall->glseg.y1);
+
+        // upper right corner
+        if (textured&1) glTexCoord2f(wall->tcs[2].u,wall->tcs[2].v);
+        glVertex3f(wall->glseg.x2,wall->ztop[1],wall->glseg.y2);
+
+        // lower right corner
+        if (textured&1) glTexCoord2f(wall->tcs[3].u,wall->tcs[3].v);
+        glVertex3f(wall->glseg.x2,wall->zbottom[1],wall->glseg.y2);
+
+        //if (split && !(flags & GLWF_NOSPLITLOWER)) SplitLowerEdge(tcs);
+
+        glEnd();
+
+        vertexcount +=  wall->vertcount;
+        return;
+#else
+	  	static FFlatVertex vtx[16]; // Yes this is static. It's only used once, and I think it's faster as the address doesn't keep changing
+        FFlatVertex *vtxPrt = &vtx[0];
+
+	  	wall->CreateVertices( vtxPrt, false );
+
+		glTexCoordPointer(2,GL_FLOAT, sizeof(FFlatVertex),&vtx[0].u);
+		glVertexPointer  (3,GL_FLOAT, sizeof(FFlatVertex),&vtx[0].x);
+
+		glEnableClientState (GL_VERTEX_ARRAY);
+		glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState (GL_COLOR_ARRAY);
+
+		glBindBuffer (GL_ARRAY_BUFFER, 0); // NO VBO
+		glDrawArrays (GL_TRIANGLE_FAN, 0, 4);
+
+		vertexcount +=  wall->vertcount;
+		return;
+#endif
+	}
+#endif
+
+
 	GLRenderer->mVBO->RenderArray(GL_TRIANGLE_FAN, wall->vertindex, wall->vertcount);
 	vertexcount += wall->vertcount;
 }

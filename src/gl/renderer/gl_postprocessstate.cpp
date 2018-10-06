@@ -47,6 +47,10 @@ FGLPostProcessState::FGLPostProcessState()
 	glGetBooleanv(GL_SCISSOR_TEST, &scissorEnabled);
 	glGetBooleanv(GL_DEPTH_TEST, &depthEnabled);
 	glGetBooleanv(GL_MULTISAMPLE, &multisampleEnabled);
+#ifdef __MOBILE__
+	if( gl.es != 1 )
+	{
+#endif
 	glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
 	glGetIntegerv(GL_BLEND_EQUATION_RGB, &blendEquationRgb);
 	glGetIntegerv(GL_BLEND_EQUATION_ALPHA, &blendEquationAlpha);
@@ -54,7 +58,9 @@ FGLPostProcessState::FGLPostProcessState()
 	glGetIntegerv(GL_BLEND_SRC_ALPHA, &blendSrcAlpha);
 	glGetIntegerv(GL_BLEND_DST_RGB, &blendDestRgb);
 	glGetIntegerv(GL_BLEND_DST_ALPHA, &blendDestAlpha);
-
+#ifdef __MOBILE__
+	}
+#endif
 	glDisable(GL_MULTISAMPLE);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_SCISSOR_TEST);
@@ -112,11 +118,20 @@ FGLPostProcessState::~FGLPostProcessState()
 	else
 		glDisable(GL_MULTISAMPLE);
 
+#ifdef __MOBILE__
+	if (gl.es == 3 )
+	{
 	glBlendEquationSeparate(blendEquationRgb, blendEquationAlpha);
 	glBlendFuncSeparate(blendSrcRgb, blendDestRgb, blendSrcAlpha, blendDestAlpha);
 
 	glUseProgram(currentProgram);
+	}
+#else
+	glBlendEquationSeparate(blendEquationRgb, blendEquationAlpha);
+	glBlendFuncSeparate(blendSrcRgb, blendDestRgb, blendSrcAlpha, blendDestAlpha);
 
+	glUseProgram(currentProgram);
+#endif
 	// Fully unbind to avoid incomplete texture warnings from Nvidia's driver when gl_debug_level 4 is active
 	for (unsigned int i = 0; i < textureBinding.Size(); i++)
 	{

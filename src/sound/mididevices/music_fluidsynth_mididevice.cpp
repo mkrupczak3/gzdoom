@@ -452,7 +452,9 @@ void FluidSynthMIDIDevice::HandleLongEvent(const uint8_t *data, int len)
 {
 	if (len > 1 && (data[0] == 0xF0 || data[0] == 0xF7))
 	{
+#ifndef __ANDROID__
 		fluid_synth_sysex(FluidSynth, (const char *)data + 1, len - 1, NULL, NULL, NULL, 0);
+#endif
 	}
 }
 

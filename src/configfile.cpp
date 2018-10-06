@@ -840,6 +840,10 @@ bool FConfigFile::WriteConfigFile () const
 		section = section->Next;
 		fputs ("\n", file);
 	}
+#ifdef __MOBILE__
+    Printf("Saving config file..");
+    fflush(file);
+#endif
 	fclose (file);
 	return true;
 }

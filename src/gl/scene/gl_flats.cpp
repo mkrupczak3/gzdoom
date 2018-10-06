@@ -87,6 +87,24 @@ void FDrawInfo::DrawSubsector(GLFlat *flat, subsector_t * sub)
 {
 	if (gl.buffermethod != BM_DEFERRED)
 	{
+#ifdef __MOBILE__
+		if( gl.novbo )
+		{
+			glBegin(GL_TRIANGLE_FAN);
+	    	for(unsigned int k=0; k<sub->numlines; k++)
+	    	{
+	    		vertex_t *vt = sub->firstline[k].v1;
+	    		glTexCoord2f(vt->fX()/64.f, -vt->fY()/64.f);
+	    		float zc = flat->plane.plane.ZatPoint(vt) + flat->dz;
+	    		glVertex3f(vt->fX(), zc, vt->fY());
+	    	}
+	    	glEnd();
+		
+			flatvertices += sub->numlines;
+			flatprimitives++;
+			return;
+		}
+#endif
 		FFlatVertex *ptr = GLRenderer->mVBO->GetBuffer();
 		for (unsigned int k = 0; k < sub->numlines; k++)
 		{
