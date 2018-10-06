@@ -146,6 +146,7 @@ FASTMATH_SOURCES = \
 	sound/opnmidi/chips/mame_opn2.cpp \
 	sound/opnmidi/chips/nuked_opn2.cpp \
 	sound/opnmidi/chips/nuked/ym3438.c \
+	sound/opnmidi/wopn/wopn_file.c \
 	sound/opnmidi/opnmidi.cpp \
 	sound/opnmidi/opnmidi_load.cpp \
 	sound/opnmidi/opnmidi_midiplay.cpp \
@@ -438,6 +439,7 @@ PCH_SOURCES = \
 	r_data/models/models_md2.cpp \
 	r_data/models/models_voxel.cpp \
 	r_data/models/models_ue1.cpp \
+	r_data/models/models_obj.cpp \
 	scripting/symbols.cpp \
 	scripting/types.cpp \
 	scripting/thingdef.cpp \
