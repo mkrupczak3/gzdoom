@@ -194,7 +194,11 @@ void FDrawInfo::DrawSubsectors(GLFlat *flat, int pass, bool processlights, bool 
 
 	gl_RenderState.Apply();
 	if (gl.legacyMode) processlights = false;
+#ifdef __MOBILE__
+	if(0)
+#else
 	if (flat->vboindex >= 0)
+#endif
 	{
 		int index = flat->vboindex;
 		for (int i=0; i<flat->sector->subsectorcount; i++)
