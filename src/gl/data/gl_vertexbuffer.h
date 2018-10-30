@@ -49,7 +49,7 @@ enum
 };
 
 
-#define NBR_BUFFERS 4
+#define NBR_BUFFERS 2
 class FVertexBuffer
 {
 protected:

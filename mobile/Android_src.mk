@@ -109,8 +109,6 @@ FASTMATH_SOURCES = \
 	gl/scene/gl_portal.cpp \
 	gl/scene/gl_walls_draw.cpp \
 	gl_load/gl_load.c \
-	hwrenderer/postprocessing/hw_postprocess_cvars.cpp \
-	hwrenderer/postprocessing/hw_postprocessshader.cpp \
 	hwrenderer/dynlights/hw_dynlightdata.cpp \
 	hwrenderer/scene/hw_bsp.cpp \
 	hwrenderer/scene/hw_fakeflat.cpp \
@@ -153,6 +151,7 @@ FASTMATH_SOURCES = \
 	sound/opnmidi/opnmidi_midiplay.cpp \
 	sound/opnmidi/opnmidi_opn2.cpp \
 	sound/opnmidi/opnmidi_private.cpp \
+	sound/opnmidi/wopn/wopn_file.c \
 
 
 PCH_SOURCES = \
@@ -320,6 +319,7 @@ PCH_SOURCES = \
 	g_statusbar/shared_sbar.cpp \
 	gl/data/gl_vertexbuffer.cpp \
 	gl/data/gl_uniformbuffer.cpp \
+	gl/data/gl_viewpointbuffer.cpp \
 	gl/dynlights/gl_lightbuffer.cpp \
 	gl/dynlights/gl_shadowmap.cpp \
 	gl/models/gl_models.cpp \
@@ -337,7 +337,6 @@ PCH_SOURCES = \
 	gl_load/gl_interface.cpp \
 	gl/system/gl_framebuffer.cpp \
 	gl/system/gl_debug.cpp \
-	gl/system/gl_wipe.cpp \
 	gl/textures/gl_hwtexture.cpp \
 	gl/textures/gl_samplers.cpp \
 	hwrenderer/data/flatvertices.cpp \
@@ -345,6 +344,8 @@ PCH_SOURCES = \
 	hwrenderer/dynlights/hw_shadowmap.cpp \
 	hwrenderer/scene/hw_skydome.cpp \
 	hwrenderer/postprocessing/hw_postprocess.cpp \
+	hwrenderer/postprocessing/hw_postprocess_cvars.cpp \
+	hwrenderer/postprocessing/hw_postprocessshader.cpp \
 	hwrenderer/postprocessing/hw_shadowmapshader.cpp \
 	hwrenderer/postprocessing/hw_presentshader.cpp \
 	hwrenderer/postprocessing/hw_present3dRowshader.cpp \
@@ -362,6 +363,7 @@ PCH_SOURCES = \
 	menu/messagebox.cpp \
 	menu/optionmenu.cpp \
 	menu/playermenu.cpp \
+	menu/resolutionmenu.cpp \
 	resourcefiles/ancientzip.cpp \
 	resourcefiles/file_7z.cpp \
 	resourcefiles/file_grp.cpp \
@@ -426,6 +428,7 @@ PCH_SOURCES = \
 	r_data/models/models_md2.cpp \
 	r_data/models/models_voxel.cpp \
 	r_data/models/models_ue1.cpp \
+	r_data/models/models_obj.cpp \
 	scripting/symbols.cpp \
 	scripting/types.cpp \
 	scripting/thingdef.cpp \
@@ -544,6 +547,8 @@ LOCAL_SRC_FILES = \
 	math/fastsin.cpp \
 	zzautozend.cpp \
 
+
+
 # Turn down optimisation of this file so clang doesnt produce ldrd instructions which are missaligned
 p_acs.cpp_CFLAGS := -O1
 
@@ -557,7 +562,7 @@ LOCAL_LDLIBS +=  -lEGL
 LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
 
 LOCAL_STATIC_LIBRARIES :=  sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_dev lzma_dev gdtoa_dev dumb_dev gme_dev bzip2_dev logwritter
-LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 jwzgles_shared
+LOCAL_SHARED_LIBRARIES := touchcontrols_gles2 openal SDL2 jwzgles_shared
 
 LOCAL_STATIC_LIBRARIES += license_static
 

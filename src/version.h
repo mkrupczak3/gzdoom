@@ -48,16 +48,16 @@ const char *GetVersionString();
 #ifdef GIT_DESCRIPTION
 #define VERSIONSTR GIT_DESCRIPTION
 #else
-#define VERSIONSTR "g3.5.0"
+#define VERSIONSTR "3.6"
 #endif
 
 // The version as seen in the Windows resource
-#define RC_FILEVERSION 3,5,0,0
-#define RC_PRODUCTVERSION 3,5,00
+#define RC_FILEVERSION 3,6,0,0
+#define RC_PRODUCTVERSION 3,6,0,0
 #define RC_PRODUCTVERSION2 VERSIONSTR
 // These are for content versioning.
 #define VER_MAJOR 3
-#define VER_MINOR 5
+#define VER_MINOR 6
 #define VER_REVISION 0
 
 // Version identifier for network games.
@@ -95,19 +95,8 @@ const char *GetVersionString();
 
 // This is so that derivates can use the same savegame versions without worrying about engine compatibility
 #define GAMESIG "GZDOOM"
-
-#ifdef __ANDROID__
-#define BASEWAD "./res/gzdoom_dev.pk3"
-#else
 #define BASEWAD "gzdoom.pk3"
-#endif
-
-#ifdef __ANDROID__
-#define OPTIONALWAD "./res/zd_extra_dev.pk3"
-#else
 #define OPTIONALWAD "zd_extra.pk3"
-#endif
-
 
 // More stuff that needs to be different for derivatives.
 #define GAMENAME "GZDoom"
