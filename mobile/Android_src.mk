@@ -3,9 +3,9 @@ LOCAL_PATH := $(call my-dir)/../src
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := gzdoom_dev
+LOCAL_MODULE    := gzdoom_gl3
 
-LOCAL_CFLAGS   :=  -D__MOBILE__ -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_DEV -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
+LOCAL_CFLAGS   :=  -D__MOBILE__ -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
 
 
 LOCAL_CPPFLAGS := -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14 -DHAVE_JWZGLES  -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
@@ -65,7 +65,8 @@ ANDROID_SRC_FILES = \
     ../../../Clibs_OpenTouch/idtech1/gzdoom_game_interface.cpp \
     ../../../Clibs_OpenTouch/idtech1/touch_interface.cpp \
     ../../../Clibs_OpenTouch/idtech1/android_jni.cpp \
-    ../mobile/src/i_specialpaths_android.cpp
+    ../mobile/src/i_specialpaths_android.cpp \
+    ../mobile/src/extrafiles/etc1.cpp
 
 PLAT_POSIX_SOURCES = \
 	posix/i_cd.cpp \
@@ -550,21 +551,23 @@ LOCAL_SRC_FILES = \
 
 
 # Turn down optimisation of this file so clang doesnt produce ldrd instructions which are missaligned
-p_acs.cpp_CFLAGS := -O1
+# p_acs.cpp_CFLAGS := -O1
 
 LOCAL_LDLIBS := -ldl -llog -lOpenSLES
-LOCAL_LDLIBS +=-lGLESv1_CM
+#LOCAL_LDLIBS +=-lGLESv1_CM
 #LOCAL_LDLIBS += -lGLESv3
 
 LOCAL_LDLIBS +=  -lEGL
 
 # This is stop a linker warning for mp123 lib failing build
-LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
+#LOCAL_LDLIBS += -Wl,--no-warn-shared-textrel
 
-LOCAL_STATIC_LIBRARIES :=  sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_dev lzma_dev gdtoa_dev dumb_dev gme_dev bzip2_dev logwritter
-LOCAL_SHARED_LIBRARIES := touchcontrols_gles2 openal SDL2 jwzgles_shared
+LOCAL_STATIC_LIBRARIES :=  sndfile mpg123 fluidsynth-static SDL2_net libjpeg zlib_gl3 lzma_gl3 gdtoa_gl3 dumb_gl3 gme_gl3 bzip2_gl3 logwritter
+LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2
 
 LOCAL_STATIC_LIBRARIES += license_static
+
+#LOCAL_SHORT_COMMANDS := true
 
 include $(BUILD_SHARED_LIBRARY)
 

@@ -377,8 +377,9 @@ void FDrawInfo::DrawEndScene2D(sector_t * viewsector)
 	vp.mProjectionMatrix = vrmode->GetHUDSpriteProjection();
 	GLRenderer->mViewpoints->SetViewpoint(&vp);
 	glDisable(GL_DEPTH_TEST);
+#ifndef __MOBILE__
 	glDisable(GL_MULTISAMPLE);
-
+#endif
 
  	DrawPlayerSprites(false);
 

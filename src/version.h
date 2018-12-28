@@ -95,8 +95,13 @@ const char *GetVersionString();
 
 // This is so that derivates can use the same savegame versions without worrying about engine compatibility
 #define GAMESIG "GZDOOM"
+#ifdef __ANDROID__
+#define BASEWAD "./res/gzdoom_dev_gl3.pk3"
+#define OPTIONALWAD "./res/zd_extra_dev.pk3" // Same as legacy
+#else
 #define BASEWAD "gzdoom.pk3"
 #define OPTIONALWAD "zd_extra.pk3"
+#endif
 
 // More stuff that needs to be different for derivatives.
 #define GAMENAME "GZDoom"

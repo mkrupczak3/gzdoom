@@ -70,8 +70,9 @@ void GLPortal::ClearScreen(HWDrawInfo *di)
 	GLRenderer->mViewpoints->Set2D(SCREENWIDTH, SCREENHEIGHT);
 	gl_RenderState.SetColor(0, 0, 0);
 	gl_RenderState.Apply();
-
+#ifndef __MOBILE__
 	glDisable(GL_MULTISAMPLE);
+#endif
 	glDisable(GL_DEPTH_TEST);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, FFlatVertexBuffer::FULLSCREEN_INDEX, 4);

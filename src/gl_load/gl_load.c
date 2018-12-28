@@ -3426,10 +3426,6 @@ static int ProcExtsFromExtList(void)
 
 int ogl_LoadFunctions()
 {
-#ifdef __MOBILE__
-    void jwzgles_reset (void);
-    jwzgles_reset ();
-#endif
 	int numFailed = 0;
 	ClearExtensionVars();
 	
