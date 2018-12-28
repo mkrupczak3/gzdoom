@@ -7,7 +7,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := gme_gl3
 
-LOCAL_CFLAGS :=
+LOCAL_CPPFLAGS := -DVGM_YM2612_GENS -std=c++14 -fexceptions
 
 LOCAL_LDLIBS += -llog
 
@@ -61,7 +61,7 @@ LOCAL_SRC_FILES =  	\
     gme/Vgm_Emu.cpp \
     gme/Vgm_Emu_Impl.cpp \
     gme/Ym2413_Emu.cpp \
-    gme/Ym2612_Emu.cpp \
+    gme/Ym2612_GENS.cpp \
 
 #strtof.c \
 

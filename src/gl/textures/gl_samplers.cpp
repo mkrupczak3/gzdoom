@@ -30,6 +30,9 @@
 #include "gl_samplers.h"
 #include "hwrenderer/textures/hw_material.h"
 
+namespace OpenGLRenderer
+{
+
 extern TexFilter_s TexFilter[];
 
 
@@ -101,3 +104,4 @@ void FSamplerManager::SetTextureFilterMode()
 }
 
 
+}

@@ -117,7 +117,7 @@ SDLGLVideo::~SDLGLVideo ()
 
 DFrameBuffer *SDLGLVideo::CreateFrameBuffer ()
 {
-	SystemGLFrameBuffer *fb = new OpenGLFrameBuffer(0, fullscreen);
+	SystemGLFrameBuffer *fb = new OpenGLRenderer::OpenGLFrameBuffer(0, fullscreen);
 
 	return fb;
 }
@@ -152,7 +152,7 @@ void SDLGLVideo::SetupPixelFormat(bool allowsoftware, int multisample, const int
 #ifdef __MOBILE__
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 	return;
 #endif
 

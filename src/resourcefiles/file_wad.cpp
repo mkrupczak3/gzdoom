@@ -166,18 +166,19 @@ bool FWadFile::Open(bool quiet)
 		if (InfoTableOfs + NumLumps*sizeof(wadlump_t) > (unsigned)wadSize)
 		{
 #ifdef __MOBILE__
-            if( !stricmp(Filename, "./freedoom1.wad") || !stricmp(Filename, "./freedoom2.wad") )
+            if( !stricmp(FileName.GetChars(), "./freedoom1.wad") || !stricmp(FileName.GetChars(), "./freedoom2.wad") )
             {
-                remove(Filename);
-                I_Error("Cannot load broken WAD file %s. Deleting WAD file, please re-download\n", Filename);
+                remove(FileName.GetChars());
+                I_Error("Cannot load broken WAD file %s. Deleting WAD file, please re-download\n", FileName.GetChars());
             }
             else
             {
-                I_Error("Cannot load broken WAD file %s\n", Filename);
+                I_Error("Cannot load broken WAD file %s\n", FileName.GetChars());
             }
 #else
-			I_Error("Cannot load broken WAD file %s\n", Filename);
+			I_Error("Cannot load broken WAD file %s\n", FileName.GetChars());
 #endif
+
 		}
 	}
 
@@ -206,7 +207,7 @@ bool FWadFile::Open(bool quiet)
 		{
 			if (Lumps[i].LumpSize != 0)
 			{
-				Printf(PRINT_HIGH, "%s: Lump %s contains invalid positioning info and will be ignored\n", Filename, Lumps[i].Name);
+				Printf(PRINT_HIGH, "%s: Lump %s contains invalid positioning info and will be ignored\n", FileName.GetChars(), Lumps[i].Name);
 				Lumps[i].Name[0] = 0;
 			}
 			Lumps[i].LumpSize = Lumps[i].Position = 0;
@@ -451,7 +452,7 @@ void FWadFile::SkinHack ()
 			"The maps in %s will not be loaded because it has a skin.\n"
 			TEXTCOLOR_BLUE
 			"You should remove the skin from the wad to play these maps.\n",
-			Filename);
+			FileName.GetChars());
 	}
 }
 

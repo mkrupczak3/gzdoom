@@ -48,8 +48,7 @@ enum
 	VATTR_NORMAL_BIT
 };
 
-
-#define NBR_BUFFERS 2
+#define NBR_BUFFERS 3
 class FVertexBuffer
 {
 protected:
