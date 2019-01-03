@@ -126,7 +126,8 @@ struct LinuxHWCapMapping {
 };
 
 static void armDetectHWCaps(CpuInfo* cpuInfo, unsigned long type, const LinuxHWCapMapping* mapping, size_t length) noexcept {
-  unsigned long mask = getauxval(type);
+ // unsigned long mask = getauxval(type);
+ unsigned long mask = 0;
 
   for (size_t i = 0; i < length; i++)
     if ((mask & mapping[i].hwcapMask) == mapping[i].hwcapMask)

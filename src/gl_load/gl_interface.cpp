@@ -133,8 +133,8 @@ void gl_LoadExtensions()
 	
 	if (glversion && strlen(glversion) > 10 && memcmp(glversion, "OpenGL ES ", 10) == 0)
 	{
-		glversion += 10;
-		gl.es = true;
+		//glversion += 10;
+		//gl.es = true;
 	}
 
 	const char *version = Args->CheckValue("-glversion");
@@ -183,7 +183,7 @@ void gl_LoadExtensions()
 		// Don't even start if it's lower than 2.0 or no framebuffers are available (The framebuffer extension is needed for glGenerateMipmapsEXT!)
 		if ((gl_version < 2.0f || !CheckExtension("GL_EXT_framebuffer_object")) && gl_version < 3.0f)
 		{
-			I_FatalError("Unsupported OpenGL version.\nAt least OpenGL 2.0 with framebuffer support is required to run " GAMENAME ".\n");
+			//I_FatalError("Unsupported OpenGL version.\nAt least OpenGL 2.0 with framebuffer support is required to run " GAMENAME ".\n");
 		}
 		
 		gl.es = false;

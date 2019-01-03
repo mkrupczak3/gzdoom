@@ -5,7 +5,9 @@
 #ifdef WIN32
 #include <DbgHelp.h>
 #else
+#ifndef __MOBILE__
 #include <execinfo.h>
+#endif
 #include <cxxabi.h>
 #include <cstring>
 #include <cstdlib>
@@ -721,7 +723,9 @@ void *AddJitFunction(asmjit::CodeHolder* code, JitCompiler *compiler)
 		}
 #else
 		// On Linux it takes a pointer to the entire .eh_frame
+#ifndef __MOBILE__
 		__register_frame(unwindptr);
+#endif
 		JitFrames.Push(unwindptr);
 #endif
 	}
@@ -742,7 +746,9 @@ void JitRelease()
 #elif !defined(WIN32)
 	for (auto p : JitFrames)
 	{
+#ifndef __MOBILE__
 		__deregister_frame(p);
+#endif
 	}
 #endif
 	for (auto p : JitBlocks)
@@ -801,6 +807,8 @@ static int CaptureStackTrace(int max_frames, void **out_frames)
 #elif defined(WIN32)
 	// JIT isn't supported here, so just do nothing.
 	return 0;//return RtlCaptureStackBackTrace(0, MIN(max_frames, 32), out_frames, nullptr);
+#elif defined(__MOBILE__) // No backtrace on Android
+    return 0;
 #else
 	return backtrace(out_frames, max_frames);
 #endif
@@ -845,6 +853,17 @@ public:
 		return s;
 	}
 };
+#elif defined(__MOBILE__) // No backtrace on Android
+class NativeSymbolResolver
+{
+public:
+	FString GetName(void *frame)
+	{
+		FString s;
+		return s;
+	}
+};
+
 #else
 class NativeSymbolResolver
 {

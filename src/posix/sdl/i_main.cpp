@@ -186,8 +186,18 @@ static int DoomSpecificInfo (char *buffer, char *end)
 void I_StartupJoysticks();
 void I_ShutdownJoysticks();
 
+#ifdef __ANDROID__
+
+#include <android/log.h>
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"JNITouchControlsUtils", __VA_ARGS__))
+#include "LogWritter.h"
+
+int main_android (int argc, char **argv)
+{
+#else
 int main (int argc, char **argv)
 {
+#endif
 #if !defined (__APPLE__)
 	{
 		int s[4] = { SIGSEGV, SIGILL, SIGFPE, SIGBUS };
@@ -271,7 +281,10 @@ int main (int argc, char **argv)
 			{
 				Printf("%s", CVMAbortException::stacktrace.GetChars());
 			}
-
+#ifdef __ANDROID__
+        	LOGI("FATAL ERROR: %s",  message);
+        	LogWritter_Write(message);
+#endif
 			if (batchrun)
 			{
 				Printf("%s\n", message);

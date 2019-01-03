@@ -150,12 +150,12 @@ void FGLRenderer::Initialize(int width, int height)
 	mPresent3dRowShader = new FPresent3DRowShader();
 	mShadowMapShader = new FShadowMapShader();
 	mCustomPostProcessShaders = new FCustomPostProcessShaders();
-
+#ifndef __MOBILE__
 	if (gl.legacyMode)
 	{
 		legacyShaders = new LegacyShaderContainer;
 	}
-
+#endif
 	// needed for the core profile, because someone decided it was a good idea to remove the default VAO.
 	if (!gl.legacyMode)
 	{
