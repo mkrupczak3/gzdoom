@@ -79,6 +79,9 @@ void gl_GetRenderStyle(FRenderStyle style, bool drawopaque, bool allowcolorblend
 
 	if (allowcolorblending && srcblend == GL_SRC_ALPHA && dstblend == GL_ONE && blendequation == GL_FUNC_ADD)
 	{
+#ifdef __MOBILE__
+		if (!gl.es)
+#endif
 		srcblend = GL_SRC_COLOR;
 	}
 

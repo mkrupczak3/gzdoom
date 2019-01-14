@@ -170,6 +170,95 @@ void FHardwareTexture::Resize(int swidth, int sheight, int width, int height, un
 
 
 
+#ifdef __MOBILE__
+static void BGRAtoRGBA(unsigned char * buffer, int numPixels)
+{
+    uint32_t *temp = (uint32_t *)buffer;
+    for( int n = 0; n < numPixels; n++ )
+    {
+        //temp[n] = ((temp[n] & 0x0000FF00) << 16 ) | ((temp[n] & 0xFF000000) >> 16 ) | (temp[n] & 0x00FF00FF);
+        temp[n] = ((temp[n] & 0x000000FF) << 16 ) | ((temp[n] & 0x00FF0000) >> 16 ) | (temp[n] & 0xFF00FF00);
+    }
+}
+
+static void GL_ResampleTexture (uint32_t *in, uint32_t inwidth, uint32_t inheight, uint32_t *out,  uint32_t outwidth, uint32_t outheight)
+{
+	LOGI("GL_ResampleTexture %dx%d -> %dx%d",inwidth,inheight,outwidth,outheight);
+
+	int		i, j;
+	uint32_t	*inrow, *inrow2;
+	uint32_t	frac, fracstep;
+	uint8_t		*pix1, *pix2, *pix3, *pix4;
+	uint32_t	*p1 = (uint32_t*)malloc(sizeof(uint32_t) * outwidth );
+	uint32_t	*p2 = (uint32_t*)malloc(sizeof(uint32_t) * outwidth );
+
+	fracstep = inwidth*0x10000/outwidth;
+
+	frac = fracstep>>2;
+	for (i=0 ; i<outwidth ; i++)
+	{
+		p1[i] = 4*(frac>>16);
+		frac += fracstep;
+	}
+	frac = 3*(fracstep>>2);
+	for (i=0 ; i<outwidth ; i++)
+	{
+		p2[i] = 4*(frac>>16);
+		frac += fracstep;
+	}
+
+	for (i=0 ; i<outheight ; i++, out += outwidth)
+	{
+		inrow = in + inwidth*(int)((i+0.25)*inheight/outheight);
+		inrow2 = in + inwidth*(int)((i+0.75)*inheight/outheight);
+		frac = fracstep >> 1;
+		for (j=0 ; j<outwidth ; j++)
+		{
+			pix1 = (uint8_t *)inrow + p1[j];
+			pix2 = (uint8_t *)inrow + p2[j];
+			pix3 = (uint8_t *)inrow2 + p1[j];
+			pix4 = (uint8_t *)inrow2 + p2[j];
+			((uint8_t *)(out+j))[0] = (pix1[0] + pix2[0] + pix3[0] + pix4[0])>>2;
+			((uint8_t *)(out+j))[1] = (pix1[1] + pix2[1] + pix3[1] + pix4[1])>>2;
+			((uint8_t *)(out+j))[2] = (pix1[2] + pix2[2] + pix3[2] + pix4[2])>>2;
+			((uint8_t *)(out+j))[3] = (pix1[3] + pix2[3] + pix3[3] + pix4[3])>>2;
+		}
+	}
+
+	free(p1);
+	free(p2);
+}
+
+static bool IsPowerOfTwo(unsigned int x)
+{
+    return (x & (x - 1)) == 0;
+}
+static int NextPow2( int value )
+{
+	int i=1;
+	while (i<value) i+=i;
+	return i;
+}
+static int isopaque(GLint width, GLint height, const GLvoid *pixels)
+{
+   unsigned char const *cpixels = (unsigned char const *)pixels;
+
+   int i;
+
+   for (i = 0; i < width * height; i++) {
+      if (cpixels[i*4+3] != 0xff)
+         return 0;
+   }
+
+   return 1;
+}
+static unsigned int etc1_data_size(unsigned int width, unsigned int height) {
+    return (((width + 3) & ~3) * ((height + 3) & ~3)) >> 1;
+	//return ((width >> 2) * (height >> 2)) << 3;
+}
+#include "etc1.h"
+
+#endif
 //===========================================================================
 // 
 //	Loads the texture image into the hardware
@@ -217,6 +306,11 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 	}
 	else
 	{
+#ifdef __MOBILE__
+        if( gl.es )
+    	    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, (mipmap && TexFilter[gl_texture_filter].mipmapping) );
+#endif
+
 		if (rw < w || rh < h)
 		{
 			// The texture is larger than what the hardware can handle so scale it down.
@@ -228,6 +322,20 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 				buffer=scaledbuffer;
 			}
 		}
+#ifdef __MOBILE__
+		if( !(gl.flags & RFL_NPOT ) )
+		{
+			if( !IsPowerOfTwo(rw) || !IsPowerOfTwo(rh) )
+			{
+				rw = NextPow2(rw);
+				rh = NextPow2(rh);
+				unsigned int * scaledbuffer=(unsigned int *)calloc(4,rw * (rh+1));
+				GL_ResampleTexture((unsigned  *)buffer,w,h,(unsigned *)scaledbuffer,rw,rh);
+				deletebuffer=true;
+				buffer=(unsigned char *)scaledbuffer;
+			}
+		}
+#endif
 	}
 	// store the physical size.
 
@@ -237,10 +345,15 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 		if (glTextureBytes < 4) glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		if (gl.legacyMode)
 		{
+#ifdef __MOBILE__
 			// Do not use 2 and 3 here. They won't do anything useful!!!
+            static const int ITypes[] = { GL_LUMINANCE, GL_LUMINANCE_ALPHA, GL_BGR, GL_RGBA };
+            static const int STypes[] = { GL_LUMINANCE, GL_LUMINANCE_ALPHA, GL_BGR, GL_BGRA };
+#else
+
 			static const int ITypes[] = { GL_LUMINANCE8, GL_LUMINANCE8_ALPHA8, GL_RGB8, GL_RGBA8 };
 			static const int STypes[] = { GL_LUMINANCE, GL_LUMINANCE_ALPHA, GL_BGR, GL_BGRA };
-
+#endif
 			texformat = ITypes[glTextureBytes - 1];
 			sourcetype = STypes[glTextureBytes - 1];
 		}
@@ -257,6 +370,20 @@ unsigned int FHardwareTexture::CreateTexture(unsigned char * buffer, int w, int 
 	{
 		sourcetype = GL_BGRA;
 	}
+	
+#ifdef __MOBILE__
+    if( ( texformat == GL_BGRA) && !(gl.flags & RFL_BGRA))
+    {
+        sourcetype = GL_RGBA;
+        BGRAtoRGBA( buffer, rw * rh );
+    }
+    else
+    {
+       texformat = GL_BGRA;
+    }
+#endif
+
+
 	
 	if (!firstCall && glBufferID > 0)
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rw, rh, sourcetype, GL_UNSIGNED_BYTE, buffer);
@@ -292,6 +419,10 @@ void FHardwareTexture::AllocateBuffer(int w, int h, int texelsize)
 	int rh = GetTexDimension(h);
 	if (texelsize < 1 || texelsize > 4) texelsize = 4;
 	glTextureBytes = texelsize;
+#ifdef NO_PIX_BUFF
+    texBuffer = (uint8_t *)malloc(w*h*texelsize);
+    return;
+#endif
 	if (rw == w || rh == h)
 	{
 		glGenBuffers(1, &glBufferID);
@@ -304,6 +435,9 @@ void FHardwareTexture::AllocateBuffer(int w, int h, int texelsize)
 
 uint8_t *FHardwareTexture::MapBuffer()
 {
+#ifdef NO_PIX_BUFF
+    return texBuffer;
+#endif
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, glBufferID);
 	return (uint8_t*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
 }
@@ -316,7 +450,9 @@ uint8_t *FHardwareTexture::MapBuffer()
 FHardwareTexture::FHardwareTexture(bool nocompression) 
 {
 	forcenocompression = nocompression;
-
+#ifdef NO_PIX_BUFF
+    texBuffer = NULL;
+#endif
 	glDefTex.glTexID = 0;
 	glDefTex.translation = 0;
 	glDefTex.mipmapped = false;
@@ -399,6 +535,10 @@ void FHardwareTexture::CleanUnused(SpriteHits &usedtranslations)
 FHardwareTexture::~FHardwareTexture() 
 { 
 	Clean(true); 
+#ifdef NO_PIX_BUFF
+    if( texBuffer )
+        free( texBuffer );
+#endif
 	glDeleteBuffers(1, &glBufferID);
 }
 

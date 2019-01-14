@@ -53,6 +53,9 @@ struct RenderContext
 	char * modelstring;
 	bool legacyMode;
 	bool es;
+#ifdef __MOBILE__
+	bool novbo;
+#endif
 
 	int MaxLights() const
 	{

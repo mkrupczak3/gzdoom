@@ -150,14 +150,23 @@ void gl_SetTextureMode(int type)
 		// Type 2 (unaltered true color) can be done without activating the shader.
 		if (shader != 2)
 		{
+#ifdef __MOBILE__
+            if (!gl.es)
+#endif
 			GLRenderer->legacyShaders->BindShader(shader, c1, c2);
 			return;
 		}
 		else type = TM_MODULATE;
 	}
+#ifdef __MOBILE__
+    if (!gl.es)
+#endif
 	glUseProgram(0);
 	if (type == TM_MASK)
 	{
+#ifdef __MOBILE__
+        return; //Causes textures to screw up for some reason...
+#endif
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_REPLACE);
 		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_PRIMARY_COLOR);
@@ -173,7 +182,11 @@ void gl_SetTextureMode(int type)
 	{
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
+#ifdef __MOBILE__
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_TEXTURE);
+#else
 		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_TEXTURE0);
+#endif
 		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB, GL_PRIMARY_COLOR);
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
@@ -186,14 +199,22 @@ void gl_SetTextureMode(int type)
 	{
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
+#ifdef __MOBILE__
+		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_TEXTURE);
+#else
 		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_TEXTURE0);
+#endif
 		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB, GL_PRIMARY_COLOR);
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_ONE_MINUS_SRC_COLOR);
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
 
 		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE); 
 		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_PRIMARY_COLOR);
+#ifdef __MOBILE__
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, GL_TEXTURE);
+#else
 		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, GL_TEXTURE0);
+#endif
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
 	}
@@ -201,7 +222,11 @@ void gl_SetTextureMode(int type)
 	{
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
+#ifdef __MOBILE__
+	    glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_TEXTURE);
+#else
 		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_TEXTURE0);
+#endif
 		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB, GL_PRIMARY_COLOR);
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_ONE_MINUS_SRC_COLOR);
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
@@ -695,6 +720,38 @@ void FDrawInfo::DrawSubsectorLights(GLFlat *flat, subsector_t * sub, int pass)
 		}
 		gl_RenderState.Apply();
 
+#ifdef __MOBILE__
+		if( gl.novbo )
+		{
+			static FFlatVertex vtx[100]; // Yes this is static. It's only used once, and I think it's faster as the address doesn't keep changing
+			FFlatVertex *ptr = &vtx[0];
+			for (unsigned int k = 0; k < sub->numlines; k++)
+			{
+				vertex_t *vt = sub->firstline[k].v1;
+				float x = vt->fX();
+				float y = vt->fY();
+				float z = flat->plane.plane.ZatPoint(vt) + flat->dz;
+				t1 = { x, z, y };
+				FVector3 nearToVert = t1 - nearPt;
+				float u = ((nearToVert | right) * scale) + 0.5f;
+				float v = ((nearToVert | up) * scale) + 0.5f;
+				ptr->Set(x,z,y,u,v);
+				ptr++;
+			}
+			int vertcount = (ptr - &vtx[0]);
+			glTexCoordPointer(2,GL_FLOAT, sizeof(FFlatVertex),&vtx[0].u);
+			glVertexPointer  (3,GL_FLOAT, sizeof(FFlatVertex),&vtx[0].x);
+
+			glEnableClientState (GL_VERTEX_ARRAY);
+			glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+			glDisableClientState (GL_COLOR_ARRAY);
+
+			glBindBuffer (GL_ARRAY_BUFFER, 0); // NO VBO
+			glDrawArrays (GL_TRIANGLE_FAN, 0, vertcount);
+		}
+		else
+		{
+#endif
 		FFlatVertex *ptr = GLRenderer->mVBO->GetBuffer();
 		for (unsigned int k = 0; k < sub->numlines; k++)
 		{
@@ -710,6 +767,9 @@ void FDrawInfo::DrawSubsectorLights(GLFlat *flat, subsector_t * sub, int pass)
 			ptr++;
 		}
 		GLRenderer->mVBO->RenderCurrent(ptr, GL_TRIANGLE_FAN);
+#ifdef __MOBILE__
+		}
+#endif
 		node = node->nextLight;
 	}
 }

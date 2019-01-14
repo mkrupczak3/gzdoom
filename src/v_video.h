@@ -61,7 +61,12 @@ enum EHWCaps
 
 	RFL_INVALIDATE_BUFFER = 64,
 	RFL_DEBUG = 128,
-	RFL_NO_SHADERS = 256
+	RFL_NO_SHADERS = 256,
+#ifdef __MOBILE__
+    RFL_NPOT = 256,
+    RFL_BGRA = 512,
+    RFL_UINT_IDX = 1024,
+#endif
 };
 
 struct IntRect

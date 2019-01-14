@@ -62,7 +62,9 @@ private:
 	unsigned int glDepthID;	// only used by camera textures
 	unsigned int glBufferID = 0;
 	int glTextureBytes = 4;
-
+#ifdef NO_PIX_BUFF
+    uint8_t * texBuffer;
+#endif
 	TranslatedTexture * GetTexID(int translation);
 
 	int GetDepthBuffer(int w, int h);

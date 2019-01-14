@@ -40,6 +40,10 @@ static TArray<FString>  m_Extensions;
 RenderContext gl;
 static double realglversion;	// this is public so the statistics code can access it.
 
+#ifdef __MOBILE__
+    CVAR(Bool, force_uint_idx, false, 0)
+#endif
+
 //==========================================================================
 //
 // 
@@ -51,7 +55,12 @@ static void CollectExtensions()
 	const char *extension;
 
 	int max = 0;
+
 	glGetIntegerv(GL_NUM_EXTENSIONS, &max);
+
+#ifdef __MOBILE__
+	max = 0;
+#endif
 
 	if (max == 0)
 	{
@@ -128,13 +137,69 @@ void gl_LoadExtensions()
 	InitContext();
 	CollectExtensions();
 
+
+#ifdef __MOBILE__
+
+    if(CheckExtension("GL_OES_texture_npot") || CheckExtension("GL_APPLE_texture_2D_limited_npot"))
+    {
+        Printf("NPOT allowed");
+        gl.flags |= RFL_NPOT;
+    }
+
+    if(CheckExtension("GL_EXT_texture_format_BGRA8888") || CheckExtension("GL_EXT_bgra"))
+    {
+        Printf("BGRA allowed");
+        gl.flags |= RFL_BGRA;
+    }
+
+    if(CheckExtension("GL_OES_element_index_uint"))
+    {
+        Printf("UINT element index allowed");
+        gl.flags |= RFL_UINT_IDX;
+    }
+
+    if(force_uint_idx == true)
+    {
+        Printf("FORCING UINT element index allowed");
+        gl.flags |= RFL_UINT_IDX;
+    }
+
+	const char *version = Args->CheckValue("-glversion");
+	if( version && !strcmp(version, "gles1") )
+	{
+		gl.es = true;
+
+		gl.legacyMode = true;
+		gl.lightmethod = LM_LEGACY;
+		gl.buffermethod = BM_LEGACY;
+		gl.glslversion = 0;
+		gl.flags |= RFL_NO_CLIP_PLANES;
+
+		gl.novbo = true;
+
+        //This is needed to the fix the brutal doom white lines?!
+        glDisable(GL_CLIP_PLANE0);
+        glEnable(GL_CLIP_PLANE0);
+	}
+	else // GLES 2 with GL4ES
+	{
+    	gl.novbo = true;
+
+        gl.legacyMode = true;
+        gl.lightmethod = LM_LEGACY;
+        gl.buffermethod = BM_LEGACY;
+        gl.glslversion = 0;
+        gl.flags |= RFL_NO_CLIP_PLANES;
+	}
+#else
+
 	const char *glversion = (const char*)glGetString(GL_VERSION);
 	gl.es = false;
 	
 	if (glversion && strlen(glversion) > 10 && memcmp(glversion, "OpenGL ES ", 10) == 0)
 	{
-		//glversion += 10;
-		//gl.es = true;
+		glversion += 10;
+		gl.es = true;
 	}
 
 	const char *version = Args->CheckValue("-glversion");
@@ -183,7 +248,7 @@ void gl_LoadExtensions()
 		// Don't even start if it's lower than 2.0 or no framebuffers are available (The framebuffer extension is needed for glGenerateMipmapsEXT!)
 		if ((gl_version < 2.0f || !CheckExtension("GL_EXT_framebuffer_object")) && gl_version < 3.0f)
 		{
-			//I_FatalError("Unsupported OpenGL version.\nAt least OpenGL 2.0 with framebuffer support is required to run " GAMENAME ".\n");
+			I_FatalError("Unsupported OpenGL version.\nAt least OpenGL 2.0 with framebuffer support is required to run " GAMENAME ".\n");
 		}
 		
 		gl.es = false;
@@ -275,6 +340,7 @@ void gl_LoadExtensions()
 			}
 		}
 	}
+#endif
 
 	int v;
 	
@@ -337,6 +403,9 @@ void gl_PrintStartupLog()
 	Printf ("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
 	Printf ("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
 	Printf ("GL_VERSION: %s (%s profile)\n", glGetString(GL_VERSION), (v & GL_CONTEXT_CORE_PROFILE_BIT)? "Core" : "Compatibility");
+#ifdef __MOBILE__
+	if (!gl.es)
+#endif
 	Printf ("GL_SHADING_LANGUAGE_VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 	Printf (PRINT_LOG, "GL_EXTENSIONS:");
 	for (unsigned i = 0; i < m_Extensions.Size(); i++)
@@ -346,11 +415,18 @@ void gl_PrintStartupLog()
 
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &v);
 	Printf("\nMax. texture size: %d\n", v);
+#ifdef __MOBILE__
+	if (!gl.es)
+	{
+#endif
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &v);
 	Printf ("Max. texture units: %d\n", v);
 	glGetIntegerv(GL_MAX_VARYING_FLOATS, &v);
 	Printf ("Max. varying: %d\n", v);
 	
+#ifdef __MOBILE__
+	}
+#endif
 	if (!gl.legacyMode && !(gl.flags & RFL_SHADER_STORAGE_BUFFER))
 	{
 		glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &v);

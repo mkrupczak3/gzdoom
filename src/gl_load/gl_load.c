@@ -51,57 +51,63 @@ static void CATCH(int a, int b, int c, int d, int e)
 	LOGI("CAUGHT BAD");
 }
 
-int glesLoad = 1; // TODO tifx this!
+int glesLoad = 1; // TODO fix this!
 
 void* SDL_GL_GetProcAddress(const char* proc);
 static void *MOBILE_GetProcAddress(const char* name)
 {
-
-	if( glesLoad == 3 )
-	{
-		return SDL_GL_GetProcAddress( name );
-	}
-	else if ( glesLoad == 1 )
-	{
-		static int jwzLoaded = 0;
-		if( ! jwzLoaded )
-		{
-          	void jwzgles_reset (void);
-          	jwzgles_reset ();
-			jwzLoaded = 1;
-		}
+    static int jwzLoaded = 0;
+    if( ! jwzLoaded )
+    {
+        void jwzgles_reset (void);
+        jwzgles_reset ();
+        jwzLoaded = 1;
+    }
 
 
-		static void* h = NULL;
+    static void* h = NULL;
 
-		if (h == NULL)
-		{
-			if ((h = dlopen("libGL4ES.so", RTLD_LAZY | RTLD_LOCAL)) == NULL)
-			{
-				LOGI("ERROR loading libGL4ES");
-				return NULL;
-			}
-		}
+    if (h == NULL)
+    {
+        if( glesLoad == 1 )
+        {
+            h = dlopen("libjwzgles_shared.so", RTLD_LAZY | RTLD_LOCAL);
+        }
+        else if( glesLoad == 2 )
+        {
+            h = dlopen("libGL4ES.so", RTLD_LAZY | RTLD_LOCAL);
+        }
 
-		char newName[64];
-		memset(newName,0,64);
-		sprintf(newName,"%s",name);
+        if (h == NULL)
+        {
+            LOGI("ERROR loading GL SHIM");
+            return NULL;
+        }
+    }
 
-		void * ret = 0;
-		ret =  dlsym(h, (const char*)newName);
+    char newName[64];
+    memset(newName,0,64);
 
-		if( !ret )
-		{
-			//LOGI("Loading.. %s    FAIL", newName);
-			ret = CATCH;
-		}
-		else
-		{
-			//LOGI("Loading.. %s    OK", newName);
-		}
-		return ret;
-	}
-	return 0;
+    if( glesLoad == 1 )
+        sprintf(newName,"jwzgles_%s",name);
+    else if( glesLoad == 2 )
+        sprintf(newName,"%s",name);
+    //
+
+    void * ret = 0;
+    ret =  dlsym(h, (const char*)newName);
+
+    if( !ret )
+    {
+        //LOGI("Loading.. %s    FAIL", newName);
+        ret = CATCH;
+    }
+    else
+    {
+        //LOGI("Loading.. %s    OK", newName);
+    }
+
+    return ret;
 }
 
 #endif
@@ -3474,6 +3480,10 @@ static int ProcExtsFromExtList(void)
 {
 	GLint iLoop;
 	GLint iNumExtensions = 0;
+
+#ifdef __MOBILE__
+	return 0; // GLES1 does not have GL_NUM_EXTENSIONS
+#endif
 
 	if (_ptrc_glGetStringi == NULL) return 0;
 

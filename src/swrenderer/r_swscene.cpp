@@ -118,7 +118,11 @@ sector_t *SWSceneDrawer::RenderView(player_t *player)
 	auto buf = fbtex->SystemTexture[0]->MapBuffer();
 	if (!buf) I_FatalError("Unable to map buffer for software rendering");
 	SWRenderer->RenderView(player, Canvas.get(), buf);
+#ifdef NO_PIX_BUFF
+    fbtex->SystemTexture[0]->CreateTexture(buf, screen->GetWidth(), screen->GetHeight(), 0, false, 0, "swbuffer");
+#else
 	fbtex->SystemTexture[0]->CreateTexture(nullptr, screen->GetWidth(), screen->GetHeight(), 0, false, 0, "swbuffer");
+#endif
 
 	auto map = swrenderer::CameraLight::Instance()->ShaderColormap();
 	screen->DrawTexture(fbtex.get(), 0, 0, DTA_SpecialColormap, map, TAG_DONE);
