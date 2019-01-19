@@ -56,10 +56,10 @@ static void CollectExtensions()
 
 	int max = 0;
 
-	glGetIntegerv(GL_NUM_EXTENSIONS, &max);
-
 #ifdef __MOBILE__
 	max = 0;
+#else
+    glGetIntegerv(GL_NUM_EXTENSIONS, &max);
 #endif
 
 	if (max == 0)

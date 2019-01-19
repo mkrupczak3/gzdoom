@@ -46,6 +46,9 @@ FGLPostProcessState::FGLPostProcessState()
 	glGetBooleanv(GL_BLEND, &blendEnabled);
 	glGetBooleanv(GL_SCISSOR_TEST, &scissorEnabled);
 	glGetBooleanv(GL_DEPTH_TEST, &depthEnabled);
+#ifdef __MOBILE__ //Crashes GLES on GPD
+    if( gl.es )
+#endif
 	glGetBooleanv(GL_MULTISAMPLE, &multisampleEnabled);
 #ifdef __MOBILE__
 	if( !gl.es )
