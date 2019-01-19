@@ -50,7 +50,10 @@ FGLPostProcessState::FGLPostProcessState()
 	glGetBooleanv(GL_BLEND, &blendEnabled);
 	glGetBooleanv(GL_SCISSOR_TEST, &scissorEnabled);
 	glGetBooleanv(GL_DEPTH_TEST, &depthEnabled);
+#ifdef __MOBILE__ // Crashes GLES2 on GPD XD
+    if( gl.es )
 	glGetBooleanv(GL_MULTISAMPLE, &multisampleEnabled);
+#endif
 #ifndef __MOBILE__
 	glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
 	glGetIntegerv(GL_BLEND_EQUATION_RGB, &blendEquationRgb);
