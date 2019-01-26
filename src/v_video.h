@@ -320,7 +320,7 @@ class FUniquePalette;
 class IHardwareTexture;
 class FTexture;
 
-
+#define NBR_VTX_BUFF 3
 class DFrameBuffer
 {
 protected:
@@ -337,6 +337,9 @@ protected:
 private:
 	int Width = 0;
 	int Height = 0;
+    // __MOBILE__
+	int VtxBuff = 0;
+	int LightBuff = 0;
 protected:
 	int clipleft = 0, cliptop = 0, clipwidth = -1, clipheight = -1;
 
@@ -356,8 +359,10 @@ public:
 	FPortalSceneState *mPortalState;			// global portal state.
 	FSkyVertexBuffer *mSkyData = nullptr;		// the sky vertex buffer
 	FFlatVertexBuffer *mVertexData = nullptr;	// Global vertex data
+    FFlatVertexBuffer *mVertexDataBuf[NBR_VTX_BUFF];	    // Global vertex data
 	GLViewpointBuffer *mViewpoints = nullptr;	// Viewpoint render data.
 	FLightBuffer *mLights = nullptr;			// Dynamic lights
+    FLightBuffer *mLightsBuf[NBR_VTX_BUFF];			// Dynamic lights
 	IShadowMap mShadowMap;
 
 	IntRect mScreenViewport;
@@ -370,7 +375,22 @@ public:
 	DFrameBuffer (int width=1, int height=1);
 	virtual ~DFrameBuffer();
 	virtual void InitializeState() = 0;	// For stuff that needs 'screen' set.
-
+    // __MOBILE__
+    void NextVtxBuffer()
+    {
+        mVertexData = mVertexDataBuf[VtxBuff];
+        VtxBuff++;
+        if (VtxBuff == NBR_VTX_BUFF)
+            VtxBuff = 0;
+    }
+    // __MOBILE__
+    void NextLightBuffer()
+    {
+        mLights = mLightsBuf[LightBuff];
+        LightBuff++;
+        if (LightBuff == NBR_VTX_BUFF)
+            LightBuff = 0;
+    }
 	void SetSize(int width, int height);
 	void SetVirtualSize(int width, int height)
 	{

@@ -161,10 +161,23 @@ void OpenGLFrameBuffer::InitializeState()
 
 	SetViewportRects(nullptr);
 
-	mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight());
+	//mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight());
+	// __MOBILE__
+    for (int n = 0; n < NBR_VTX_BUFF; n ++)
+    {
+       mVertexDataBuf[n] = new FFlatVertexBuffer(GetWidth(), GetHeight());
+    }
+	NextVtxBuffer();
+
 	mSkyData = new FSkyVertexBuffer;
 	mViewpoints = new GLViewpointBuffer;
-	mLights = new FLightBuffer();
+	//mLights = new FLightBuffer();
+    // __MOBILE__
+    for (int n = 0; n < NBR_VTX_BUFF; n ++)
+    {
+       mLightsBuf[n] = new FLightBuffer();
+    }
+    NextLightBuffer();
 
 	GLRenderer = new FGLRenderer(this);
 	GLRenderer->Initialize(GetWidth(), GetHeight());
@@ -261,7 +274,16 @@ void OpenGLFrameBuffer::Swap()
 	if (swapbefore) glFinish();
 #endif
  //glFinish();
- //LOGI("SwapBuffers..");
+ //glFlush();
+#ifdef __MOBILE__
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glViewport(0, 0, 2094, 1080);
+         //   glOrthof(0.0f, 2094, 1080, 0.0f, -1.0f, 1.0f);
+#endif
 	SwapBuffers();
  //LOGI("..SwapBuffers Done");
 #ifndef __MOBILE__

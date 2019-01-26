@@ -221,7 +221,12 @@ void DFrameBuffer::Update()
 	{
 		SetVirtualSize(clientWidth, clientHeight);
 		V_OutputResized(clientWidth, clientHeight);
-		mVertexData->OutputResized(clientWidth, clientHeight);
+		//mVertexData->OutputResized(clientWidth, clientHeight);
+    	// __MOBILE__
+        for (int n = 0; n < NBR_VTX_BUFF; n ++)
+        {
+           mVertexDataBuf[n] = new FFlatVertexBuffer(GetWidth(), GetHeight());
+        }
 	}
 }
 

@@ -3695,7 +3695,11 @@ void P_SetupLevel(const char *lumpname, int position, bool newGame)
 
 	// This must be done BEFORE the PolyObj Spawn!!!
 	InitRenderInfo();			// create hardware independent renderer resources for the level.
-	screen->mVertexData->CreateVBO();
+	//screen->mVertexData->CreateVBO();
+    for (int n = 0; n < NBR_VTX_BUFF; n ++)
+    {
+        screen->mVertexDataBuf[n]->CreateVBO();
+    }
 
 	for (auto &sec : level.sectors)
 	{

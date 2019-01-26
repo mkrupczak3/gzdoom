@@ -221,6 +221,9 @@ void FGLRenderer::UpdateShadowMap()
 
 sector_t *FGLRenderer::RenderView(player_t* player)
 {
+    // __MOBILE__
+    screen->NextVtxBuffer();
+    screen->NextLightBuffer();
 	gl_RenderState.SetVertexBuffer(screen->mVertexData);
 	screen->mVertexData->Reset();
 	sector_t *retsec;
