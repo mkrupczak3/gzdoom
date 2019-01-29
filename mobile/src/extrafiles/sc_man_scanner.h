@@ -442,7 +442,7 @@ yy51:
 	++YYCURSOR;
 yy52:
 #line 96 ".\\jni\\Doom\\gzdoom_dev_legacy\\src\\sc_man_scanner.re"
-	{ RET(TK_StringConst); }
+	{ goto string_const; }
 #line 447 ".\\jni\\Doom\\gzdoom_dev_legacy\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy53:
 	yyaccept = 6;
@@ -1503,7 +1503,7 @@ yy233:
 	++YYCURSOR;
 yy234:
 #line 237 ".\\jni\\Doom\\gzdoom_dev_legacy\\src\\sc_man_scanner.re"
-	{ RET(TK_StringConst); }
+	{ goto string_const; }
 #line 1508 ".\\jni\\Doom\\gzdoom_dev_legacy\\mobile\\src\\extrafiles\\sc_man_scanner.h"
 yy235:
 	yyaccept = 6;
@@ -5916,6 +5916,13 @@ normal_token:
 	}
 	return_val = true;
 	goto end;
+
+string_const:
+	for (const char *c = tok; c < YYCURSOR; ++c)
+	{
+		if (*c == '\n') ++Line;
+	}
+	RET(TK_StringConst);
 
 string:
 	if (YYLIMIT != ScriptEndPtr)
