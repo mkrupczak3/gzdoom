@@ -2482,6 +2482,22 @@ void FMODSoundRenderer::SetInactive(SoundRenderer::EInactiveState inactive)
 		mix = 0;
 		active = true;
 	}
+#ifdef __ANDROID__
+	if(inactive == INACTIVE_Active)
+	{
+	    if(SfxGroup)    SfxGroup->setPaused(false);
+	    if(PausableSfx) PausableSfx->setPaused(false);
+	    if(MusicGroup)  MusicGroup->setPaused(false);
+        Sys->mixerResume();
+	}
+	else
+	{
+        if(SfxGroup)    SfxGroup->setPaused(true);
+        if(PausableSfx) PausableSfx->setPaused(true);
+        if(MusicGroup)  MusicGroup->setPaused(true);
+        Sys->mixerSuspend();
+	}
+#endif
 	if (ChannelGroupTargetUnitOutput != NULL)
 	{
 		ChannelGroupTargetUnitOutput->setMix(mix);
