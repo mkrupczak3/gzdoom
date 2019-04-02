@@ -325,6 +325,9 @@ int main (int argc, char **argv)
 		I_ShutdownJoysticks();
 		if (error.GetMessage ())
 			fprintf (stderr, "%s\n", error.GetMessage ());
+#ifdef __ANDROID__
+        Printf("ERROR %s", error.GetMessage () );
+#endif
 
 #ifdef __APPLE__
 		Mac_I_FatalError(error.GetMessage());
