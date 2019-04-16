@@ -332,6 +332,9 @@ class FUniquePalette;
 class IHardwareTexture;
 class FTexture;
 
+#define USE_GL_MULTI_BUFFER true
+
+#define NBR_GL_BUFF 12
 
 class DFrameBuffer
 {
@@ -349,6 +352,10 @@ protected:
 private:
 	int Width = 0;
 	int Height = 0;
+#if USE_GL_MULTI_BUFFER
+	int VtxBuff = 0;
+	int LightBuff = 0;
+#endif
 protected:
 	int clipleft = 0, cliptop = 0, clipwidth = -1, clipheight = -1;
 
@@ -367,7 +374,10 @@ public:
 	GLViewpointBuffer *mViewpoints = nullptr;	// Viewpoint render data.
 	FLightBuffer *mLights = nullptr;			// Dynamic lights
 	IShadowMap mShadowMap;
-
+#if USE_GL_MULTI_BUFFER
+	FFlatVertexBuffer *mVertexDataBuf[NBR_GL_BUFF];
+	FLightBuffer *mLightsBuf[NBR_GL_BUFF];
+#endif
 	IntRect mScreenViewport;
 	IntRect mSceneViewport;
 	IntRect mOutputLetterbox;
@@ -378,6 +388,22 @@ public:
 	DFrameBuffer (int width=1, int height=1);
 	virtual ~DFrameBuffer();
 	virtual void InitializeState() = 0;	// For stuff that needs 'screen' set.
+
+#if USE_GL_MULTI_BUFFER
+	void NextVtxBuffer()
+	{
+		mVertexData = mVertexDataBuf[VtxBuff];
+		VtxBuff++;
+		VtxBuff %= NBR_GL_BUFF;
+	}
+
+	void NextLightBuffer()
+	{
+		mLights = mLightsBuf[LightBuff];
+		LightBuff++;
+		LightBuff %= NBR_GL_BUFF;
+	}
+#endif
 
 	void SetSize(int width, int height);
 	void SetVirtualSize(int width, int height)

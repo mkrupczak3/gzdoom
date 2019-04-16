@@ -153,10 +153,27 @@ void OpenGLFrameBuffer::InitializeState()
 
 	SetViewportRects(nullptr);
 
+#if USE_GL_MULTI_BUFFER
+	for (int n = 0; n < NBR_GL_BUFF; n++)
+	{
+		mVertexDataBuf[n] = new FFlatVertexBuffer(GetWidth(), GetHeight());
+	}
+	NextVtxBuffer();
+#else
 	mVertexData = new FFlatVertexBuffer(GetWidth(), GetHeight());
+#endif
 	mSkyData = new FSkyVertexBuffer;
 	mViewpoints = new GLViewpointBuffer;
+
+#if USE_GL_MULTI_BUFFER
+	for (int n = 0; n < NBR_GL_BUFF; n++)
+	{
+		mLightsBuf[n] = new FLightBuffer();
+	}
+	NextLightBuffer();
+#else
 	mLights = new FLightBuffer();
+#endif
 
 	GLRenderer = new FGLRenderer(this);
 	GLRenderer->Initialize(GetWidth(), GetHeight());
@@ -249,10 +266,14 @@ void OpenGLFrameBuffer::Swap()
 	bool swapbefore = gl_finishbeforeswap && camtexcount == 0;
 	Finish.Reset();
 	Finish.Clock();
+#ifndef USE_GL_MULTI_BUFFER
 	if (swapbefore) glFinish();
+#endif
 	FPSLimit();
 	SwapBuffers();
+#ifndef USE_GL_MULTI_BUFFER
 	if (!swapbefore) glFinish();
+#endif
 	Finish.Unclock();
 	camtexcount = 0;
 	FHardwareTexture::UnbindAll();
