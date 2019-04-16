@@ -878,9 +878,21 @@ void WriteLineToLog(FILE *LogFile, const char *outline)
 	fflush(LogFile);
 }
 
+#ifdef __ANDROID__
+#include <android/log.h>
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,"Gzdoom", __VA_ARGS__))
+#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "Gzdoom", __VA_ARGS__))
+#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR,"Gzdoom", __VA_ARGS__))
+#include "LogWritter.h"
+#endif
+
 
 int PrintString (int iprintlevel, const char *outline)
 {
+#ifdef __ANDROID__
+	LOGI("PrintString: %s",outline);
+	LogWritter_Write(outline);
+#endif
 	int printlevel = iprintlevel & PRINT_TYPES;
 	if (printlevel < msglevel || *outline == '\0')
 	{

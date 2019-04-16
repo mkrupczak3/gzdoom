@@ -249,10 +249,14 @@ void OpenGLFrameBuffer::Swap()
 	bool swapbefore = gl_finishbeforeswap && camtexcount == 0;
 	Finish.Reset();
 	Finish.Clock();
+#ifndef __MOBILE__
 	if (swapbefore) glFinish();
+#endif
 	FPSLimit();
 	SwapBuffers();
+#ifndef __MOBILE__
 	if (!swapbefore) glFinish();
+#endif
 	Finish.Unclock();
 	camtexcount = 0;
 	FHardwareTexture::UnbindAll();
