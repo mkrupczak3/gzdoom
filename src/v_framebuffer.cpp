@@ -222,7 +222,14 @@ void DFrameBuffer::Update()
 	{
 		SetVirtualSize(clientWidth, clientHeight);
 		V_OutputResized(clientWidth, clientHeight);
+#if USE_GL_MULTI_BUFFER
+		for (int n = 0; n < NBR_GL_BUFF; n++)
+		{
+			mVertexDataBuf[n]->OutputResized(clientWidth, clientHeight);
+		}
+#else
 		mVertexData->OutputResized(clientWidth, clientHeight);
+#endif
 	}
 }
 

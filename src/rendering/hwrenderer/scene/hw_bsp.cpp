@@ -627,7 +627,27 @@ void HWDrawInfo::DoSubsector(subsector_t * sub)
 
 	if (sector->validcount != validcount)
 	{
+#if USE_GL_MULTI_BUFFER
+		if (sector->GetPlaneTexZ(sector_t::ceiling) != sector->vboheight[sector_t::ceiling])
+		{
+			for (int n = 0; n < NBR_GL_BUFF; n++)
+			{
+				screen->mVertexDataBuf[n]->UpdatePlaneVertices(sector, sector_t::ceiling);
+			}
+			//UpdatePlaneVertices(sector, sector_t::ceiling);
+			sector->vboheight[sector_t::ceiling] = sector->GetPlaneTexZ(sector_t::ceiling);
+		}
+		if (sector->GetPlaneTexZ(sector_t::floor) != sector->vboheight[sector_t::floor])
+		{
+			for (int n = 0; n < NBR_GL_BUFF; n++)
+			{
+				screen->mVertexDataBuf[n]->UpdatePlaneVertices(sector, sector_t::floor);
+			}
+			sector->vboheight[sector_t::floor] = sector->GetPlaneTexZ(sector_t::floor);
+		}
+#else
 		screen->mVertexData->CheckUpdate(sector);
+#endif
 	}
 
 	// [RH] Add particles

@@ -123,12 +123,13 @@ private:
 	int CreateIndexedVertices(int h, sector_t *sec, const secplane_t &plane, int floor, VertexContainers &cont);
 	void CreateIndexedFlatVertices(TArray<sector_t> &sectors);
 
-	void UpdatePlaneVertices(sector_t *sec, int plane);
+
 protected:
 	void CreateVertices(TArray<sector_t> &sectors);
 	void CheckPlanes(sector_t *sector);
 public:
 	void CheckUpdate(sector_t *sector);
+	void UpdatePlaneVertices(sector_t *sec, int plane);
 
 };
 
