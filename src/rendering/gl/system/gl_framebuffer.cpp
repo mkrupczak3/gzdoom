@@ -160,9 +160,21 @@ void OpenGLFrameBuffer::InitializeState()
 	}
 	NextVtxBuffer();
 
-	mSkyData = new FSkyVertexBuffer;
-	mViewpoints = new GLViewpointBuffer;
+	for (int n = 0; n < nbrHwBuffers; n++)
+	{
+		mSkyDataBuf[n] = new FSkyVertexBuffer;
+	}
+	NextSkyBuffer();
 
+	//mSkyData = new FSkyVertexBuffer;
+	//mViewpoints = new GLViewpointBuffer;
+
+
+	for (int n = 0; n < nbrHwBuffers; n++)
+	{
+		mViewpointsBuf[n] = new GLViewpointBuffer;
+	}
+	NextViewBuffer();
 
 	for (int n = 0; n < nbrHwBuffers; n++)
 	{
@@ -401,7 +413,8 @@ void OpenGLFrameBuffer::BeginFrame()
 {
 	screen->NextVtxBuffer();
 	screen->NextLightBuffer();
-
+	screen->NextSkyBuffer();
+	screen->NextViewBuffer();
 
 	screen->mVertexData->WaitSync();
 

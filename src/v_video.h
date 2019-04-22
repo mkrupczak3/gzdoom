@@ -353,6 +353,8 @@ private:
 
 	int VtxBuff = 0;
 	int LightBuff = 0;
+	int SkyBuff = 0;
+	int ViewBuff = 0;
 
 protected:
 	int clipleft = 0, cliptop = 0, clipwidth = -1, clipheight = -1;
@@ -375,6 +377,9 @@ public:
 	IShadowMap mShadowMap;
 	FFlatVertexBuffer *mVertexDataBuf[MAX_HW_BUFFERS];
 	FLightBuffer *mLightsBuf[MAX_HW_BUFFERS];
+	FSkyVertexBuffer *mSkyDataBuf[MAX_HW_BUFFERS];
+	GLViewpointBuffer *mViewpointsBuf[MAX_HW_BUFFERS];
+
 	IntRect mScreenViewport;
 	IntRect mSceneViewport;
 	IntRect mOutputLetterbox;
@@ -398,6 +403,20 @@ public:
 		mLights = mLightsBuf[LightBuff];
 		LightBuff++;
 		LightBuff %= nbrHwBuffers;
+	}
+
+	void NextSkyBuffer()
+	{
+		mSkyData = mSkyDataBuf[SkyBuff];
+		SkyBuff++;
+		SkyBuff %= nbrHwBuffers;
+	}
+
+	void NextViewBuffer()
+	{
+		mViewpoints = mViewpointsBuf[ViewBuff];
+		ViewBuff++;
+		ViewBuff %= nbrHwBuffers;
 	}
 
 	void SetSize(int width, int height);
