@@ -19,6 +19,7 @@ protected:
 	int mAllocationSize = 0;
 	bool mPersistent = false;
 	bool nomap = true;
+	GLsync mGLSync = 0;
 
 	GLBuffer(int usetype);
 	~GLBuffer();
@@ -29,6 +30,8 @@ protected:
 	void Resize(size_t newsize) override;
 	void *Lock(unsigned int size) override;
 	void Unlock() override;
+	void GPUDropSync();
+	void GPUWaitSync();
 public:
 	void Bind();
 };
@@ -48,7 +51,6 @@ class GLVertexBuffer : public IVertexBuffer, public GLBuffer
 	int mNumBindingPoints;
 	GLVertexBufferAttribute mAttributeInfo[VATTR_MAX] = {};	// Thanks to OpenGL's state system this needs to contain info about every attribute that may ever be in use throughout the entire renderer.
 	size_t mStride = 0;
-
 public:
 	GLVertexBuffer() : GLBuffer(GL_ARRAY_BUFFER) {}
 	void SetFormat(int numBindingPoints, int numAttributes, size_t stride, const FVertexBufferAttribute *attrs) override;

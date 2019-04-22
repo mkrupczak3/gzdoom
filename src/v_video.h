@@ -332,9 +332,7 @@ class FUniquePalette;
 class IHardwareTexture;
 class FTexture;
 
-#define USE_GL_MULTI_BUFFER true
-
-#define NBR_GL_BUFF 12
+#define MAX_HW_BUFFERS 16
 
 class DFrameBuffer
 {
@@ -352,10 +350,10 @@ protected:
 private:
 	int Width = 0;
 	int Height = 0;
-#if USE_GL_MULTI_BUFFER
+
 	int VtxBuff = 0;
 	int LightBuff = 0;
-#endif
+
 protected:
 	int clipleft = 0, cliptop = 0, clipwidth = -1, clipheight = -1;
 
@@ -367,6 +365,7 @@ public:
 	int stencilValue = 0;						// Global stencil test value
 	unsigned int uniformblockalignment = 256;	// Hardware dependent uniform buffer alignment.
 	unsigned int maxuniformblock = 65536;
+	int nbrHwBuffers = 1;
 	const char *gl_vendorstring;				// On OpenGL (not Vulkan) we have to account for some issues with Intel.
 	FPortalSceneState *mPortalState;			// global portal state.
 	FSkyVertexBuffer *mSkyData = nullptr;		// the sky vertex buffer
@@ -374,10 +373,8 @@ public:
 	GLViewpointBuffer *mViewpoints = nullptr;	// Viewpoint render data.
 	FLightBuffer *mLights = nullptr;			// Dynamic lights
 	IShadowMap mShadowMap;
-#if USE_GL_MULTI_BUFFER
-	FFlatVertexBuffer *mVertexDataBuf[NBR_GL_BUFF];
-	FLightBuffer *mLightsBuf[NBR_GL_BUFF];
-#endif
+	FFlatVertexBuffer *mVertexDataBuf[MAX_HW_BUFFERS];
+	FLightBuffer *mLightsBuf[MAX_HW_BUFFERS];
 	IntRect mScreenViewport;
 	IntRect mSceneViewport;
 	IntRect mOutputLetterbox;
@@ -389,21 +386,19 @@ public:
 	virtual ~DFrameBuffer();
 	virtual void InitializeState() = 0;	// For stuff that needs 'screen' set.
 
-#if USE_GL_MULTI_BUFFER
 	void NextVtxBuffer()
 	{
 		mVertexData = mVertexDataBuf[VtxBuff];
 		VtxBuff++;
-		VtxBuff %= NBR_GL_BUFF;
+		VtxBuff %= nbrHwBuffers;
 	}
 
 	void NextLightBuffer()
 	{
 		mLights = mLightsBuf[LightBuff];
 		LightBuff++;
-		LightBuff %= NBR_GL_BUFF;
+		LightBuff %= nbrHwBuffers;
 	}
-#endif
 
 	void SetSize(int width, int height);
 	void SetVirtualSize(int width, int height)
