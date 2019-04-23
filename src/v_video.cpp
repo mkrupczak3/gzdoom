@@ -598,6 +598,17 @@ bool IVideo::SetResolution ()
 {
 	DFrameBuffer *buff = CreateFrameBuffer();
 
+	const char *hwBuffers = Args->CheckValue("-hwbuffers");
+	if (hwBuffers)
+	{
+		buff->nbrHwBuffers = atoi(hwBuffers);
+	}
+	else
+	{
+		buff->nbrHwBuffers = 1;
+	}
+	Printf("HW buffers = %d\n", buff->nbrHwBuffers);
+
 	if (buff == NULL)	// this cannot really happen
 	{
 		return false;

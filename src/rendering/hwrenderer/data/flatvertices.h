@@ -65,6 +65,7 @@ class FFlatVertexBuffer
 	static const unsigned int BUFFER_SIZE = 2000000;
 	static const unsigned int BUFFER_SIZE_TO_USE = 1999500;
 
+
 public:
 	enum
 	{
@@ -117,6 +118,16 @@ public:
 		mVertexBuffer->Unmap();
 	}
 
+	void DropSync()
+	{
+		mVertexBuffer->GPUDropSync();
+	}
+
+	void WaitSync()
+	{
+		mVertexBuffer->GPUWaitSync();
+	}
+		
 private:
 	int CreateIndexedSectionVertices(subsector_t *sub, const secplane_t &plane, int floor, VertexContainer &cont);
 	int CreateIndexedSectorVertices(sector_t *sec, const secplane_t &plane, int floor, VertexContainer &cont);

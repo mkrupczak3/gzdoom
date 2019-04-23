@@ -628,6 +628,8 @@ void HWDrawInfo::DoSubsector(subsector_t * sub)
 	if (sector->validcount != validcount)
 	{
 #if USE_GL_MULTI_BUFFER
+
+
 		if (sector->GetPlaneTexZ(sector_t::ceiling) != sector->vboheight[sector_t::ceiling])
 		{
 			for (int n = 0; n < NBR_GL_BUFF; n++)
@@ -645,6 +647,8 @@ void HWDrawInfo::DoSubsector(subsector_t * sub)
 			}
 			sector->vboheight[sector_t::floor] = sector->GetPlaneTexZ(sector_t::floor);
 		}
+
+
 #else
 		screen->mVertexData->CheckUpdate(sector);
 #endif

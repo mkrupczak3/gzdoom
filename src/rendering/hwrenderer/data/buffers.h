@@ -54,6 +54,10 @@ public:
 	virtual void Resize(size_t newsize) = 0;
 	virtual void Map() {}		// Only needed by old OpenGL but this needs to be in the interface.
 	virtual void Unmap() {}
+
+	virtual void GPUDropSync() {}
+	virtual void GPUWaitSync() {}
+
 	void *Memory() { assert(map); return map; }
 	size_t Size() { return buffersize; }
 };
