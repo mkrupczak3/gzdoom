@@ -277,14 +277,14 @@ void OpenGLFrameBuffer::Swap()
 	Finish.Clock();
 
 	//if (swapbefore) glFinish();
-	
+
+	screen->mVertexData->DropSync();
+
 	FPSLimit();
 	SwapBuffers();
 
 	//if (!swapbefore) glFinish();
-
-	screen->mVertexData->DropSync();
-
+	
 	Finish.Unclock();
 	camtexcount = 0;
 	FHardwareTexture::UnbindAll();
