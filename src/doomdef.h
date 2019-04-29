@@ -365,6 +365,8 @@ enum
 
 #define BLINKTHRESHOLD (4*32)
 
+#define MAX_HW_BUFFERS 16
+
 #ifndef __BIG_ENDIAN__
 #define MAKE_ID(a,b,c,d)	((uint32_t)((a)|((b)<<8)|((c)<<16)|((d)<<24)))
 #else

@@ -332,7 +332,6 @@ class FUniquePalette;
 class IHardwareTexture;
 class FTexture;
 
-#define MAX_HW_BUFFERS 16
 
 class DFrameBuffer
 {
@@ -351,7 +350,6 @@ private:
 	int Width = 0;
 	int Height = 0;
 
-	int VtxBuff = 0;
 	int LightBuff = 0;
 	int SkyBuff = 0;
 	int ViewBuff = 0;
@@ -360,6 +358,7 @@ protected:
 	int clipleft = 0, cliptop = 0, clipwidth = -1, clipheight = -1;
 
 public:
+	int VtxBuff = 0;
 	// Hardware render state that needs to be exposed to the API independent part of the renderer. For ease of access this is stored in the base class.
 	int hwcaps = 0;								// Capability flags
 	float glslversion = 0;						// This is here so that the differences between old OpenGL and new OpenGL/Vulkan can be handled by platform independent code.
