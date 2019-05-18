@@ -331,7 +331,9 @@ void FHardwareTexture::LoadImage(unsigned char * buffer,int w, int h, unsigned i
 	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+#ifndef __MOBILE__
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.f);
+#endif
 	}
 	else
 	{
