@@ -45,6 +45,8 @@
 #include "p_destructible.h"
 
 
+extern int i_compatflags, i_compatflags2;
+
 struct FLevelData
 {
 	TArray<vertex_t> vertexes;
@@ -95,6 +97,9 @@ struct FLevelLocals : public FLevelData
 	void AddScroller(int secnum);
 	void SetInterMusic(const char *nextmap);
 	void SetMusicVolume(float v);
+
+	int li_compatflags = i_compatflags;
+	int li_compatflags2 = i_compatflags2;
 
 	uint8_t		md5[16];			// for savegame validation. If the MD5 does not match the savegame won't be loaded.
 	int			time;			// time in the hub
@@ -168,6 +173,7 @@ struct FLevelLocals : public FLevelData
 	bool		FromSnapshot;			// The current map was restored from a snapshot
 	bool		HasHeightSecs;			// true if some Transfer_Heights effects are present in the map. If this is false, some checks in the renderer can be shortcut.
 	bool		HasDynamicLights;		// Another render optimization for maps with no lights at all.
+	int			frozenstate;
 
 	double		teamdamage;
 
@@ -185,6 +191,8 @@ struct FLevelLocals : public FLevelData
 	bool		brightfog;
 	bool		lightadditivesurfaces;
 	bool		notexturefill;
+
+	FDynamicLight *lights;
 
 	bool		IsJumpingAllowed() const;
 	bool		IsCrouchingAllowed() const;
@@ -204,6 +212,11 @@ struct FLevelLocals : public FLevelData
 	{
 		return savegamerestore 
 			|| (info != nullptr && info->Snapshot.mBuffer != nullptr && info->isValid());
+	}
+
+	int isFrozen()
+	{
+		return frozenstate;
 	}
 };
 

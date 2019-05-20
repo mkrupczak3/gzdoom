@@ -98,7 +98,7 @@ CVAR(Int, sv_smartaim, 0, CVAR_ARCHIVE | CVAR_SERVERINFO)
 CVAR(Bool, cl_doautoaim, false, CVAR_ARCHIVE)
 
 static void CheckForPushSpecial(line_t *line, int side, AActor *mobj, DVector2 * posforwindowcheck = NULL);
-static void SpawnShootDecal(AActor *t1, const FTraceResults &trace);
+static void SpawnShootDecal(AActor *t1, AActor *defaults, const FTraceResults &trace);
 static void SpawnDeepSplash(AActor *t1, const FTraceResults &trace, AActor *puff);
 
 static FRandom pr_tracebleed("TraceBleed");
@@ -280,6 +280,7 @@ void P_GetFloorCeilingZ(FCheckPosition &tmf, int flags)
 
 	tmf.ceilingz = NextHighestCeilingAt(sec, tmf.pos.X, tmf.pos.Y, tmf.pos.Z, tmf.pos.Z + tmf.thing->Height, flags, &tmf.ceilingsector, &ffc);
 	tmf.floorz = tmf.dropoffz = NextLowestFloorAt(sec, tmf.pos.X, tmf.pos.Y, tmf.pos.Z, flags, tmf.thing->MaxStepHeight, &tmf.floorsector, &fff);
+	tmf.dropoffisportal = tmf.floorsector != sec;
 
 	if (fff)
 	{
@@ -557,6 +558,9 @@ void P_PlayerStartStomp(AActor *actor, bool mononly)
 
 		// only kill monsters and other players
 		if (th->player == NULL && !(th->flags3 & MF3_ISMONSTER))
+			continue;
+
+		if ((th->flags6 & MF6_NOTELEFRAG) && !(th->flags7 & MF7_ALWAYSTELEFRAG))
 			continue;
 
 		if (th->player != NULL && mononly)
@@ -975,7 +979,7 @@ bool PIT_CheckLine(FMultiBlockLinesIterator &mit, FMultiBlockLinesIterator::Chec
 		// better than Strife's handling of rails, which lets you jump into rails
 		// from either side. How long until somebody reports this as a bug and I'm
 		// forced to say, "It's not a bug. It's a feature?" Ugh.
-		(!(level.flags2 & LEVEL2_RAILINGHACK) ||
+		(!(i_compatflags2 & COMPATF2_RAILING) ||
 		open.bottom == tm.thing->Sector->floorplane.ZatPoint(ref)))
 	{
 		open.bottom += 32;
@@ -1021,7 +1025,12 @@ bool PIT_CheckLine(FMultiBlockLinesIterator &mit, FMultiBlockLinesIterator::Chec
 
 			if (open.lowfloor < tm.dropoffz)
 			{
-				tm.dropoffz = open.lowfloor;
+				// Do not alter the dropoff if the previous portal layer got it solely from its own data.
+				if (!(cres.portalflags & FFCF_NOCEILING) || tm.dropoffisportal)
+				{
+					tm.dropoffz = open.lowfloor;
+					tm.dropoffisportal = open.lowfloorthroughportal;
+				}
 			}
 		}
 	}
@@ -1683,6 +1692,7 @@ bool P_CheckPosition(AActor *thing, const DVector2 &pos, FCheckPosition &tm, boo
 		else
 		{
 			tm.floorz = tm.dropoffz = newsec->floorplane.ZatPoint(pos);
+			tm.dropoffisportal = false;
 			tm.floorpic = newsec->GetTexture(sector_t::floor);
 			tm.ceilingz = newsec->ceilingplane.ZatPoint(pos);
 			tm.ceilingpic = newsec->GetTexture(sector_t::ceiling);
@@ -1707,6 +1717,7 @@ bool P_CheckPosition(AActor *thing, const DVector2 &pos, FCheckPosition &tm, boo
 			if (ff_top > tm.floorz && fabs(delta1) < fabs(delta2))
 			{
 				tm.floorz = tm.dropoffz = ff_top;
+				tm.dropoffisportal = false;
 				tm.floorpic = *rover->top.texture;
 				tm.floorterrain = rover->model->GetTerrain(rover->top.isceiling);
 			}
@@ -2336,7 +2347,7 @@ bool P_TryMove(AActor *thing, const DVector2 &pos,
 				&& bglobal.IsDangerous(tm.sector))
 			{
 				thing->player->Bot->prev = thing->player->Bot->dest;
-				thing->player->Bot->dest = NULL;
+				thing->player->Bot->dest = nullptr;
 				thing->Vel.X = thing->Vel.Y = 0;
 				thing->SetZ(oldz);
 				thing->flags6 &= ~MF6_INTRYMOVE;
@@ -4264,15 +4275,7 @@ struct aim_t
 DAngle P_AimLineAttack(AActor *t1, DAngle angle, double distance, FTranslatedLineTarget *pLineTarget, DAngle vrange,
 	int flags, AActor *target, AActor *friender)
 {
-	double shootz = t1->Center() - t1->Floorclip;
-	if (t1->player != NULL)
-	{
-		shootz += t1->player->mo->AttackZOffset * t1->player->crouchfactor;
-	}
-	else
-	{
-		shootz += 8;
-	}
+	double shootz = t1->Center() - t1->Floorclip + t1->AttackOffset();
 
 	// can't shoot outside view angles
 	if (vrange == 0)
@@ -4409,21 +4412,13 @@ AActor *P_LineAttack(AActor *t1, DAngle angle, double distance,
 	double pc = pitch.Cos();
 
 	direction = { pc * angle.Cos(), pc * angle.Sin(), -pitch.Sin() };
-	shootz = t1->Center() - t1->Floorclip;
+	shootz = t1->Center() - t1->Floorclip + t1->AttackOffset();
 
 	if (t1->player != NULL)
 	{
-		shootz += t1->player->mo->AttackZOffset * t1->player->crouchfactor;
-		if (damageType == NAME_Melee || damageType == NAME_Hitscan)
-		{
-			// this is coming from a weapon attack function which needs to transfer information to the obituary code,
-			// We need to preserve this info from the damage type because the actual damage type can get overridden by the puff
-			pflag = DMG_PLAYERATTACK;
-		}
-	}
-	else
-	{
-		shootz += 8;
+		// this is coming from a weapon attack function which needs to transfer information to the obituary code,
+		// We need to preserve this info from the damage type because the actual damage type can get overridden by the puff
+		pflag = DMG_PLAYERATTACK;
 	}
 
 	// [MC] If overriding, set it to the base of the actor.
@@ -4575,20 +4570,20 @@ AActor *P_LineAttack(AActor *t1, DAngle angle, double distance,
 				{
 					// [ZK] If puff has FORCEDECAL set, do not use the weapon's decal
 					if (puffDefaults->flags7 & MF7_FORCEDECAL && puff != NULL && puff->DecalGenerator)
-						SpawnShootDecal(puff, trace);
+						SpawnShootDecal(puff,  puff, trace);
 					else
-						SpawnShootDecal(t1, trace);
+						SpawnShootDecal(t1, t1, trace);
 				}
 
 				// Else, look if the bulletpuff has a decal defined.
 				else if (puff != NULL && puff->DecalGenerator)
 				{
-					SpawnShootDecal(puff, trace);
+					SpawnShootDecal(puff, puff, trace);
 				}
 
 				else
 				{
-					SpawnShootDecal(t1, trace);
+					SpawnShootDecal(t1, t1, trace);
 				}
 			}
 			else if (puff != NULL &&
@@ -4866,16 +4861,7 @@ AActor *P_LinePickActor(AActor *t1, DAngle angle, double distance, DAngle pitch,
 
 	double pc = pitch.Cos();
 	direction = { pc * angle.Cos(), pc * angle.Sin(), -pitch.Sin() };
-	shootz = t1->Center() - t1->Floorclip;
-
-	if (t1->player != NULL)
-	{
-		shootz += t1->player->mo->AttackZOffset * t1->player->crouchfactor;
-	}
-	else
-	{
-		shootz += 8;
-	}
+	shootz = t1->Center() - t1->Floorclip + t1->AttackOffset();
 
 	FTraceResults trace;
 	Origin TData;
@@ -5165,14 +5151,7 @@ void P_RailAttack(FRailParams *p)
 
 	if (!(p->flags & RAF_CENTERZ))
 	{
-		if (source->player != NULL)
-		{
-			shootz += source->player->mo->AttackZOffset * source->player->crouchfactor;
-		}
-		else
-		{
-			shootz += 8;
-		}
+		shootz += source->AttackOffset();
 	}
 
 	int puffflags = 0;
@@ -5291,9 +5270,9 @@ void P_RailAttack(FRailParams *p)
 				puff->Destroy();
 		}
 		if (puffDefaults != nullptr && puffDefaults->flags7 & MF7_FORCEDECAL && puffDefaults->DecalGenerator)
-			SpawnShootDecal(puffDefaults, trace);
+			SpawnShootDecal(source, puffDefaults, trace);
 		else
-			SpawnShootDecal(source, trace);
+			SpawnShootDecal(source, source, trace);
 
 	}
 	if (trace.HitType == TRACE_HitFloor || trace.HitType == TRACE_HitCeiling)
@@ -5587,7 +5566,7 @@ void P_UseLines(player_t *player)
 	// If the player is transitioning a portal, use the group that is at its vertical center.
 	DVector2 start = player->mo->GetPortalTransition(player->mo->Height / 2);
 	// [NS] Now queries the Player's UseRange.
-	DVector2 end = start + player->mo->Angles.Yaw.ToVector(player->mo->UseRange);
+	DVector2 end = start + player->mo->Angles.Yaw.ToVector(player->mo->FloatVar(NAME_UseRange));
 
 	// old code:
 	// This added test makes the "oof" sound work on 2s lines -- killough:
@@ -5621,7 +5600,7 @@ int P_UsePuzzleItem(AActor *PuzzleItemUser, int PuzzleItemType)
 
 	// [NS] If it's a Player, get their UseRange.
 	if (PuzzleItemUser->player)
-		usedist = PuzzleItemUser->player->mo->UseRange;
+		usedist = PuzzleItemUser->player->mo->FloatVar(NAME_UseRange);
 	else
 		usedist = USERANGE;
 
@@ -5912,7 +5891,8 @@ int P_RadiusAttack(AActor *bombspot, AActor *bombsource, int bombdamage, int bom
 		// them far too "active." BossBrains also use the old code
 		// because some user levels require they have a height of 16,
 		// which can make them near impossible to hit with the new code.
-		if (((flags & RADF_NODAMAGE) || !((bombspot->flags5 | thing->flags5) & MF5_OLDRADIUSDMG)) && !(flags & RADF_OLDRADIUSDAMAGE))
+		if ((flags & RADF_NODAMAGE) || (!((bombspot->flags5 | thing->flags5) & MF5_OLDRADIUSDMG) && 
+			!(flags & RADF_OLDRADIUSDAMAGE) && !(i_compatflags2 & COMPATF2_EXPLODE2)))
 		{
 			double points = GetRadiusDamage(false, bombspot, thing, bombdamage, bombdistance, fulldamagedistance, bombsource == thing);
 			double check = int(points) * bombdamage;
@@ -5962,7 +5942,10 @@ int P_RadiusAttack(AActor *bombspot, AActor *bombsource, int bombdamage, int bom
 								}
 								thing->Thrust(bombspot->AngleTo(thing), thrust);
 								if (!(flags & RADF_NODAMAGE) || (flags & RADF_THRUSTZ))
-									thing->Vel.Z += vz;	// this really doesn't work well
+								{
+									if (!(i_compatflags2 & COMPATF2_EXPLODE1) || (flags & RADF_THRUSTZ))
+										thing->Vel.Z += vz;	// this really doesn't work well
+								}
 							}
 						}
 					}
@@ -6769,19 +6752,19 @@ bool P_ChangeSector(sector_t *sector, int crunch, double amt, int floorOrCeil, b
 //
 //==========================================================================
 
-void SpawnShootDecal(AActor *t1, const FTraceResults &trace)
+void SpawnShootDecal(AActor *t1, AActor *defaults, const FTraceResults &trace)
 {
-	FDecalBase *decalbase = NULL;
+	FDecalBase *decalbase = nullptr;
 
-	if (t1->player != NULL && t1->player->ReadyWeapon != NULL)
+	if (defaults->player != nullptr && defaults->player->ReadyWeapon != nullptr)
 	{
-		decalbase = t1->player->ReadyWeapon->DecalGenerator;
+		decalbase = defaults->player->ReadyWeapon->DecalGenerator;
 	}
 	else
 	{
-		decalbase = t1->DecalGenerator;
+		decalbase = defaults->DecalGenerator;
 	}
-	if (decalbase != NULL)
+	if (decalbase != nullptr)
 	{
 		DImpactDecal::StaticCreate(decalbase->GetDecal(),
 			trace.HitPos, trace.Line->sidedef[trace.Side], trace.ffloor);

@@ -53,6 +53,7 @@ struct FBlockNode;
 struct FPortalGroupArray;
 struct visstyle_t;
 class FLightDefaults;
+struct FDynamicLight;
 //
 // NOTES: AActor
 //
@@ -741,11 +742,6 @@ public:
 	bool CallOkayToSwitchTarget(AActor *other);
 	bool OkayToSwitchTarget (AActor *other);
 
-	// Note: Although some of the inventory functions are virtual, this
-	// is not exposed to scripts, as the only class overriding them is 
-	// APlayerPawn for some specific handling for players. None of this
-	// should ever be overridden by custom classes.
-
 	// Uses an item and removes it from the inventory.
 	bool UseInventory (AActor *item);
 
@@ -820,7 +816,9 @@ public:
 	void Crash();
 
 	// Return starting health adjusted by skill level
+	double AttackOffset(double offset = 0);
 	int SpawnHealth() const;
+	virtual int GetMaxHealth(bool withupgrades = false) const;
 	int GetGibHealth() const;
 	double GetCameraHeight() const;
 
@@ -1104,7 +1102,7 @@ public:
 	int32_t			threshold;		// if > 0, the target will be chased
 	int32_t			DefThreshold;	// [MC] Default threshold which the actor will reset its threshold to after switching targets
 									// no matter what (even if shot)
-	player_t		*player;		// only valid if type of APlayerPawn
+	player_t		*player;		// only valid if type of PlayerPawn
 	TObjPtr<AActor*>	LastLookActor;	// Actor last looked for (if TIDtoHate != 0)
 	DVector3		SpawnPoint; 	// For nightmare respawn
 	uint16_t			SpawnAngle;
@@ -1233,7 +1231,7 @@ public:
 	DVector3 Prev;
 	DRotator PrevAngles;
 	int PrevPortalGroup;
-	TArray<TObjPtr<AActor*> > AttachedLights;
+	TArray<FDynamicLight *> AttachedLights;
 
 	// When was this actor spawned?
 	int SpawnTime;
@@ -1331,6 +1329,11 @@ public:
 	bool isAtZ(double checkz) const
 	{
 		return fabs(Z() - checkz) < EQUAL_EPSILON;
+	}
+
+	double RenderRadius() const
+	{
+		return MAX(radius, renderradius);
 	}
 
 	DVector3 PosRelative(int grp) const;
@@ -1486,14 +1489,13 @@ public:
 	}
 
 	int ApplyDamageFactor(FName damagetype, int damage) const;
-	int GetModifiedDamage(FName damagetype, int damage, bool passive);
-
+	int GetModifiedDamage(FName damagetype, int damage, bool passive, AActor *inflictor, AActor *source, int flags = 0);
+	void DeleteAttachedLights();
 	static void DeleteAllAttachedLights();
 	static void RecreateAllAttachedLights();
+	bool isFrozen();
 
 	bool				hasmodel;
-
-	size_t PropagateMark();
 };
 
 class FActorIterator

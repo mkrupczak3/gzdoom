@@ -46,6 +46,7 @@
 #include "d_player.h"
 #include "p_setup.h"
 #include "i_music.h"
+#include "fontinternals.h"
 
 DVector2 AM_GetPosition();
 int Net_GetLatency(int *ld, int *ad);
@@ -171,6 +172,19 @@ DEFINE_ACTION_FUNCTION_NATIVE(FStringStruct, CharCodeAt, StringCharCodeAt)
 	ACTION_RETURN_INT(StringCharCodeAt(self, pos));
 }
 
+static int StringByteAt(FString *self, int pos)
+{
+	if ((unsigned)pos >= self->Len()) return 0;
+	else return (uint8_t)((*self)[pos]);
+}
+
+DEFINE_ACTION_FUNCTION_NATIVE(FStringStruct, ByteAt, StringByteAt)
+{
+	PARAM_SELF_STRUCT_PROLOGUE(FString);
+	PARAM_INT(pos);
+	ACTION_RETURN_INT(StringByteAt(self, pos));
+}
+
 static void StringFilter(FString *self, FString *result)
 {
 	*result = strbin1(*self);
@@ -245,6 +259,53 @@ DEFINE_ACTION_FUNCTION_NATIVE(FStringStruct, ToLower, StringToLower)
 	return 0;
 }
 
+static void StringMakeUpper(FString *self, FString *out)
+{
+	*out = self->MakeUpper();
+}
+
+DEFINE_ACTION_FUNCTION_NATIVE(FStringStruct, MakeUpper, StringMakeUpper)
+{
+	PARAM_SELF_STRUCT_PROLOGUE(FString);
+	ACTION_RETURN_STRING(self->MakeUpper());
+}
+
+static void StringMakeLower(FString *self, FString *out)
+{
+	*out = self->MakeLower();
+}
+
+DEFINE_ACTION_FUNCTION_NATIVE(FStringStruct, MakeLower, StringMakeLower)
+{
+	PARAM_SELF_STRUCT_PROLOGUE(FString);
+	ACTION_RETURN_STRING(self->MakeLower());
+}
+
+static int StringCharUpper(int ch)
+{
+	return ch >= 0 && ch < 65536 ? upperforlower[ch] : ch;
+}
+
+DEFINE_ACTION_FUNCTION_NATIVE(FStringStruct, CharUpper, StringCharUpper)
+{
+	PARAM_PROLOGUE;
+	PARAM_INT(ch);
+	ACTION_RETURN_INT(StringCharUpper(ch));
+}
+
+static int StringCharLower(int ch)
+{
+	return ch >= 0 && ch < 65536 ? lowerforupper[ch] : ch;
+}
+
+DEFINE_ACTION_FUNCTION_NATIVE(FStringStruct, CharLower, StringCharLower)
+{
+	PARAM_PROLOGUE;
+	PARAM_INT(ch);
+	ACTION_RETURN_INT(StringCharLower(ch));
+}
+
+
 static int StringToInt(FString *self, int base)
 {
 	return (int)self->ToLong(base);
@@ -254,7 +315,7 @@ DEFINE_ACTION_FUNCTION_NATIVE(FStringStruct, ToInt, StringToInt)
 {
 	PARAM_SELF_STRUCT_PROLOGUE(FString);
 	PARAM_INT(base);
-	ACTION_RETURN_INT(self->ToLong(base));
+	ACTION_RETURN_INT((int)self->ToLong(base));
 }
 
 static double StringToDbl(FString *self)
@@ -282,6 +343,34 @@ DEFINE_ACTION_FUNCTION_NATIVE(FStringStruct, Split, StringSplit)
 	StringSplit(self, tokens, delimiter, keepEmpty);
 	return 0;
 }
+
+static int StringCodePointCount(FString *self)
+{
+	return (int)self->CharacterCount();
+}
+
+DEFINE_ACTION_FUNCTION_NATIVE(FStringStruct, CodePointCount, StringCodePointCount)
+{
+	PARAM_SELF_STRUCT_PROLOGUE(FString);
+	ACTION_RETURN_INT(StringCodePointCount(self));
+}
+
+static int StringNextCodePoint(FString *self, int inposition, int *position)
+{
+	int codepoint = self->GetNextCharacter(inposition);
+	if (position) *position = inposition;
+	return codepoint;
+}
+
+DEFINE_ACTION_FUNCTION_NATIVE(FStringStruct, GetNextCodePoint, StringNextCodePoint)
+{
+	PARAM_SELF_STRUCT_PROLOGUE(FString);
+	PARAM_INT(pos);
+	if (numret > 0) ret[0].SetInt(self->GetNextCharacter(pos));
+	if (numret > 1) ret[1].SetInt(pos);
+	return numret;
+}
+
 
 //=====================================================================================
 //
@@ -1788,6 +1877,18 @@ DEFINE_ACTION_FUNCTION_NATIVE(FFont, StringWidth, StringWidth)
 	ACTION_RETURN_INT(StringWidth(self, str));
 }
 
+static int CanPrint(FFont *font, const FString &str) // hack hack
+{
+	return 1;
+}
+
+DEFINE_ACTION_FUNCTION_NATIVE(FFont, CanPrint, CanPrint)
+{
+	PARAM_SELF_STRUCT_PROLOGUE(FFont);
+	PARAM_STRING(str);
+	ACTION_RETURN_INT(CanPrint(self, str));
+}
+
 static int FindFontColor(int name)
 {
 	return V_FindFontColor(ENamedName(name));
@@ -1864,7 +1965,7 @@ DEFINE_ACTION_FUNCTION_NATIVE(FWeaponSlots, SlotSize, SlotSize)
 DEFINE_ACTION_FUNCTION_NATIVE(FWeaponSlots, SetupWeaponSlots, FWeaponSlots::SetupWeaponSlots)
 {
 	PARAM_PROLOGUE;
-	PARAM_OBJECT(pawn, APlayerPawn);
+	PARAM_OBJECT(pawn, AActor);
 	FWeaponSlots::SetupWeaponSlots(pawn);
 	return 0;
 }
@@ -2402,9 +2503,9 @@ DEFINE_ACTION_FUNCTION_NATIVE(DBaseStatusBar, GetInventoryIcon, GetInventoryIcon
 //
 //=====================================================================================
 
-DHUDFont *CreateHudFont(FFont *fnt, int spac, bool mono, int sx, int sy)
+DHUDFont *CreateHudFont(FFont *fnt, int spac, int mono, int sx, int sy)
 {
-	return (Create<DHUDFont>(fnt, spac, mono, sy, sy));
+	return (Create<DHUDFont>(fnt, spac, EMonospacing(mono), sy, sy));
 }
 
 DEFINE_ACTION_FUNCTION_NATIVE(DHUDFont, Create, CreateHudFont)
@@ -2412,10 +2513,10 @@ DEFINE_ACTION_FUNCTION_NATIVE(DHUDFont, Create, CreateHudFont)
 	PARAM_PROLOGUE;
 	PARAM_POINTER(fnt, FFont);
 	PARAM_INT(spac);
-	PARAM_BOOL(mono);
+	PARAM_INT(mono);
 	PARAM_INT(sx);
 	PARAM_INT(sy);
-	ACTION_RETURN_POINTER(Create<DHUDFont>(fnt, spac, mono, sy, sy));
+	ACTION_RETURN_POINTER(Create<DHUDFont>(fnt, spac, EMonospacing(mono), sy, sy));
 }
 
 
@@ -2586,7 +2687,29 @@ DEFINE_ACTION_FUNCTION_NATIVE(FLevelLocals, Vec3Offset, Vec3Offset)
 	ACTION_RETURN_VEC3(result);
 }
 
+static int isFrozen(FLevelLocals *self)
+{
+	return self->isFrozen();
+}
 
+DEFINE_ACTION_FUNCTION_NATIVE(FLevelLocals, isFrozen, isFrozen)
+{
+	PARAM_SELF_STRUCT_PROLOGUE(FLevelLocals);
+	return isFrozen(self);
+}
+
+void setFrozen(FLevelLocals *self, int on)
+{
+	self->frozenstate = (self->frozenstate & ~1) | !!on;
+}
+
+DEFINE_ACTION_FUNCTION_NATIVE(FLevelLocals, setFrozen, setFrozen)
+{
+	PARAM_SELF_STRUCT_PROLOGUE(FLevelLocals);
+	PARAM_BOOL(on);
+	setFrozen(self, on);
+	return 0;
+}
 
 //=====================================================================================
 //
@@ -2667,6 +2790,10 @@ DEFINE_FIELD(FLevelLocals, outsidefogdensity)
 DEFINE_FIELD(FLevelLocals, skyfog)
 DEFINE_FIELD(FLevelLocals, pixelstretch)
 DEFINE_FIELD(FLevelLocals, deathsequence)
+DEFINE_FIELD_NAMED(FLevelLocals, li_compatflags, compatflags)
+DEFINE_FIELD_NAMED(FLevelLocals, li_compatflags2, compatflags2)
+DEFINE_FIELD_BIT(FLevelLocals, frozenstate, frozen, 1)	// still needed for backwards compatibility.
+
 DEFINE_FIELD_BIT(FLevelLocals, flags, noinventorybar, LEVEL_NOINVENTORYBAR)
 DEFINE_FIELD_BIT(FLevelLocals, flags, monsterstelefrag, LEVEL_MONSTERSTELEFRAG)
 DEFINE_FIELD_BIT(FLevelLocals, flags, actownspecial, LEVEL_ACTOWNSPECIAL)
@@ -2678,7 +2805,6 @@ DEFINE_FIELD_BIT(FLevelLocals, flags2, checkswitchrange, LEVEL2_CHECKSWITCHRANGE
 DEFINE_FIELD_BIT(FLevelLocals, flags2, polygrind, LEVEL2_POLYGRIND)
 DEFINE_FIELD_BIT(FLevelLocals, flags2, allowrespawn, LEVEL2_ALLOWRESPAWN)
 DEFINE_FIELD_BIT(FLevelLocals, flags2, nomonsters, LEVEL2_NOMONSTERS)
-DEFINE_FIELD_BIT(FLevelLocals, flags2, frozen, LEVEL2_FROZEN)
 DEFINE_FIELD_BIT(FLevelLocals, flags2, infinite_flight, LEVEL2_INFINITE_FLIGHT)
 DEFINE_FIELD_BIT(FLevelLocals, flags2, no_dlg_freeze, LEVEL2_CONV_SINGLE_UNFREEZE)
 DEFINE_FIELD_BIT(FLevelLocals, flags2, keepfullinventory, LEVEL2_KEEPFULLINVENTORY)

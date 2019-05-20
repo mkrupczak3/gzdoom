@@ -61,9 +61,11 @@
 #include "a_keys.h"
 #include "intermission/intermission.h"
 #include "g_levellocals.h"
+#include "actorinlines.h"
 #include "events.h"
 #include "i_time.h"
 #include "vm.h"
+#include "gstrings.h"
 
 EXTERN_CVAR (Int, disableautosave)
 EXTERN_CVAR (Int, autosavecount)
@@ -127,7 +129,7 @@ void G_BuildTiccmd (ticcmd_t *cmd);
 void D_DoAdvanceDemo (void);
 
 static void SendSetup (uint32_t playersdetected[MAXNETNODES], uint8_t gotsetup[MAXNETNODES], int len);
-static void RunScript(uint8_t **stream, APlayerPawn *pawn, int snum, int argn, int always);
+static void RunScript(uint8_t **stream, AActor *pawn, int snum, int argn, int always);
 
 int		reboundpacket;
 uint8_t	reboundstore[MAX_MSGLEN];
@@ -1799,7 +1801,46 @@ void D_QuitNetGame (void)
 		fclose (debugfile);
 }
 
+// Forces playsim processing time to be consistent across frames.
+// This improves interpolation for frames in between tics.
+//
+// With this cvar off the mods with a high playsim processing time will appear
+// less smooth as the measured time used for interpolation will vary.
 
+CVAR(Bool, r_ticstability, true, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
+
+static uint64_t stabilityticduration = 0;
+static uint64_t stabilitystarttime = 0;
+
+static void TicStabilityWait()
+{
+	using namespace std::chrono;
+	using namespace std::this_thread;
+
+	if (!r_ticstability)
+		return;
+
+	uint64_t start = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count();
+	while (true)
+	{
+		uint64_t cur = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count();
+		if (cur - start > stabilityticduration)
+			break;
+	}
+}
+
+static void TicStabilityBegin()
+{
+	using namespace std::chrono;
+	stabilitystarttime = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count();
+}
+
+static void TicStabilityEnd()
+{
+	using namespace std::chrono;
+	uint64_t stabilityendtime = duration_cast<microseconds>(steady_clock::now().time_since_epoch()).count();
+	stabilityticduration = std::min(stabilityendtime - stabilitystarttime, (uint64_t)1'000'000);
+}
 
 //
 // TryRunTics
@@ -1869,6 +1910,8 @@ void TryRunTics (void)
 	// Uncapped framerate needs seprate checks
 	if (counts == 0 && !doWait)
 	{
+		TicStabilityWait();
+
 		// Check possible stall conditions
 		Net_CheckLastReceived(counts);
 		if (realtics >= 1)
@@ -1936,6 +1979,7 @@ void TryRunTics (void)
 		P_UnPredictPlayer();
 		while (counts--)
 		{
+			TicStabilityBegin();
 			if (gametic > lowtic)
 			{
 				I_Error ("gametic>lowtic");
@@ -1951,9 +1995,14 @@ void TryRunTics (void)
 			gametic++;
 
 			NetUpdate ();	// check for new console commands
+			TicStabilityEnd();
 		}
 		P_PredictPlayer(&players[consoleplayer]);
 		S_UpdateSounds (players[consoleplayer].camera);	// move positional sounds
+	}
+	else
+	{
+		TicStabilityWait();
 	}
 }
 
@@ -2190,6 +2239,13 @@ void Net_DoCommand (int type, uint8_t **stream, int player)
 	case DEM_GIVECHEAT:
 		s = ReadString (stream);
 		cht_Give (&players[player], s, ReadLong (stream));
+		if (player != consoleplayer)
+		{
+			FString message = GStrings("TXT_X_CHEATS");
+			message.Substitute("%s", players[player].userinfo.GetName());
+			Printf("%s: give %s\n", message.GetChars(), s);
+		}
+
 		break;
 
 	case DEM_TAKECHEAT:
@@ -2688,7 +2744,7 @@ void Net_DoCommand (int type, uint8_t **stream, int player)
 }
 
 // Used by DEM_RUNSCRIPT, DEM_RUNSCRIPT2, and DEM_RUNNAMEDSCRIPT
-static void RunScript(uint8_t **stream, APlayerPawn *pawn, int snum, int argn, int always)
+static void RunScript(uint8_t **stream, AActor *pawn, int snum, int argn, int always)
 {
 	int arg[4] = { 0, 0, 0, 0 };
 	int i;

@@ -82,6 +82,7 @@ CVAR (Bool,  am_customcolors,		true,		CVAR_ARCHIVE);
 CVAR (Int,   am_map_secrets,		1,			CVAR_ARCHIVE);
 CVAR (Int,	 am_drawmapback,		1,			CVAR_ARCHIVE);
 CVAR (Bool,  am_showkeys,			true,		CVAR_ARCHIVE);
+CVAR (Bool,  am_showkeys_always,			false,		CVAR_ARCHIVE);
 CVAR (Int,   am_showtriggerlines,	0,			CVAR_ARCHIVE);
 CVAR (Int,   am_showthingsprites,		0,		CVAR_ARCHIVE);
 
@@ -855,6 +856,9 @@ void AM_minOutWindowScale ();
 CVAR(Bool, am_followplayer, true, CVAR_ARCHIVE)
 CVAR(Bool, am_portaloverlay, true, CVAR_ARCHIVE)
 
+static const char *const DEFAULT_FONT_NAME = "AMMNUMx";
+CVAR(String, am_markfont, DEFAULT_FONT_NAME, CVAR_ARCHIVE)
+CVAR(Int, am_markcolor, CR_GREY, CVAR_ARCHIVE)
 
 CCMD(am_togglefollow)
 {
@@ -1047,7 +1051,9 @@ void AM_restoreScaleAndLoc ()
 
 bool AM_addMark ()
 {
-	if (marknums[0].isValid())
+	// Add a mark when default font is selected and its textures (AMMNUM?)
+	// are loaded. Mark is always added when custom font is selected
+	if (stricmp(*am_markfont, DEFAULT_FONT_NAME) != 0 || marknums[0].isValid())
 	{
 		markpoints[markpointnum].x = m_x + m_w/2;
 		markpoints[markpointnum].y = m_y + m_h/2;
@@ -3043,7 +3049,7 @@ void AM_drawThings ()
 						// That is the case for all default keys, however.
 						if (t->IsKindOf(NAME_Key))
 						{
-							if (G_SkillProperty(SKILLP_EasyKey))
+							if (G_SkillProperty(SKILLP_EasyKey) || am_showkeys_always)
 							{
 								// Already drawn by AM_drawKeys(), so don't draw again
 								color.Index = -1;
@@ -3132,12 +3138,37 @@ static void DrawMarker (FTexture *tex, double x, double y, int yadjust,
 
 void AM_drawMarks ()
 {
+	FFont* font;
+	bool fontloaded = false;
+
 	for (int i = 0; i < AM_NUMMARKPOINTS; i++)
 	{
 		if (markpoints[i].x != -1)
 		{
-			DrawMarker (TexMan(marknums[i]), markpoints[i].x, markpoints[i].y, -3, 0,
-				1, 1, 0, 1, 0, LegacyRenderStyles[STYLE_Normal]);
+			if (!fontloaded)
+			{
+				font = stricmp(*am_markfont, DEFAULT_FONT_NAME) == 0 ? nullptr : V_GetFont(am_markfont);
+				fontloaded = true;
+			}
+
+			if (font == nullptr)
+			{
+				DrawMarker (TexMan(marknums[i]), markpoints[i].x, markpoints[i].y, -3, 0,
+					1, 1, 0, 1, 0, LegacyRenderStyles[STYLE_Normal]);
+			}
+			else
+			{
+				char numstr[2] = { char('0' + i), 0 };
+				double x = markpoints[i].x;
+				double y = markpoints[i].y;
+
+				if (am_rotate == 1 || (am_rotate == 2 && viewactive))
+				{
+					AM_rotatePoint (&x, &y);
+				}
+
+				screen->DrawText(font, am_markcolor, CXMTOF(x), CYMTOF(y), numstr, TAG_DONE);
+			}
 		}
 	}
 }
@@ -3270,7 +3301,7 @@ void AM_Drawer (int bottom)
 
 	AM_drawWalls(allmap);
 	AM_drawPlayers();
-	if (G_SkillProperty(SKILLP_EasyKey))
+	if (G_SkillProperty(SKILLP_EasyKey) || am_showkeys_always)
 		AM_drawKeys();
 	if ((am_cheat >= 2 && am_cheat != 4) || allthings)
 		AM_drawThings();

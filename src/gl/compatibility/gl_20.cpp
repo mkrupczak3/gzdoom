@@ -453,7 +453,7 @@ void FRenderState::DrawColormapOverlay()
 //
 //==========================================================================
 
-bool gl_SetupLight(int group, Plane & p, ADynamicLight * light, FVector3 & nearPt, FVector3 & up, FVector3 & right,
+bool gl_SetupLight(int group, Plane & p, FDynamicLight * light, FVector3 & nearPt, FVector3 & up, FVector3 & right,
 	float & scale, bool checkside, bool additive)
 {
 	FVector3 fn, pos;
@@ -463,7 +463,7 @@ bool gl_SetupLight(int group, Plane & p, ADynamicLight * light, FVector3 & nearP
 	float dist = fabsf(p.DistToPoint(lpos.X, lpos.Z, lpos.Y));
 	float radius = light->GetRadius();
 
-	if (V_IsHardwareRenderer() && (light->lightflags & LF_ATTENUATE))
+	if (V_IsHardwareRenderer() && (light->IsAttenuated()))
 	{
 		radius *= 0.66f;
 	}
@@ -693,9 +693,9 @@ void FDrawInfo::DrawSubsectorLights(GLFlat *flat, subsector_t * sub, int pass)
 	FLightNode * node = sub->lighthead;
 	while (node)
 	{
-		ADynamicLight * light = node->lightsource;
+		FDynamicLight * light = node->lightsource;
 
-		if (light->flags2&MF2_DORMANT ||
+		if (!(light->IsActive()) ||
 			(pass == GLPASS_LIGHTTEX && light->IsAdditive()) ||
 			(pass == GLPASS_LIGHTTEX_ADDITIVE && !light->IsAdditive()))
 		{
@@ -705,7 +705,7 @@ void FDrawInfo::DrawSubsectorLights(GLFlat *flat, subsector_t * sub, int pass)
 
 		// we must do the side check here because gl_SetupLight needs the correct plane orientation
 		// which we don't have for Legacy-style 3D-floors
-		double planeh = flat->plane.plane.ZatPoint(light);
+		double planeh = flat->plane.plane.ZatPoint(light->Pos);
 		if (((planeh<light->Z() && flat->ceiling) || (planeh>light->Z() && !flat->ceiling)))
 		{
 			node = node->nextLight;
@@ -814,7 +814,7 @@ void FDrawInfo::DrawLightsCompat(GLFlat *flat, int pass)
 // Sets up the texture coordinates for one light to be rendered
 //
 //==========================================================================
-static bool PrepareLight(GLWall *wall, ADynamicLight * light, int pass)
+static bool PrepareLight(GLWall *wall, FDynamicLight * light, int pass)
 {
 	auto &glseg = wall->glseg;
 	auto tcs = wall->tcs;
@@ -893,9 +893,9 @@ void FDrawInfo::RenderLightsCompat(GLWall *wall, int pass)
 	memcpy(save, wall->tcs, sizeof(wall->tcs));
 	while (node)
 	{
-		ADynamicLight * light = node->lightsource;
+		FDynamicLight * light = node->lightsource;
 
-		if (light->flags2&MF2_DORMANT ||
+		if (!(light->IsActive()) ||
 			(pass == GLPASS_LIGHTTEX && light->IsAdditive()) ||
 			(pass == GLPASS_LIGHTTEX_ADDITIVE && !light->IsAdditive()))
 		{

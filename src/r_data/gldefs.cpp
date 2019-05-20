@@ -137,6 +137,7 @@ static const char *LightTags[]=
    "attenuate",
    "dontlightactors",
    "spot",
+   "noshadowmap",
    nullptr
 };
 
@@ -159,7 +160,8 @@ enum {
    LIGHTTAG_DONTLIGHTSELF,
    LIGHTTAG_ATTENUATE,
    LIGHTTAG_DONTLIGHTACTORS,
-   LIGHTTAG_SPOT
+   LIGHTTAG_SPOT,
+   LIGHTTAG_NOSHADOWMAP,
 };
 
 //==========================================================================
@@ -443,8 +445,11 @@ class GLDefsParser
 				case LIGHTTAG_ADDITIVE:
 					defaults->SetAdditive(ParseInt(sc) != 0);
 					break;
-				case LIGHTTAG_HALO:
-					defaults->SetHalo(ParseInt(sc) != 0);
+				case LIGHTTAG_HALO:	// old development garbage
+					ParseInt(sc);
+					break;
+				case LIGHTTAG_NOSHADOWMAP:
+					defaults->SetNoShadowmap(ParseInt(sc) != 0);
 					break;
 				case LIGHTTAG_DONTLIGHTSELF:
 					defaults->SetDontLightSelf(ParseInt(sc) != 0);
@@ -536,8 +541,11 @@ class GLDefsParser
 				case LIGHTTAG_SUBTRACTIVE:
 					defaults->SetSubtractive(ParseInt(sc) != 0);
 					break;
-				case LIGHTTAG_HALO:
-					defaults->SetHalo(ParseInt(sc) != 0);
+				case LIGHTTAG_HALO:	// old development garbage
+					ParseInt(sc);
+					break;
+				case LIGHTTAG_NOSHADOWMAP:
+					defaults->SetNoShadowmap(ParseInt(sc) != 0);
 					break;
 				case LIGHTTAG_DONTLIGHTSELF:
 					defaults->SetDontLightSelf(ParseInt(sc) != 0);
@@ -632,8 +640,11 @@ class GLDefsParser
 				case LIGHTTAG_SUBTRACTIVE:
 					defaults->SetSubtractive(ParseInt(sc) != 0);
 					break;
-				case LIGHTTAG_HALO:
-					defaults->SetHalo(ParseInt(sc) != 0);
+				case LIGHTTAG_HALO:	// old development garbage
+					ParseInt(sc);
+					break;
+				case LIGHTTAG_NOSHADOWMAP:
+					defaults->SetNoShadowmap(ParseInt(sc) != 0);
 					break;
 				case LIGHTTAG_DONTLIGHTSELF:
 					defaults->SetDontLightSelf(ParseInt(sc) != 0);
@@ -727,8 +738,11 @@ class GLDefsParser
 				case LIGHTTAG_SUBTRACTIVE:
 					defaults->SetSubtractive(ParseInt(sc) != 0);
 					break;
-				case LIGHTTAG_HALO:
-					defaults->SetHalo(ParseInt(sc) != 0);
+				case LIGHTTAG_HALO:	// old development garbage
+					ParseInt(sc);
+					break;
+				case LIGHTTAG_NOSHADOWMAP:
+					defaults->SetNoShadowmap(ParseInt(sc) != 0);
 					break;
 				case LIGHTTAG_DONTLIGHTSELF:
 					defaults->SetDontLightSelf(ParseInt(sc) != 0);
@@ -814,13 +828,16 @@ class GLDefsParser
 					break;
 				case LIGHTTAG_SCALE:
 					floatVal = ParseFloat(sc);
-					defaults->SetArg(LIGHT_SCALE, clamp((int)(floatVal * 255), 1, 1024));
+					defaults->SetArg(LIGHT_INTENSITY, clamp((int)(floatVal * 255), 1, 1024));
 					break;
 				case LIGHTTAG_SUBTRACTIVE:
 					defaults->SetSubtractive(ParseInt(sc) != 0);
 					break;
-				case LIGHTTAG_HALO:
-					defaults->SetHalo(ParseInt(sc) != 0);
+				case LIGHTTAG_HALO:	// old development garbage
+					ParseInt(sc);
+					break;
+				case LIGHTTAG_NOSHADOWMAP:
+					defaults->SetNoShadowmap(ParseInt(sc) != 0);
 					break;
 				case LIGHTTAG_DONTLIGHTSELF:
 					defaults->SetDontLightSelf(ParseInt(sc) != 0);
@@ -1199,6 +1216,11 @@ class GLDefsParser
 		FTextureID no = TexMan.CheckForTexture(sc.String, type, FTextureManager::TEXMAN_TryAny | FTextureManager::TEXMAN_Overridable);
 		FTexture *tex = TexMan[no];
 
+		if (tex == nullptr)
+		{
+			sc.ScriptMessage("Material definition refers nonexistent texture '%s'\n", sc.String);
+		}
+
 		sc.MustGetToken('{');
 		while (!sc.CheckToken('}'))
 		{
@@ -1255,26 +1277,29 @@ class GLDefsParser
 					}
 				}
 				sc.MustGetString();
-				bool okay = false;
-				for (int i = 0; i < MAX_CUSTOM_HW_SHADER_TEXTURES; i++)
+				if (tex)
 				{
-					if (!tex->CustomShaderTextures[i])
+					bool okay = false;
+					for (int i = 0; i < MAX_CUSTOM_HW_SHADER_TEXTURES; i++)
 					{
-						tex->CustomShaderTextures[i] = TexMan.FindTexture(sc.String, ETextureType::Any, FTextureManager::TEXMAN_TryAny);
 						if (!tex->CustomShaderTextures[i])
 						{
-							sc.ScriptError("Custom hardware shader texture '%s' not found in texture '%s'\n", sc.String, tex ? tex->Name.GetChars() : "(null)");
-						}
+							tex->CustomShaderTextures[i] = TexMan.FindTexture(sc.String, ETextureType::Any, FTextureManager::TEXMAN_TryAny);
+							if (!tex->CustomShaderTextures[i])
+							{
+								sc.ScriptError("Custom hardware shader texture '%s' not found in texture '%s'\n", sc.String, tex->Name.GetChars());
+							}
 
-						texNameList.Push(textureName);
-						texNameIndex.Push(i);
-						okay = true;
-						break;
+							texNameList.Push(textureName);
+							texNameIndex.Push(i);
+							okay = true;
+							break;
+						}
 					}
-				}
-				if (!okay)
-				{
-					sc.ScriptError("Error: out of texture units in texture '%s'", tex ? tex->Name.GetChars() : "(null)");
+					if (!okay)
+					{
+						sc.ScriptError("Error: out of texture units in texture '%s'", tex->Name.GetChars());
+					}
 				}
 			}
 			else if (sc.Compare("define"))

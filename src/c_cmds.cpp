@@ -74,6 +74,7 @@ extern bool insave;
 
 CVAR (Bool, sv_cheats, false, CVAR_SERVERINFO | CVAR_LATCH)
 CVAR (Bool, sv_unlimited_pickup, false, CVAR_SERVERINFO)
+CVAR (Bool, cl_blockcheats, false, 0)
 
 CCMD (toggleconsole)
 {
@@ -85,6 +86,11 @@ bool CheckCheatmode (bool printmsg)
 	if ((G_SkillProperty(SKILLP_DisableCheats) || netgame || deathmatch) && (!sv_cheats))
 	{
 		if (printmsg) Printf ("sv_cheats must be true to enable this command.\n");
+		return true;
+	}
+	else if (cl_blockcheats)
+	{
+		if (printmsg) Printf ("cl_blockcheats is turned on and disabled this command.\n");
 		return true;
 	}
 	else
@@ -1235,10 +1241,12 @@ CCMD(secret)
 					FString levelname;
 					level_info_t *info = FindLevelInfo(mapname);
 					const char *ln = !(info->flags & LEVEL_LOOKUPLEVELNAME)? info->LevelName.GetChars() : GStrings[info->LevelName.GetChars()];
-					levelname.Format("%s - %s\n", mapname, ln);
-					size_t llen = levelname.Len() - 1;
+					levelname.Format("%s - %s", mapname, ln);
+					Printf(TEXTCOLOR_YELLOW "%s\n", levelname.GetChars());
+					size_t llen = levelname.Len();
+					levelname = "";
 					for(size_t ii=0; ii<llen; ii++) levelname += '-';
-					Printf(TEXTCOLOR_YELLOW"%s\n", levelname.GetChars());
+					Printf(TEXTCOLOR_YELLOW "%s\n", levelname.GetChars());
 					foundsome = true;
 				}
 			}

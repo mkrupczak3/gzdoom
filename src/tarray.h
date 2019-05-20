@@ -272,6 +272,18 @@ public:
         return i;
     }
 
+	template<class Func>
+	unsigned int FindEx(Func compare) const
+	{
+		unsigned int i;
+		for (i = 0; i < Count; ++i)
+		{
+			if (compare(Array[i]))
+				break;
+		}
+		return i;
+	}
+
 	unsigned int Push (const T &item)
 	{
 		Grow (1);
@@ -922,6 +934,36 @@ public:
 		return n->Pair.Value;
 	}
 
+	VT &Insert(const KT key, VT &&value)
+	{
+		Node *n = FindKey(key);
+		if (n != NULL)
+		{
+			n->Pair.Value = value;
+		}
+		else
+		{
+			n = NewKey(key);
+			::new(&n->Pair.Value) VT(value);
+		}
+		return n->Pair.Value;
+	}
+
+	VT &InsertNew(const KT key)
+	{
+		Node *n = FindKey(key);
+		if (n != NULL)
+		{
+			n->Pair.Value.~VT();
+		}
+		else
+		{
+			n = NewKey(key);
+		}
+		::new(&n->Pair.Value) VT;
+		return n->Pair.Value;
+	}
+
 	//=======================================================================
 	//
 	// Remove
@@ -1019,7 +1061,7 @@ protected:
 			if (!nold[i].IsNil())
 			{
 				Node *n = NewKey(nold[i].Pair.Key);
-				::new(&n->Pair.Value) VT(nold[i].Pair.Value);
+				::new(&n->Pair.Value) VT(std::move(nold[i].Pair.Value));
 				nold[i].~Node();
 			}
 		}

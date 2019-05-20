@@ -74,7 +74,6 @@ PLAT_POSIX_SOURCES = \
 
 PLAT_SDL_SOURCES = \
 	posix/sdl/crashcatcher.c \
-	posix/sdl/critsec.cpp \
 	posix/sdl/hardware.cpp \
 	posix/sdl/i_gui.cpp \
 	posix/sdl/i_input.cpp \
@@ -156,6 +155,7 @@ FASTMATH_SOURCES = \
 
 PCH_SOURCES = \
 	actorptrselect.cpp \
+	utf8.cpp \
 	am_map.cpp \
 	b_bot.cpp \
 	b_func.cpp \
@@ -465,14 +465,6 @@ PCH_SOURCES = \
 	scripting/decorate/thingdef_states.cpp \
 	scripting/vm/vmexec.cpp \
 	scripting/vm/vmframe.cpp \
-	scripting/vm/jit.cpp \
-	scripting/vm/jit_runtime.cpp \
-	scripting/vm/jit_call.cpp \
-	scripting/vm/jit_flow.cpp \
-	scripting/vm/jit_load.cpp \
-	scripting/vm/jit_math.cpp \
-	scripting/vm/jit_move.cpp \
-	scripting/vm/jit_store.cpp \
 	scripting/zscript/ast.cpp \
 	scripting/zscript/zcc_compile.cpp \
 	scripting/zscript/zcc_parser.cpp \

@@ -78,6 +78,7 @@
 #include "vm.h"
 #include "events.h"
 #include "i_music.h"
+#include "a_dynlight.h"
 
 #include "gi.h"
 
@@ -340,8 +341,8 @@ void G_NewInit ()
 	int i;
 
 	// Destory all old player refrences that may still exist
-	TThinkerIterator<APlayerPawn> it(STAT_TRAVELLING);
-	APlayerPawn *pawn, *next;
+	TThinkerIterator<AActor> it(NAME_PlayerPawn, STAT_TRAVELLING);
+	AActor *pawn, *next;
 
 	next = it.Next();
 	while ((pawn = next) != NULL)
@@ -464,16 +465,6 @@ void G_InitNew (const char *mapname, bool bTitleLevel)
 	ST_CreateStatusBar(bTitleLevel);
 	setsizeneeded = true;
 
-	if (gameinfo.gametype == GAME_Strife || (SBarInfoScript[SCRIPT_CUSTOM] != NULL && SBarInfoScript[SCRIPT_CUSTOM]->GetGameType() == GAME_Strife))
-	{
-		// Set the initial quest log text for Strife.
-		for (i = 0; i < MAXPLAYERS; ++i)
-		{
-			if (playeringame[i])
-				players[i].SetLogText ("Find help");
-		}
-	}
-
 	// [RH] If this map doesn't exist, bomb out
 	if (!P_CheckMapData(mapname))
 	{
@@ -533,6 +524,16 @@ void G_InitNew (const char *mapname, bool bTitleLevel)
 	}
 	
 	G_DoLoadLevel (0, false, !savegamerestore);
+
+	if (gameinfo.gametype == GAME_Strife || (SBarInfoScript[SCRIPT_CUSTOM] != nullptr && SBarInfoScript[SCRIPT_CUSTOM]->GetGameType() == GAME_Strife))
+	{
+		// Set the initial quest log text for Strife.
+		for (i = 0; i < MAXPLAYERS; ++i)
+		{
+			if (playeringame[i])
+				players[i].SetLogText("$TXT_FINDHELP");
+		}
+	}
 }
 
 //
@@ -1288,7 +1289,7 @@ void G_StartTravel ()
 		{
 			AActor *pawn = players[i].mo;
 			AActor *inv;
-			players[i].camera = NULL;
+			players[i].camera = nullptr;
 
 			// Only living players travel. Dead ones get a new body on the new level.
 			if (players[i].health > 0)
@@ -1298,11 +1299,13 @@ void G_StartTravel ()
 				pawn->RemoveFromHash ();
 				pawn->tid = tid;		// Restore TID (but no longer linked into the hash chain)
 				pawn->ChangeStatNum (STAT_TRAVELLING);
+				pawn->DeleteAttachedLights();
 
 				for (inv = pawn->Inventory; inv != NULL; inv = inv->Inventory)
 				{
 					inv->ChangeStatNum (STAT_TRAVELLING);
 					inv->UnlinkFromWorld (nullptr);
+					inv->DeleteAttachedLights();
 				}
 			}
 		}
@@ -1324,15 +1327,15 @@ void G_StartTravel ()
 
 int G_FinishTravel ()
 {
-	TThinkerIterator<APlayerPawn> it (STAT_TRAVELLING);
-	APlayerPawn *pawn, *pawndup, *oldpawn, *next;
+	TThinkerIterator<AActor> it (NAME_PlayerPawn, STAT_TRAVELLING);
+	AActor *pawn, *pawndup, *oldpawn, *next;
 	AActor *inv;
 	FPlayerStart *start;
 	int pnum;
 	int failnum = 0;
 
 	// 
-	APlayerPawn* pawns[MAXPLAYERS];
+	AActor* pawns[MAXPLAYERS];
 	int pawnsnum = 0;
 
 	next = it.Next ();
@@ -1388,11 +1391,11 @@ int G_FinishTravel ()
 		{
 			P_FindFloorCeiling(pawn);
 		}
-		pawn->target = NULL;
-		pawn->lastenemy = NULL;
+		pawn->target = nullptr;
+		pawn->lastenemy = nullptr;
 		pawn->player->mo = pawn;
 		pawn->player->camera = pawn;
-		pawn->player->viewheight = pawn->ViewHeight;
+		pawn->player->viewheight = pawn->player->DefaultViewHeight();
 		pawn->flags2 &= ~MF2_BLASTED;
 		if (oldpawn != nullptr)
 		{
@@ -1532,6 +1535,7 @@ void G_InitLevelLocals ()
 	level.lightadditivesurfaces = info->lightadditivesurfaces < 0 ? gl_lightadditivesurfaces : !!info->lightadditivesurfaces;
 	level.notexturefill = info->notexturefill < 0 ? gl_notexturefill : !!info->notexturefill;
 
+	FLightDefaults::SetAttenuationForLevel();
 }
 
 //==========================================================================
@@ -1682,8 +1686,8 @@ void G_UnSnapshotLevel (bool hubLoad)
 		G_SerializeLevel (arc, hubLoad);
 		level.FromSnapshot = true;
 
-		TThinkerIterator<APlayerPawn> it;
-		APlayerPawn *pawn, *next;
+		TThinkerIterator<AActor> it(NAME_PlayerPawn);
+		AActor *pawn, *next;
 
 		next = it.Next();
 		while ((pawn = next) != 0)
@@ -2043,9 +2047,9 @@ int IsPointInMap(double x, double y, double z)
 
 	for (uint32_t i = 0; i < subsector->numlines; i++)
 	{
-		// Skip single sided lines.
+		// Skip double sided lines.
 		seg_t *seg = subsector->firstline + i;
-		if (seg->backsector != nullptr)	continue;
+		if (seg->backsector != nullptr || seg->linedef == nullptr) continue;
 
 		divline_t dline;
 		P_MakeDivline(seg->linedef, &dline);

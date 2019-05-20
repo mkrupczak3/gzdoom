@@ -76,6 +76,8 @@ static void *MOBILE_GetProcAddress(const char* name)
         else if( glesLoad == 2 )
         {
             h = dlopen("libGL4ES.so", RTLD_LAZY | RTLD_LOCAL);
+            void (*initialize_gl4es)( void )  = dlsym(h, "initialize_gl4es");
+            initialize_gl4es();
         }
 
         if (h == NULL)

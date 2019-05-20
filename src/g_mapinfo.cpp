@@ -826,6 +826,28 @@ void FMapInfoParser::ParseCluster()
 			break;
 		}
 	}
+	// Remap Hexen's CLUS?MSG lumps to the string table, if applicable. The code here only checks what can actually be in an IWAD.
+	if (clusterinfo->flags & CLUSTER_EXITTEXTINLUMP)
+	{
+		int lump = Wads.CheckNumForFullName(clusterinfo->ExitText, true);
+		if (lump > 0)
+		{
+			// Check if this comes from either Hexen.wad or Hexdd.wad and if so, map to the string table.
+			int fileno = Wads.GetLumpFile(lump);
+			auto fn = Wads.GetWadName(fileno);
+			if (fn && (!stricmp(fn, "HEXEN.WAD") || !stricmp(fn, "HEXDD.WAD")))
+			{
+				FStringf key("TXT_%.5s_%s", fn, clusterinfo->ExitText.GetChars());
+				if (GStrings.exists(key))
+				{
+					clusterinfo->ExitText = key;
+					clusterinfo->flags &= ~CLUSTER_EXITTEXTINLUMP;
+					clusterinfo->flags |= CLUSTER_LOOKUPEXITTEXT;
+				}
+			}
+		}
+
+	}
 	CheckEndOfFile("cluster");
 }
 
@@ -1445,6 +1467,34 @@ DEFINE_MAP_OPTION(skyrotate2, false)
 	info->skyrotatevector2.MakeUnit();
 }
 
+DEFINE_MAP_OPTION(fs_nocheckposition, false)
+{
+	if (parse.CheckAssign())
+	{
+		parse.sc.MustGetNumber();
+		info->fs_nocheckposition = !!parse.sc.Number;
+	}
+	else
+	{
+		info->fs_nocheckposition = true;
+	}
+}
+
+DEFINE_MAP_OPTION(edata, false)
+{
+	parse.ParseAssign();
+	parse.sc.MustGetString();
+	info->EDName = parse.sc.String;
+}
+
+DEFINE_MAP_OPTION(loadacs, false)
+{
+	parse.ParseAssign();
+	parse.sc.MustGetString();
+	info->acsName = parse.sc.String;
+}
+
+
 //==========================================================================
 //
 // All flag based map options 
@@ -1590,6 +1640,10 @@ MapFlagHandlers[] =
 	{ "compat_multiexit",				MITYPE_COMPATFLAG, 0, COMPATF2_MULTIEXIT },
 	{ "compat_teleport",				MITYPE_COMPATFLAG, 0, COMPATF2_TELEPORT },
 	{ "compat_pushwindow",				MITYPE_COMPATFLAG, 0, COMPATF2_PUSHWINDOW },
+	{ "compat_checkswitchrange",		MITYPE_COMPATFLAG, 0, COMPATF2_CHECKSWITCHRANGE },
+	{ "compat_explode1",				MITYPE_COMPATFLAG, 0, COMPATF2_EXPLODE1 },
+	{ "compat_explode2",				MITYPE_COMPATFLAG, 0, COMPATF2_EXPLODE2 },
+	{ "compat_railing",					MITYPE_COMPATFLAG, 0, COMPATF2_RAILING },
 	{ "cd_start_track",					MITYPE_EATNEXT,	0, 0 },
 	{ "cd_end1_track",					MITYPE_EATNEXT,	0, 0 },
 	{ "cd_end2_track",					MITYPE_EATNEXT,	0, 0 },
@@ -1871,8 +1925,28 @@ level_info_t *FMapInfoParser::ParseMapHeader(level_info_t &defaultinfo)
 		{
 			sc.MustGetString ();
 			levelinfo->flags |= LEVEL_LOOKUPLEVELNAME;
+			levelinfo->LevelName = sc.String;
 		}
-		levelinfo->LevelName = sc.String;
+		else
+		{
+			levelinfo->LevelName = sc.String;
+
+			if (HexenHack)
+			{
+				// Try to localize Hexen's map names.
+				int fileno = Wads.GetLumpFile(sc.LumpNum);
+				auto fn = Wads.GetWadName(fileno);
+				if (fn && (!stricmp(fn, "HEXEN.WAD") || !stricmp(fn, "HEXDD.WAD")))
+				{
+					FStringf key("TXT_%.5s_%s", fn, levelinfo->MapName.GetChars());
+					if (GStrings.exists(key))
+					{
+						levelinfo->flags |= LEVEL_LOOKUPLEVELNAME;
+						levelinfo->LevelName = key;
+					}
+				}
+			}
+		}
 	}
 
 	// Set up levelnum now so that you can use Teleport_NewMap specials
@@ -1947,7 +2021,7 @@ void FMapInfoParser::ParseEpisodeInfo ()
 		{
 			ParseAssign();
 			sc.MustGetString ();
-			name = sc.String;
+			name = strbin1(sc.String);
 		}
 		else if (sc.Compare ("picname"))
 		{

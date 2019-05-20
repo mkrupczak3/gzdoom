@@ -79,7 +79,19 @@ extern int NumTextColors;
 class FFont
 {
 public:
-	FFont (const char *fontname, const char *nametemplate, int first, int count, int base, int fdlump, int spacewidth=-1, bool notranslate = false);
+
+	enum EFontType
+	{
+		Unknown,
+		Folder,
+		Multilump,
+		Fon1,
+		Fon2,
+		BMF,
+		Custom
+	};
+
+	FFont (const char *fontname, const char *nametemplate, const char *filetemplate, int first, int count, int base, int fdlump, int spacewidth=-1, bool notranslate = false);
 	virtual ~FFont ();
 
 	virtual FTexture *GetChar (int code, int *const width) const;
@@ -99,9 +111,12 @@ public:
 	inline int StringWidth (const char *str) const { return StringWidth ((const uint8_t *)str); }
 	inline int StringWidth (const FString &str) const { return StringWidth ((const uint8_t *)str.GetChars()); }
 
+	inline bool CanPrint(const uint8_t *str) const { return true; } // hack hack
+
 	int GetCharCode(int code, bool needpic) const;
 	char GetCursor() const { return Cursor; }
 	void SetCursor(char c) { Cursor = c; }
+	void SetKerning(int c) { GlobalKerning = c; }
 	bool NoTranslate() const { return noTranslate; }
 
 protected:
@@ -111,15 +126,17 @@ protected:
 		const void *ranges, int total_colors, const PalEntry *palette);
 	void FixXMoves();
 
-	static int SimpleTranslation (uint8_t *colorsused, uint8_t *translation,
+	static int SimpleTranslation (uint32_t *colorsused, uint8_t *translation,
 		uint8_t *identity, double **luminosity);
 
+	EFontType Type = EFontType::Unknown;
 	int FirstChar, LastChar;
 	int SpaceWidth;
 	int FontHeight;
 	int GlobalKerning;
 	char Cursor;
 	bool noTranslate;
+	bool MixedCase = false;
 	struct CharData
 	{
 		FTexture *Pic;
@@ -137,17 +154,18 @@ protected:
 	friend struct FontsDeleter;
 
 	friend void V_ClearFonts();
+	friend void V_InitFonts();
 };
 
 
-extern FFont *SmallFont, *SmallFont2, *BigFont, *ConFont, *IntermissionFont;
+extern FFont *SmallFont, *SmallFont2, *BigFont, *BigUpper, *ConFont, *IntermissionFont, *NewConsoleFont, *NewSmallFont, *CurrentConsoleFont, *OriginalSmallFont, *AlternativeSmallFont, *OriginalBigFont;
 
 void V_InitFonts();
 void V_ClearFonts();
 EColorRange V_FindFontColor (FName name);
 PalEntry V_LogColorFromColorRange (EColorRange range);
 EColorRange V_ParseFontColor (const uint8_t *&color_value, int normalcolor, int boldcolor);
-FFont *V_GetFont(const char *);
+FFont *V_GetFont(const char *fontname, const char *fontlumpname = nullptr);
 void V_InitFontColors();
 
 #endif //__V_FONT_H__

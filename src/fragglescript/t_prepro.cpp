@@ -129,7 +129,7 @@ void DFsScript::ClearSections()
 			var->Destroy();
 			var = next;
 		}
-		sections[i] = NULL;
+		sections[i] = nullptr;
 	}
 }
 

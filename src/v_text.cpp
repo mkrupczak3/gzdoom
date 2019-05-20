@@ -51,78 +51,6 @@ int ListGetInt(VMVa_List &tags);
 
 //==========================================================================
 //
-// reads one character from the string.
-// This can handle both ISO 8859-1 and UTF-8, as well as mixed strings
-// between both encodings, which may happen if inconsistent encoding is 
-// used between different files in a mod.
-//
-//==========================================================================
-
-int GetCharFromString(const uint8_t *&string)
-{
-	int z, y, x;
-
-	z = *string++;
-
-	if (z < 192)
-	{
-		return z;
-	}
-	else if (z <= 223)
-	{
-		y = *string++;
-		if (y < 128 || y >= 192)
-		{
-			// not an UTF-8 sequence so return the first byte unchanged
-			string--;
-		}
-		else
-		{
-			z = (z - 192) * 64 + (y - 128);
-		}
-	}
-	else if (z >= 224 && z <= 239)
-	{
-		y = *string++;
-		if (y < 128 || y >= 192)
-		{
-			// not an UTF-8 sequence so return the first byte unchanged
-			string--;
-		}
-		else
-		{
-			x = *string++;
-			if (x < 128 || x >= 192)
-			{
-				// not an UTF-8 sequence so return the first byte unchanged
-				string -= 2;
-			}
-			else
-			{
-				z = (z - 224) * 4096 + (y - 128) * 64 + (x - 128);
-			}
-		}
-	}
-	else if (z >= 240)
-	{
-		y = *string++;
-		if (y < 128 || y >= 192)
-		{
-			// not an UTF-8 sequence so return the first byte unchanged
-			string--;
-		}
-		else
-		{
-			// we do not support 4-Byte UTF-8 here
-			string += 2;
-			return '?';
-		}
-	}
-	return z;
-}
-
-//==========================================================================
-//
 // DrawChar
 //
 // Write a single character using the given font
@@ -237,6 +165,10 @@ void DFrameBuffer::DrawTextCommon(FFont *font, int normalcolor, double x, double
 	cx = x;
 	cy = y;
 
+	if (parms.monospace == EMonospacing::CellCenter)
+		cx += parms.spacing / 2;
+	else if (parms.monospace == EMonospacing::CellRight)
+		cx += parms.spacing;
 
 	while ((const char *)ch - string < parms.maxstrlen)
 	{
@@ -272,9 +204,24 @@ void DFrameBuffer::DrawTextCommon(FFont *font, int normalcolor, double x, double
 				parms.destwidth = parms.cellx;
 				parms.destheight = parms.celly;
 			}
+			if (parms.monospace == EMonospacing::CellLeft)
+				parms.left = 0;
+			else if (parms.monospace == EMonospacing::CellCenter)
+				parms.left = w / 2.;
+			else if (parms.monospace == EMonospacing::CellRight)
+				parms.left = w;
+
 			DrawTextureParms(pic, parms);
 		}
-		cx += (w + kerning) * parms.scalex;
+		if (parms.monospace == EMonospacing::MOff)
+		{
+			cx += (w + kerning + parms.spacing) * parms.scalex;
+		}
+		else
+		{
+			cx += (parms.spacing) * parms.scalex;
+		}
+
 	}
 }
 
@@ -358,6 +305,9 @@ TArray<FBrokenLines> V_BreakLines (FFont *font, int maxwidth, const uint8_t *str
 	bool lastWasSpace = false;
 	int kerning = font->GetDefaultKerning ();
 
+	// The real isspace is a bit too badly defined, so use our own one
+	auto myisspace = [](int ch) { return ch == '\t' || ch == '\r' || ch == '\n' || ch == ' '; };
+
 	w = 0;
 
 	while ( (c = GetCharFromString(string)) )
@@ -387,7 +337,7 @@ TArray<FBrokenLines> V_BreakLines (FFont *font, int maxwidth, const uint8_t *str
 			continue;
 		}
 
-		if (iswspace(c)) 
+		if (myisspace(c)) 
 		{
 			if (!lastWasSpace)
 			{
@@ -420,12 +370,12 @@ TArray<FBrokenLines> V_BreakLines (FFont *font, int maxwidth, const uint8_t *str
 			start = space;
 			space = NULL;
 
-			while (*start && iswspace (*start) && *start != '\n')
+			while (*start && myisspace (*start) && *start != '\n')
 				start++;
 			if (*start == '\n')
 				start++;
 			else
-				while (*start && iswspace (*start))
+				while (*start && myisspace (*start))
 					start++;
 			string = start;
 		}
@@ -443,7 +393,7 @@ TArray<FBrokenLines> V_BreakLines (FFont *font, int maxwidth, const uint8_t *str
 		while (s < string)
 		{
 			// If there is any non-white space in the remainder of the string, add it.
-			if (!iswspace (*s++))
+			if (!myisspace (*s++))
 			{
 				auto i = Lines.Reserve(1);
 				breakit (&Lines[i], font, start, string, linecolor);

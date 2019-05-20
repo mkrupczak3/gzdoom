@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "r_defs.h"
 #include "g_levellocals.h"
+#include "d_player.h"
 // These depend on both actor.h and r_defs.h so they cannot be in either file without creating a circular dependency.
 
 inline DVector3 AActor::PosRelative(int portalgroup) const
@@ -78,4 +79,38 @@ inline double AActor::GetGravity() const
 {
 	if (flags & MF_NOGRAVITY) return 0;
 	return level.gravity * Sector->gravity * Gravity * 0.00125;
+}
+
+inline double AActor::AttackOffset(double offset)
+{
+	if (player != NULL)
+	{
+		return (FloatVar(NAME_AttackZOffset) + offset) * player->crouchfactor;
+	}
+	else
+	{
+		return 8 + offset;
+	}
+
+}
+
+inline bool AActor::isFrozen()
+{
+	if (!(flags5 & MF5_NOTIMEFREEZE))
+	{
+		auto state = level.isFrozen();
+		if (state)
+		{
+			if (player == nullptr || player->Bot != nullptr) return true;
+
+			// This is the only place in the entire game where the two freeze flags need different treatment.
+			// The time freezer flag also freezes other players, the global setting does not.
+
+			if ((state & 1) && player->timefreezer == 0)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }

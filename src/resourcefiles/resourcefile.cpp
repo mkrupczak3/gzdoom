@@ -360,6 +360,7 @@ void FResourceFile::PostProcessArchive(void *lumps, size_t lumpsize)
 {
 	// Entries in archives are sorted alphabetically
 	qsort(lumps, NumLumps, lumpsize, lumpcmp);
+	
 
 	// Filter out lumps using the same names as the Autoload.* sections
 	// in the ini file use. We reduce the maximum lump concidered after
@@ -399,7 +400,17 @@ int FResourceFile::FilterLumps(FString filtername, void *lumps, size_t lumpsize,
 		return 0;
 	}
 	filter << "filter/" << filtername << '/';
-	if (FindPrefixRange(filter, lumps, lumpsize, max, start, end))
+	
+	bool found = FindPrefixRange(filter, lumps, lumpsize, max, start, end);
+	
+	// Workaround for old Doom filter names.
+	if (!found && filtername.IndexOf("doom.id.doom") == 0)
+	{
+		filter.Substitute("doom.id.doom", "doom.doom");
+		found = FindPrefixRange(filter, lumps, lumpsize, max, start, end);
+	}
+
+	if (found)
 	{
 		void *from = (uint8_t *)lumps + start * lumpsize;
 
@@ -490,7 +501,7 @@ void FResourceFile::JunkLeftoverFilters(void *lumps, size_t lumpsize, uint32_t m
 		for (void *p = (uint8_t *)lumps + start * lumpsize; p < stop; p = (uint8_t *)p + lumpsize)
 		{
 			FResourceLump *lump = (FResourceLump *)p;
-			lump->FullName = 0;
+			lump->FullName = "";
 			lump->Name[0] = '\0';
 			lump->Namespace = ns_hidden;
 		}
@@ -720,7 +731,7 @@ bool FMemoryFile::Open(bool quiet)
     Lumps[0].LumpSize = (int)Reader.GetLength();
     Lumps[0].Namespace = ns_global;
     Lumps[0].Flags = 0;
-    Lumps[0].FullName = nullptr;
+    Lumps[0].FullName = "";
     NumLumps = 1;
     return true;
 }

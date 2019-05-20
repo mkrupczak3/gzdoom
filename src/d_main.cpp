@@ -563,38 +563,40 @@ CUSTOM_CVAR(Int, compatmode, 0, CVAR_ARCHIVE|CVAR_NOINITCALL)
 		break;
 
 	case 1:	// Doom2.exe compatible with a few relaxed settings
-		v = COMPATF_SHORTTEX|COMPATF_STAIRINDEX|COMPATF_USEBLOCKING|COMPATF_NODOORLIGHT|COMPATF_SPRITESORT|
-			COMPATF_TRACE|COMPATF_MISSILECLIP|COMPATF_SOUNDTARGET|COMPATF_DEHHEALTH|COMPATF_CROSSDROPOFF|
-			COMPATF_LIGHT|COMPATF_MASKEDMIDTEX;
-		w= COMPATF2_FLOORMOVE;
+		v = COMPATF_SHORTTEX | COMPATF_STAIRINDEX | COMPATF_USEBLOCKING | COMPATF_NODOORLIGHT | COMPATF_SPRITESORT |
+			COMPATF_TRACE | COMPATF_MISSILECLIP | COMPATF_SOUNDTARGET | COMPATF_DEHHEALTH | COMPATF_CROSSDROPOFF |
+			COMPATF_LIGHT | COMPATF_MASKEDMIDTEX;
+		w = COMPATF2_FLOORMOVE | COMPATF2_EXPLODE1;
 		break;
 
 	case 2:	// same as 1 but stricter (NO_PASSMOBJ and INVISIBILITY are also set)
-		v = COMPATF_SHORTTEX|COMPATF_STAIRINDEX|COMPATF_USEBLOCKING|COMPATF_NODOORLIGHT|COMPATF_SPRITESORT|
-			COMPATF_TRACE|COMPATF_MISSILECLIP|COMPATF_SOUNDTARGET|COMPATF_NO_PASSMOBJ|COMPATF_LIMITPAIN|
-			COMPATF_DEHHEALTH|COMPATF_INVISIBILITY|COMPATF_CROSSDROPOFF|COMPATF_CORPSEGIBS|COMPATF_HITSCAN|
-			COMPATF_WALLRUN|COMPATF_NOTOSSDROPS|COMPATF_LIGHT|COMPATF_MASKEDMIDTEX;
-		w = COMPATF2_BADANGLES|COMPATF2_FLOORMOVE|COMPATF2_POINTONLINE;
+		v = COMPATF_SHORTTEX | COMPATF_STAIRINDEX | COMPATF_USEBLOCKING | COMPATF_NODOORLIGHT | COMPATF_SPRITESORT |
+			COMPATF_TRACE | COMPATF_MISSILECLIP | COMPATF_SOUNDTARGET | COMPATF_NO_PASSMOBJ | COMPATF_LIMITPAIN |
+			COMPATF_DEHHEALTH | COMPATF_INVISIBILITY | COMPATF_CROSSDROPOFF | COMPATF_CORPSEGIBS | COMPATF_HITSCAN |
+			COMPATF_WALLRUN | COMPATF_NOTOSSDROPS | COMPATF_LIGHT | COMPATF_MASKEDMIDTEX;
+		w = COMPATF2_BADANGLES | COMPATF2_FLOORMOVE | COMPATF2_POINTONLINE | COMPATF2_EXPLODE2;
 		break;
 
 	case 3: // Boom compat mode
 		v = COMPATF_TRACE|COMPATF_SOUNDTARGET|COMPATF_BOOMSCROLL|COMPATF_MISSILECLIP|COMPATF_MASKEDMIDTEX;
+		w = COMPATF2_EXPLODE1;
 		break;
 
 	case 4: // Old ZDoom compat mode
 		v = COMPATF_SOUNDTARGET | COMPATF_LIGHT;
-		w = COMPATF2_MULTIEXIT | COMPATF2_TELEPORT | COMPATF2_PUSHWINDOW;
+		w = COMPATF2_MULTIEXIT | COMPATF2_TELEPORT | COMPATF2_PUSHWINDOW | COMPATF2_CHECKSWITCHRANGE;
 		break;
 
 	case 5: // MBF compat mode
-		v = COMPATF_TRACE|COMPATF_SOUNDTARGET|COMPATF_BOOMSCROLL|COMPATF_MISSILECLIP|COMPATF_MUSHROOM|
-			COMPATF_MBFMONSTERMOVE|COMPATF_NOBLOCKFRIENDS|COMPATF_MASKEDMIDTEX;
+		v = COMPATF_TRACE | COMPATF_SOUNDTARGET | COMPATF_BOOMSCROLL | COMPATF_MISSILECLIP | COMPATF_MUSHROOM |
+			COMPATF_MBFMONSTERMOVE | COMPATF_NOBLOCKFRIENDS | COMPATF_MASKEDMIDTEX;
+		w = COMPATF2_EXPLODE1;
 		break;
 
 	case 6:	// Boom with some added settings to reenable some 'broken' behavior
-		v = COMPATF_TRACE|COMPATF_SOUNDTARGET|COMPATF_BOOMSCROLL|COMPATF_MISSILECLIP|COMPATF_NO_PASSMOBJ|
-			COMPATF_INVISIBILITY|COMPATF_CORPSEGIBS|COMPATF_HITSCAN|COMPATF_WALLRUN|COMPATF_NOTOSSDROPS|COMPATF_MASKEDMIDTEX;
-		w = COMPATF2_POINTONLINE;
+		v = COMPATF_TRACE | COMPATF_SOUNDTARGET | COMPATF_BOOMSCROLL | COMPATF_MISSILECLIP | COMPATF_NO_PASSMOBJ |
+			COMPATF_INVISIBILITY | COMPATF_CORPSEGIBS | COMPATF_HITSCAN | COMPATF_WALLRUN | COMPATF_NOTOSSDROPS | COMPATF_MASKEDMIDTEX;
+		w = COMPATF2_POINTONLINE | COMPATF2_EXPLODE2;
 		break;
 
 	}
@@ -641,6 +643,9 @@ CVAR (Flag, compat_pointonline,			compatflags2, COMPATF2_POINTONLINE);
 CVAR (Flag, compat_multiexit,			compatflags2, COMPATF2_MULTIEXIT);
 CVAR (Flag, compat_teleport,			compatflags2, COMPATF2_TELEPORT);
 CVAR (Flag, compat_pushwindow,			compatflags2, COMPATF2_PUSHWINDOW);
+CVAR (Flag, compat_checkswitchrange,	compatflags2, COMPATF2_CHECKSWITCHRANGE);
+CVAR (Flag, compat_explode1,			compatflags2, COMPATF2_EXPLODE1);
+CVAR (Flag, compat_explode2,			compatflags2, COMPATF2_EXPLODE2);
 
 CVAR(Bool, vid_activeinbackground, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 
@@ -770,8 +775,7 @@ void D_Display ()
 		// Check for the presence of dynamic lights at the start of the frame once.
 		if ((gl_lights && vid_rendermode == 4) || (r_dynlights && vid_rendermode != 4))
 		{
-			TThinkerIterator<ADynamicLight> it(STAT_DLIGHT);
-			level.HasDynamicLights = !!it.Next();
+			level.HasDynamicLights = !!level.lights;
 		}
 		else level.HasDynamicLights = false;	// lights are off so effectively we have none.
 		
@@ -853,7 +857,7 @@ void D_Display ()
 	{
 		FTexture *tex;
 		int x;
-		FString pstring = "By ";
+		FString pstring = GStrings("TXT_BY");
 
 		tex = TexMan(gameinfo.PauseSign);
 		x = (SCREENWIDTH - tex->GetScaledWidth() * CleanXfac)/2 +
@@ -861,7 +865,7 @@ void D_Display ()
 		screen->DrawTexture (tex, x, 4, DTA_CleanNoMove, true, TAG_DONE);
 		if (paused && multiplayer)
 		{
-			pstring += players[paused - 1].userinfo.GetName();
+			pstring << ' ' << players[paused - 1].userinfo.GetName();
 			screen->DrawText(SmallFont, CR_RED,
 				(screen->GetWidth() - SmallFont->StringWidth(pstring)*CleanXfac) / 2,
 				(tex->GetScaledHeight() * CleanYfac) + 4, pstring, DTA_CleanNoMove, true, TAG_DONE);
@@ -1279,6 +1283,7 @@ void D_DoAdvanceDemo (void)
 			}
 			else
 			{
+				singledemo = false;
 				G_DeferedPlayDemo (demoname);
 				demosequence = 2;
 				break;
@@ -2013,8 +2018,6 @@ static void D_DoomInit()
 
 	gamestate = GS_STARTUP;
 
-	SetLanguageIDs ();
-
 	const char *v = Args->CheckValue("-rngseed");
 	if (v)
 	{
@@ -2414,7 +2417,7 @@ void D_DoomMain (void)
 		}
 
 		// [RH] Initialize localizable strings.
-		GStrings.LoadStrings (false);
+		GStrings.LoadStrings ();
 
 		V_InitFontColors ();
 
@@ -2599,7 +2602,7 @@ void D_DoomMain (void)
 		// [RH] Run any saved commands from the command line or autoexec.cfg now.
 		gamestate = GS_FULLCONSOLE;
 		Net_NewMakeTic ();
-		DThinker::RunThinkers ();
+		C_RunDelayedCommands();
 		gamestate = GS_STARTUP;
 
 		if (!restart)
@@ -2667,8 +2670,8 @@ void D_DoomMain (void)
 							G_InitNew(startmap, false);
 							if (StoredWarp.IsNotEmpty())
 							{
-								AddCommandString(StoredWarp.LockBuffer());
-								StoredWarp = NULL;
+								AddCommandString(StoredWarp);
+								StoredWarp = "";
 							}
 						}
 						else
@@ -2720,7 +2723,6 @@ void D_DoomMain (void)
 		DThinker::DestroyThinkersInList(STAT_STATIC);
 		E_Shutdown(false);
 		P_FreeLevelData();
-		P_FreeExtraLevelData();
 
 		M_SaveDefaults(NULL);			// save config before the restart
 

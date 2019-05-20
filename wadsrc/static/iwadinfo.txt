@@ -104,7 +104,7 @@ IWad
 	Config = "Chex"
 	IWADName = "chex3.wad"
 	Mapinfo = "mapinfo/chex.txt"
-	Compatibility = "NoTextcolor"
+	Compatibility = "NoTextcolor", "NoBigFont"
 	MustContain = "E1M1", "CYCLA1", "FLMBA1", "MAPINFO"
 	BannerColors = "ff ff 00", "00 c0 00"
 }
@@ -183,6 +183,7 @@ IWad
 	Compatibility = "Poly1"
 	MustContain = "TITLE", "MAP01", "MAP40", "WINNOWR"
 	BannerColors = "f0 f0 f0", "6b 3c 18"
+	DeleteLumps = "FONTB01", "FONTB02", "FONTB03", "FONTB04", "FONTB06", "FONTB08", "FONTB09", "FONTB10", "FONTB11", "FONTB27", "FONTB28", "FONTB29", "FONTB30"
 }
 	
 IWad
@@ -207,6 +208,7 @@ IWad
 	Compatibility = "Shareware"
 	MustContain = "TITLE", "MAP01", "WINNOWR"
 	BannerColors = "f0 f0 f0", "6b 3c 18"
+	DeleteLumps = "FONTB01", "FONTB02", "FONTB03", "FONTB04", "FONTB06", "FONTB08", "FONTB09", "FONTB10", "FONTB11", "FONTB27", "FONTB28", "FONTB29", "FONTB30"
 }
 	
 IWad
@@ -232,6 +234,7 @@ IWad
 	Compatibility = "Extended"
 	MustContain = "E1M1", "E2M1", "TITLE", "MUS_E1M1", "EXTENDED"
 	BannerColors = "fc fc 00", "a8 00 00"
+	DeleteLumps = "FONTB01", "FONTB02", "FONTB03", "FONTB04", "FONTB06", "FONTB08", "FONTB09", "FONTB10", "FONTB11", "FONTB27", "FONTB28", "FONTB29", "FONTB30"
 }
 
 IWad
@@ -244,6 +247,7 @@ IWad
 	Mapinfo = "mapinfo/heretic.txt"
 	MustContain = "E1M1", "E2M1", "TITLE", "MUS_E1M1"
 	BannerColors = "fc fc 00", "a8 00 00"
+	DeleteLumps = "FONTB01", "FONTB02", "FONTB03", "FONTB04", "FONTB06", "FONTB08", "FONTB09", "FONTB10", "FONTB11", "FONTB27", "FONTB28", "FONTB29", "FONTB30"
 }
 
 IWad
@@ -255,6 +259,7 @@ IWad
 	Compatibility = "Shareware"
 	MustContain = "E1M1", "TITLE", "MUS_E1M1"
 	BannerColors = "fc fc 00", "a8 00 00"
+	DeleteLumps = "FONTB01", "FONTB02", "FONTB03", "FONTB04", "FONTB06", "FONTB08", "FONTB09", "FONTB10", "FONTB11", "FONTB27", "FONTB28", "FONTB29", "FONTB30"
 }
 
 IWad
@@ -307,7 +312,7 @@ IWad
 IWad
 {
 	Name = "DOOM: BFG Edition"
-	Autoname = "doom.doom1.bfg"
+	Autoname = "doom.id.doom1.bfg"
 	Game = "Doom"
 	Config = "Doom"
 	IWADName = "doom.wad", 2
@@ -323,7 +328,7 @@ IWad
 IWad
 {
 	Name = "DOOM: Complete: WadSmoosh"
-	Autoname = "doom.doom2.wadsmoosh"
+	Autoname = "doom.id.doom2.wadsmoosh"
 	Game = "Doom"
 	Config = "Doom"
 	Mapinfo = "mapinfo/doom2.txt"
@@ -335,7 +340,7 @@ IWad
 IWad
 {
 	Name = "The Ultimate DOOM"
-	Autoname = "doom.doom1.ultimate"
+	Autoname = "doom.id.doom1.ultimate"
 	Game = "Doom"
 	Config = "Doom"
 	IWADName = "doom.wad"
@@ -350,7 +355,7 @@ IWad
 IWad
 {
 	Name = "DOOM Registered"
-	Autoname = "doom.doom1.registered"
+	Autoname = "doom.id.doom1.registered"
 	Game = "Doom"
 	Config = "Doom"
 	IWADName = "doom.wad", 1
@@ -376,7 +381,7 @@ IWad
 IWad
 {
 	Name = "Final Doom: TNT - Evilution"
-	Autoname = "doom.doom2.tnt"
+	Autoname = "doom.id.doom2.tnt"
 	Game = "Doom"
 	Config = "Doom"
 	IWADName = "tnt.wad"
@@ -389,7 +394,7 @@ IWad
 IWad
 {
 	Name = "Final Doom: Plutonia Experiment"
-	Autoname = "doom.doom2.plutonia"
+	Autoname = "doom.id.doom2.plutonia"
 	Game = "Doom"
 	Config = "Doom"
 	IWADName = "plutonia.wad"
@@ -402,7 +407,7 @@ IWad
 IWad
 {
 	Name = "DOOM 2: BFG Edition"
-	Autoname = "doom.doom2.bfg"
+	Autoname = "doom.id.doom2.bfg"
 	Game = "Doom"
 	Config = "Doom"
 	IWADName = "doom2.wad"
@@ -417,7 +422,7 @@ IWad
 IWad
 {
 	Name = "DOOM 2: Hell on Earth"
-	Autoname = "doom.doom2.commercial"
+	Autoname = "doom.id.doom2.commercial"
 	Game = "Doom"
 	Config = "Doom"
 	IWADName = "doom2.wad", 1

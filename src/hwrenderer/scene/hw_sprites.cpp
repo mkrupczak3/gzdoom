@@ -933,7 +933,7 @@ void GLSprite::ProcessParticle (HWDrawInfo *di, particle_t *particle, sector_t *
 
     auto &vp = r_viewpoint;
 	double timefrac = vp.TicFrac;
-	if (paused || bglobal.freeze || (level.flags2 & LEVEL2_FROZEN))
+	if (paused || level.isFrozen())
 		timefrac = 0.;
 	float xvf = (particle->Vel.X) * timefrac;
 	float yvf = (particle->Vel.Y) * timefrac;

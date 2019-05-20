@@ -201,7 +201,7 @@ enum ELevelFlags : unsigned int
 	LEVEL2_LAXACTIVATIONMAPINFO	= 0x00000008,	// LEVEL_LAXMONSTERACTIVATION is not a default.
 
 	LEVEL2_MISSILESACTIVATEIMPACT=0x00000010,	// Missiles are the activators of SPAC_IMPACT events, not their shooters
-	LEVEL2_FROZEN				= 0x00000020,	// Game is frozen by a TimeFreezer
+	//							= 0x00000020,	// unused
 
 	LEVEL2_KEEPFULLINVENTORY	= 0x00000040,	// doesn't reduce the amount of inventory items to 1
 
@@ -225,7 +225,7 @@ enum ELevelFlags : unsigned int
 	LEVEL2_FORCETEAMPLAYOFF		= 0x00080000,
 
 	LEVEL2_CONV_SINGLE_UNFREEZE	= 0x00100000,
-	LEVEL2_RAILINGHACK			= 0x00200000,	// but UDMF requires them to be separate to have more control
+	//			= 0x00200000,	// unused, was LEVEL2_RAILINGHACK
 	LEVEL2_DUMMYSWITCHES		= 0x00400000,
 	LEVEL2_HEXENHACK			= 0x00800000,	// Level was defined in a Hexen style MAPINFO
 
@@ -263,25 +263,6 @@ class DScroller;
 class FScanner;
 struct level_info_t;
 
-struct FOptionalMapinfoData
-{
-	FOptionalMapinfoData *Next = nullptr;
-	FName identifier = NAME_None;
-	virtual ~FOptionalMapinfoData() {}
-	virtual FOptionalMapinfoData *Clone() const = 0;
-};
-
-struct FOptionalMapinfoDataPtr
-{
-	FOptionalMapinfoData *Ptr;
-
-	FOptionalMapinfoDataPtr() throw() : Ptr(NULL) {}
-	~FOptionalMapinfoDataPtr() { if (Ptr!=NULL) delete Ptr; }
-	FOptionalMapinfoDataPtr(const FOptionalMapinfoDataPtr &p) throw() : Ptr(p.Ptr->Clone()) {}
-	FOptionalMapinfoDataPtr &operator= (FOptionalMapinfoDataPtr &p) throw() { Ptr = p.Ptr->Clone(); return *this; }
-};
-
-typedef TMap<FName, FOptionalMapinfoDataPtr> FOptData;
 typedef TMap<int, FName> FMusicMap;
 
 enum EMapType : int
@@ -385,7 +366,6 @@ struct level_info_t
 
 	double		teamdamage;
 
-	FOptData	optdata;
 	FMusicMap	MusicMap;
 
 	TArray<FSpecialAction> specialactions;
@@ -402,6 +382,10 @@ struct level_info_t
 	int8_t		notexturefill;
 	FVector3	skyrotatevector;
 	FVector3	skyrotatevector2;
+
+	FString		EDName;
+	FString		acsName;
+	bool		fs_nocheckposition;
 
 
 	level_info_t() 
@@ -421,24 +405,6 @@ struct level_info_t
 		deferred.Clear();
 	}
 	level_info_t *CheckLevelRedirect ();
-
-	template<class T>
-	T *GetOptData(FName id, bool create = true)
-	{
-		FOptionalMapinfoDataPtr *pdat = optdata.CheckKey(id);
-		
-		if (pdat != NULL)
-		{
-			return static_cast<T*>(pdat->Ptr);
-		}
-		else if (create)
-		{
-			T *newobj = new T;
-			optdata[id].Ptr = newobj;
-			return newobj;
-		}
-		else return NULL;
-	}
 };
 
 
@@ -460,15 +426,18 @@ struct cluster_info_t
 };
 
 // Cluster flags
-#define CLUSTER_HUB				0x00000001	// Cluster uses hub behavior
-#define CLUSTER_EXITTEXTINLUMP	0x00000002	// Exit text is the name of a lump
-#define CLUSTER_ENTERTEXTINLUMP	0x00000004	// Enter text is the name of a lump
-#define CLUSTER_FINALEPIC		0x00000008	// Finale "flat" is actually a full-sized image
-#define CLUSTER_LOOKUPEXITTEXT	0x00000010	// Exit text is the name of a language string
-#define CLUSTER_LOOKUPENTERTEXT	0x00000020	// Enter text is the name of a language string
-#define CLUSTER_LOOKUPNAME		0x00000040	// Name is the name of a language string
-#define CLUSTER_LOOKUPCLUSTERNAME 0x00000080	// Cluster name is the name of a language string
-#define CLUSTER_ALLOWINTERMISSION 0x00000100  // Allow intermissions between levels in a hub.
+enum
+{
+	CLUSTER_HUB				= 0x00000001,	// Cluster uses hub behavior
+	CLUSTER_EXITTEXTINLUMP	= 0x00000002,	// Exit text is the name of a lump
+	CLUSTER_ENTERTEXTINLUMP	= 0x00000004,	// Enter text is the name of a lump
+	CLUSTER_FINALEPIC		= 0x00000008,	// Finale "flat" is actually a full-sized image
+	CLUSTER_LOOKUPEXITTEXT	= 0x00000010,	// Exit text is the name of a language string
+	CLUSTER_LOOKUPENTERTEXT	= 0x00000020,	// Enter text is the name of a language string
+	CLUSTER_LOOKUPNAME		= 0x00000040,	// Name is the name of a language string
+	CLUSTER_LOOKUPCLUSTERNAME = 0x00000080,	// Cluster name is the name of a language string
+	CLUSTER_ALLOWINTERMISSION = 0x00000100  // Allow intermissions between levels in a hub.
+};
 
 extern TArray<level_info_t> wadlevelinfos;
 extern TArray<cluster_info_t> wadclusterinfos;

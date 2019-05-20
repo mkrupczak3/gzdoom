@@ -55,6 +55,7 @@
 #include "vm.h"
 #include "p_acs.h"
 #include "sbarinfo.h"
+#include "gstrings.h"
 #include "events.h"
 
 #include "../version.h"
@@ -404,6 +405,47 @@ void DBaseStatusBar::SetSize(int reltop, int hres, int vres, int hhres, int hvre
 	SetDrawSize(reltop, hres, vres);
 }
 
+static void ST_CalcCleanFacs(int designwidth, int designheight, int realwidth, int realheight, int *cleanx, int *cleany)
+{
+	float ratio;
+	int cwidth;
+	int cheight;
+	int cx1, cy1, cx2, cy2;
+
+	ratio = ActiveRatio(realwidth, realheight);
+	if (AspectTallerThanWide(ratio))
+	{
+		cwidth = realwidth;
+		cheight = realheight * AspectMultiplier(ratio) / 48;
+	}
+	else
+	{
+		cwidth = realwidth * AspectMultiplier(ratio) / 48;
+		cheight = realheight;
+	}
+	// Use whichever pair of cwidth/cheight or width/height that produces less difference
+	// between CleanXfac and CleanYfac.
+	cx1 = MAX(cwidth / designwidth, 1);
+	cy1 = MAX(cheight / designheight, 1);
+	cx2 = MAX(realwidth / designwidth, 1);
+	cy2 = MAX(realheight / designheight, 1);
+	if (abs(cx1 - cy1) <= abs(cx2 - cy2) || MAX(cx1, cx2) >= 4)
+	{ // e.g. 640x360 looks better with this.
+		*cleanx = cx1;
+		*cleany = cy1;
+	}
+	else
+	{ // e.g. 720x480 looks better with this.
+		*cleanx = cx2;
+		*cleany = cy2;
+	}
+
+	if (*cleanx < *cleany)
+		*cleany = *cleanx;
+	else
+		*cleanx = *cleany;
+}
+
 void DBaseStatusBar::SetDrawSize(int reltop, int hres, int vres)
 {
 	ValidateResolution(hres, vres);
@@ -412,7 +454,7 @@ void DBaseStatusBar::SetDrawSize(int reltop, int hres, int vres)
 	HorizontalResolution = hres;
 	VerticalResolution = vres;
 	int x, y;
-	V_CalcCleanFacs(hres, vres, SCREENWIDTH, SCREENHEIGHT, &x, &y);
+	ST_CalcCleanFacs(hres, vres, SCREENWIDTH, SCREENHEIGHT, &x, &y);
 	defaultScale = { (double)x, (double)y };
 
 	SetScale();	// recalculate positioning info.
@@ -436,7 +478,7 @@ void DBaseStatusBar::OnDestroy ()
 			msg->Destroy();
 			msg = next;
 		}
-		Messages[i] = NULL;
+		Messages[i] = nullptr;
 	}
 	if (AltHud) AltHud->Destroy();
 	Super::OnDestroy();
@@ -708,7 +750,7 @@ DHUDMessageBase *DBaseStatusBar::DetachMessage (DHUDMessageBase *msg)
 		if (probe != NULL)
 		{
 			*prev = probe->Next;
-			probe->Next = NULL;
+			probe->Next = nullptr;
 			return probe;
 		}
 	}
@@ -730,7 +772,7 @@ DHUDMessageBase *DBaseStatusBar::DetachMessage (uint32_t id)
 		if (probe != NULL)
 		{
 			*prev = probe->Next;
-			probe->Next = NULL;
+			probe->Next = nullptr;
 			return probe;
 		}
 	}
@@ -749,7 +791,7 @@ void DBaseStatusBar::DetachAllMessages ()
 	{
 		DHUDMessageBase *probe = Messages[i];
 
-		Messages[i] = NULL;
+		Messages[i] = nullptr;
 		while (probe != NULL)
 		{
 			DHUDMessageBase *next = probe->Next;
@@ -1017,7 +1059,7 @@ void DBaseStatusBar::DrawLog ()
 		hudheight = SCREENHEIGHT / scale;
 
 		int linelen = hudwidth<640? Scale(hudwidth,9,10)-40 : 560;
-		auto lines = V_BreakLines (SmallFont, linelen, CPlayer->LogText);
+		auto lines = V_BreakLines (SmallFont, linelen, GStrings(CPlayer->LogText));
 		int height = 20;
 
 		for (unsigned i = 0; i < lines.Size(); i++) height += SmallFont->GetHeight () + 1;
@@ -1443,23 +1485,25 @@ void DBaseStatusBar::DrawGraphic(FTextureID texture, double x, double y, int fla
 //
 //============================================================================
 
-void DBaseStatusBar::DrawString(FFont *font, const FString &cstring, double x, double y, int flags, double Alpha, int translation, int spacing, bool monospaced, int shadowX, int shadowY)
+void DBaseStatusBar::DrawString(FFont *font, const FString &cstring, double x, double y, int flags, double Alpha, int translation, int spacing, EMonospacing monospacing, int shadowX, int shadowY)
 {
+	bool monospaced = monospacing != EMonospacing::MOff;
+
 	switch (flags & DI_TEXT_ALIGN)
 	{
 	default:
 		break;
 	case DI_TEXT_ALIGN_RIGHT:
 		if (!monospaced)
-			x -= static_cast<int> (font->StringWidth(cstring) + (spacing * cstring.Len()));
+			x -= static_cast<int> (font->StringWidth(cstring) + (spacing * cstring.CharacterCount()));
 		else //monospaced, so just multiply the character size
-			x -= static_cast<int> ((spacing) * cstring.Len());
+			x -= static_cast<int> ((spacing) * cstring.CharacterCount());
 		break;
 	case DI_TEXT_ALIGN_CENTER:
 		if (!monospaced)
-			x -= static_cast<int> (font->StringWidth(cstring) + (spacing * cstring.Len())) / 2;
+			x -= static_cast<int> (font->StringWidth(cstring) + (spacing * cstring.CharacterCount())) / 2;
 		else //monospaced, so just multiply the character size
-			x -= static_cast<int> ((spacing)* cstring.Len()) / 2;
+			x -= static_cast<int> ((spacing)* cstring.CharacterCount()) / 2;
 		break;
 	}
 
@@ -1497,7 +1541,7 @@ void DBaseStatusBar::DrawString(FFont *font, const FString &cstring, double x, d
 		Scale = { 1.,1. };
 	}
 	int ch;
-	while (ch = *str++, ch != '\0')
+	while (ch = GetCharFromString(str), ch != '\0')
 	{
 		if (ch == ' ')
 		{
@@ -1513,7 +1557,7 @@ void DBaseStatusBar::DrawString(FFont *font, const FString &cstring, double x, d
 		}
 
 		int width;
-		FTexture* c = font->GetChar((unsigned char)ch, &width);
+		FTexture* c = font->GetChar(ch, &width);
 		if (c == NULL) //missing character.
 		{
 			continue;
@@ -1527,6 +1571,11 @@ void DBaseStatusBar::DrawString(FFont *font, const FString &cstring, double x, d
 		ry = y + drawOffset.Y;
 		rw = c->GetScaledWidthDouble();
 		rh = c->GetScaledHeightDouble();
+
+		if (monospacing == EMonospacing::CellCenter)
+			rx += (spacing - rw) / 2;
+		else if (monospacing == EMonospacing::CellRight)
+			rx += (spacing - rw);
 
 		if (!fullscreenOffsets)
 		{
@@ -1564,7 +1613,6 @@ void DBaseStatusBar::DrawString(FFont *font, const FString &cstring, double x, d
 		else
 			x += spacing;
 	}
-
 }
 
 void SBar_DrawString(DBaseStatusBar *self, DHUDFont *font, const FString &string, double x, double y, int flags, int trans, double alpha, int wrapwidth, int linespacing)
@@ -1586,13 +1634,13 @@ void SBar_DrawString(DBaseStatusBar *self, DHUDFont *font, const FString &string
 		auto brk = V_BreakLines(font->mFont, wrapwidth, string, true);
 		for (auto &line : brk)
 		{
-			self->DrawString(font->mFont, line.Text, x, y, flags, alpha, trans, font->mSpacing, font->mMonospaced, font->mShadowX, font->mShadowY);
+			self->DrawString(font->mFont, line.Text, x, y, flags, alpha, trans, font->mSpacing, font->mMonospacing, font->mShadowX, font->mShadowY);
 			y += font->mFont->GetHeight() + linespacing;
 		}
 	}
 	else
 	{
-		self->DrawString(font->mFont, string, x, y, flags, alpha, trans, font->mSpacing, font->mMonospaced, font->mShadowX, font->mShadowY);
+		self->DrawString(font->mFont, string, x, y, flags, alpha, trans, font->mSpacing, font->mMonospacing, font->mShadowX, font->mShadowY);
 	}
 }
 

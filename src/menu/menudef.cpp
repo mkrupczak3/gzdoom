@@ -403,7 +403,7 @@ static void ParseListMenuBody(FScanner &sc, DListMenuDescriptor *desc)
 						}
 						else if (args[i] == TypeFont)
 						{
-							auto f = FFont::FindFont(sc.String);
+							auto f = V_GetFont(sc.String);
 							if (f == nullptr)
 							{
 								sc.ScriptError("Unknown font %s", sc.String);
@@ -946,6 +946,7 @@ static void ParseOptionMenu(FScanner &sc)
 	sc.MustGetString();
 
 	DOptionMenuDescriptor *desc = Create<DOptionMenuDescriptor>();
+	desc->mFont = gameinfo.gametype == GAME_Doom ? BigUpper : BigFont;
 	desc->mMenuName = sc.String;
 	desc->mSelectedItem = -1;
 	desc->mScrollPos = 0;
@@ -1149,6 +1150,7 @@ static void BuildEpisodeMenu()
 		DOptionMenuDescriptor *od = Create<DOptionMenuDescriptor>();
 		MenuDescriptors[NAME_Episodemenu] = od;
 		od->mMenuName = NAME_Episodemenu;
+		od->mFont = gameinfo.gametype == GAME_Doom ? BigUpper : BigFont;
 		od->mTitle = "$MNU_EPISODE";
 		od->mSelectedItem = 0;
 		od->mScrollPos = 0;
@@ -1282,6 +1284,7 @@ static void BuildPlayerclassMenu()
 		DOptionMenuDescriptor *od = Create<DOptionMenuDescriptor>();
 		MenuDescriptors[NAME_Playerclassmenu] = od;
 		od->mMenuName = NAME_Playerclassmenu;
+		od->mFont = gameinfo.gametype == GAME_Doom ? BigUpper : BigFont;
 		od->mTitle = "$MNU_CHOOSECLASS";
 		od->mSelectedItem = 0;
 		od->mScrollPos = 0;
@@ -1662,6 +1665,7 @@ fail:
 		od = Create<DOptionMenuDescriptor>();
 		MenuDescriptors[NAME_Skillmenu] = od;
 		od->mMenuName = NAME_Skillmenu;
+		od->mFont = gameinfo.gametype == GAME_Doom ? BigUpper : BigFont;
 		od->mTitle = "$MNU_CHOOSESKILL";
 		od->mSelectedItem = defindex;
 		od->mScrollPos = 0;

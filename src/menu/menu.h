@@ -9,6 +9,7 @@
 #include "r_data/r_translate.h"
 #include "c_cvars.h"
 #include "v_font.h"
+#include "gi.h"
 #include "textures/textures.h"
 
 EXTERN_CVAR(Float, snd_menuvolume)
@@ -194,6 +195,7 @@ public:
 	int mIndent;
 	int mPosition;
 	bool mDontDim;
+	FFont *mFont;
 
 	void CalcIndent();
 	DMenuItemBase *GetItem(FName name);
@@ -204,6 +206,8 @@ public:
 		mScrollTop = 0;
 		mIndent = 0;
 		mDontDim = 0;
+		mFont = gameinfo.gametype == GAME_Doom ? BigUpper : BigFont;
+
 	}
 	size_t PropagateMark() override;
 	~DOptionMenuDescriptor()
@@ -339,7 +343,7 @@ void M_ActivateMenu(DMenu *menu);
 void M_ClearMenus ();
 void M_ParseMenuDefs();
 void M_StartupSkillMenu(FGameStartup *gs);
-void M_StartControlPanel (bool makeSound);
+void M_StartControlPanel (bool makeSound, bool scaleoverride = false);
 void M_SetMenu(FName menu, int param = -1);
 void M_StartMessage(const char *message, int messagemode, FName action = NAME_None);
 DMenu *StartPickerMenu(DMenu *parent, const char *name, FColorCVar *cvar);

@@ -13,7 +13,6 @@ include( CheckIncludeFile )
 include( CheckIncludeFiles )
 include( CheckLibraryExists )
 include( FindPkgConfig )
-include( TargetArch )
 
 if( ZD_CMAKE_COMPILER_IS_GNUCXX_COMPATIBLE )
 	option( NO_STRIP "Do not strip Release or MinSizeRel builds" )
@@ -32,8 +31,6 @@ option( DYN_MPG123 "Dynamically load libmpg123" ON )
 if( APPLE )
     option( OSX_COCOA_BACKEND "Use native Cocoa backend instead of SDL" ON )
 endif()
-
-target_architecture(ZDOOM_TARGET_ARCH)
 
 if( ${ZDOOM_TARGET_ARCH} MATCHES "x86_64" )
 	set( X64 64 )
@@ -384,8 +381,11 @@ if( ZD_CMAKE_COMPILER_IS_GNUCXX_COMPATIBLE )
 	# Remove extra warnings when using the official DirectX headers.
 	# Also, TDM-GCC 4.4.0 no longer accepts glibc-style printf formats as valid,
 	# which is a royal pain. The previous version I had been using was fine with them.
+	# MinGW: switch to the Windows Unicode API.
 	if( WIN32 )
 		set( CMAKE_CXX_FLAGS "-Wno-unknown-pragmas -Wno-comment -Wno-format ${CMAKE_CXX_FLAGS}" )
+		set( CMAKE_CXX_FLAGS "-D_UNICODE -DUNICODE ${CMAKE_CXX_FLAGS}" )
+		set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -municode" )
 	endif()
 
 	# Detect FreeBSD and add flags
@@ -460,8 +460,14 @@ add_custom_target( revision_check ALL
 # Libraries ZDoom needs
 
 message( STATUS "Fluid synth libs: ${FLUIDSYNTH_LIBRARIES}" )
-set( ZDOOM_LIBS ${ZDOOM_LIBS} "${ZLIB_LIBRARIES}" "${JPEG_LIBRARIES}" "${BZIP2_LIBRARIES}" "${GME_LIBRARIES}" "${ASMJIT_LIBRARIES}" "${CMAKE_DL_LIBS}" )
-include_directories( "${ZLIB_INCLUDE_DIR}" "${BZIP2_INCLUDE_DIR}" "${LZMA_INCLUDE_DIR}" "${JPEG_INCLUDE_DIR}" "${GME_INCLUDE_DIR}" "${ASMJIT_INCLUDE_DIR}" )
+set( ZDOOM_LIBS ${ZDOOM_LIBS} "${ZLIB_LIBRARIES}" "${JPEG_LIBRARIES}" "${BZIP2_LIBRARIES}" "${GME_LIBRARIES}" "${CMAKE_DL_LIBS}" )
+include_directories( "${ZLIB_INCLUDE_DIR}" "${BZIP2_INCLUDE_DIR}" "${LZMA_INCLUDE_DIR}" "${JPEG_INCLUDE_DIR}" "${GME_INCLUDE_DIR}" )
+
+if( ${HAVE_VM_JIT} )
+	add_definitions( -DHAVE_VM_JIT )
+	include_directories( "${ASMJIT_INCLUDE_DIR}" )
+	set( ZDOOM_LIBS ${ZDOOM_LIBS} "${ASMJIT_LIBRARIES}")
+endif()
 
 if( SNDFILE_FOUND )
     set( ZDOOM_LIBS ${ZDOOM_LIBS} "${SNDFILE_LIBRARIES}" )
@@ -481,7 +487,6 @@ endif()
 # Start defining source files for ZDoom
 set( PLAT_WIN32_SOURCES
 	sound/mididevices/music_win_mididevice.cpp
-	win32/critsec.cpp
 	win32/hardware.cpp
 	win32/helperthread.cpp
 	win32/i_cd.cpp
@@ -503,7 +508,6 @@ set( PLAT_POSIX_SOURCES
 	posix/i_steam.cpp )
 set( PLAT_SDL_SOURCES
 	posix/sdl/crashcatcher.c
-	posix/sdl/critsec.cpp
 	posix/sdl/hardware.cpp
 	posix/sdl/i_gui.cpp
 	posix/sdl/i_input.cpp
@@ -520,7 +524,6 @@ set( PLAT_OSX_SOURCES
 	posix/osx/i_specialpaths.mm
 	posix/osx/zdoom.icns )
 set( PLAT_COCOA_SOURCES
-	posix/cocoa/critsec.cpp
 	posix/cocoa/i_input.mm
 	posix/cocoa/i_joystick.cpp
 	posix/cocoa/i_main.mm
@@ -798,6 +801,17 @@ set( NOT_COMPILED_SOURCE_FILES
 	zcc-parse.h
 )
 
+set( VM_JIT_SOURCES
+	scripting/vm/jit.cpp
+	scripting/vm/jit_runtime.cpp
+	scripting/vm/jit_call.cpp
+	scripting/vm/jit_flow.cpp
+	scripting/vm/jit_load.cpp
+	scripting/vm/jit_math.cpp
+	scripting/vm/jit_move.cpp
+	scripting/vm/jit_store.cpp
+)
+
 # This is disabled for now because I cannot find a way to give the .pch file a different name.
 # Visual C++ 2015 seems hell-bent on only allowing one .pch file with the same name as the executable.
 #enable_precompiled_headers( g_pch2.h FASTMATH_PCH_SOURCES )
@@ -1023,6 +1037,7 @@ set (PCH_SOURCES
 	v_video.cpp
 	w_wad.cpp
 	wi_stuff.cpp
+	utf8.cpp
 	zstrformat.cpp
 	g_inventory/a_keys.cpp
 	g_inventory/a_pickups.cpp
@@ -1186,14 +1201,6 @@ set (PCH_SOURCES
 	scripting/decorate/thingdef_states.cpp
 	scripting/vm/vmexec.cpp
 	scripting/vm/vmframe.cpp
-	scripting/vm/jit.cpp
-	scripting/vm/jit_runtime.cpp
-	scripting/vm/jit_call.cpp
-	scripting/vm/jit_flow.cpp
-	scripting/vm/jit_load.cpp
-	scripting/vm/jit_math.cpp
-	scripting/vm/jit_move.cpp
-	scripting/vm/jit_store.cpp
 	scripting/zscript/ast.cpp
 	scripting/zscript/zcc_compile.cpp
 	scripting/zscript/zcc_parser.cpp
@@ -1265,6 +1272,12 @@ set (PCH_SOURCES
 	events.cpp
 )
 
+if( ${HAVE_VM_JIT} )
+	set( PCH_SOURCES ${PCH_SOURCES} ${VM_JIT_SOURCES} )
+else()
+	set( NOT_COMPILED_SOURCE_FILES ${NOT_COMPILED_SOURCE_FILES} ${VM_JIT_SOURCES} )
+endif()
+
 enable_precompiled_headers( g_pch.h PCH_SOURCES )
 
 add_executable( zdoom WIN32 MACOSX_BUNDLE
@@ -1272,7 +1285,6 @@ add_executable( zdoom WIN32 MACOSX_BUNDLE
 	${NOT_COMPILED_SOURCE_FILES}
 	__autostart.cpp
 	${SYSTEM_SOURCES}
-	${X86_SOURCES}
 	${FASTMATH_SOURCES}
 	${PCH_SOURCES}
 	x86.cpp

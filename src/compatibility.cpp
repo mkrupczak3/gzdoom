@@ -134,6 +134,10 @@ static FCompatOption Options[] =
 	{ "multiexit",				COMPATF2_MULTIEXIT, SLOT_COMPAT2 },
 	{ "teleport",				COMPATF2_TELEPORT, SLOT_COMPAT2 },
 	{ "disablepushwindowcheck",	COMPATF2_PUSHWINDOW, SLOT_COMPAT2 },
+	{ "checkswitchrange",		COMPATF2_CHECKSWITCHRANGE, SLOT_COMPAT2 },
+	{ "explode1",				COMPATF2_EXPLODE1, SLOT_COMPAT2 },
+	{ "explode2",				COMPATF2_EXPLODE2, SLOT_COMPAT2 },
+	{ "railing",				COMPATF2_RAILING, SLOT_COMPAT2 },
 	{ NULL, 0, 0 }
 };
 
@@ -309,18 +313,25 @@ FName CheckCompatibility(MapData *map)
 //
 //==========================================================================
 
+class DLevelCompatibility : public DObject
+{
+	DECLARE_ABSTRACT_CLASS(DLevelCompatibility, DObject)
+};
+IMPLEMENT_CLASS(DLevelCompatibility, true, false);
+
+
 void SetCompatibilityParams(FName checksum)
 {
-	if (checksum != NAME_None)
+	auto lc = Create<DLevelCompatibility>();
+	for (auto cls : PClass::AllClasses)
 	{
-		PClass *const cls = PClass::FindClass("LevelCompatibility");
-		if (cls != nullptr)
+		if (cls->IsDescendantOf(RUNTIME_CLASS(DLevelCompatibility)))
 		{
-			PFunction *const func = dyn_cast<PFunction>(cls->FindSymbol("Apply", true));
+			PFunction *const func = dyn_cast<PFunction>(cls->FindSymbol("Apply", false));
 			if (func != nullptr)
 			{
-				VMValue param = { (int)checksum };
-				VMCall(func->Variants[0].Implementation, &param, 1, nullptr, 0);
+				VMValue param[] = { lc, checksum.GetIndex(), &level.MapName };
+				VMCall(func->Variants[0].Implementation, param, 3, nullptr, 0);
 			}
 		}
 	}
@@ -328,7 +339,7 @@ void SetCompatibilityParams(FName checksum)
 
 DEFINE_ACTION_FUNCTION(DLevelCompatibility, OffsetSectorPlane)
 {
-	PARAM_PROLOGUE;
+	PARAM_SELF_PROLOGUE(DLevelCompatibility);
 	PARAM_INT(sector);
 	PARAM_INT(planeval);
 	PARAM_FLOAT(delta);
@@ -345,7 +356,7 @@ DEFINE_ACTION_FUNCTION(DLevelCompatibility, OffsetSectorPlane)
 
 DEFINE_ACTION_FUNCTION(DLevelCompatibility, ClearSectorTags)
 {
-	PARAM_PROLOGUE;
+	PARAM_SELF_PROLOGUE(DLevelCompatibility);
 	PARAM_INT(sector);
 	tagManager.RemoveSectorTags(sector);
 	return 0;
@@ -353,7 +364,7 @@ DEFINE_ACTION_FUNCTION(DLevelCompatibility, ClearSectorTags)
 
 DEFINE_ACTION_FUNCTION(DLevelCompatibility, AddSectorTag)
 {
-	PARAM_PROLOGUE;
+	PARAM_SELF_PROLOGUE(DLevelCompatibility);
 	PARAM_INT(sector);
 	PARAM_INT(tag);
 
@@ -364,9 +375,30 @@ DEFINE_ACTION_FUNCTION(DLevelCompatibility, AddSectorTag)
 	return 0;
 }
 
+DEFINE_ACTION_FUNCTION(DLevelCompatibility, ClearLineIDs)
+{
+	PARAM_SELF_PROLOGUE(DLevelCompatibility);
+	PARAM_INT(line);
+	tagManager.RemoveLineIDs(line);
+	return 0;
+}
+
+DEFINE_ACTION_FUNCTION(DLevelCompatibility, AddLineID)
+{
+	PARAM_SELF_PROLOGUE(DLevelCompatibility);
+	PARAM_INT(line);
+	PARAM_INT(tag);
+	
+	if ((unsigned)line < level.lines.Size())
+	{
+		tagManager.AddLineID(line, tag);
+	}
+	return 0;
+}
+
 DEFINE_ACTION_FUNCTION(DLevelCompatibility, SetThingSkills)
 {
-	PARAM_PROLOGUE;
+	PARAM_SELF_PROLOGUE(DLevelCompatibility);
 	PARAM_INT(thing);
 	PARAM_INT(skillmask);
 
@@ -379,7 +411,7 @@ DEFINE_ACTION_FUNCTION(DLevelCompatibility, SetThingSkills)
 
 DEFINE_ACTION_FUNCTION(DLevelCompatibility, SetThingXY)
 {
-	PARAM_PROLOGUE;
+	PARAM_SELF_PROLOGUE(DLevelCompatibility);
 	PARAM_INT(thing);
 	PARAM_FLOAT(x);
 	PARAM_FLOAT(y);
@@ -395,7 +427,7 @@ DEFINE_ACTION_FUNCTION(DLevelCompatibility, SetThingXY)
 
 DEFINE_ACTION_FUNCTION(DLevelCompatibility, SetThingZ)
 {
-	PARAM_PROLOGUE;
+	PARAM_SELF_PROLOGUE(DLevelCompatibility);
 	PARAM_INT(thing);
 	PARAM_FLOAT(z);
 
@@ -408,7 +440,7 @@ DEFINE_ACTION_FUNCTION(DLevelCompatibility, SetThingZ)
 
 DEFINE_ACTION_FUNCTION(DLevelCompatibility, SetThingFlags)
 {
-	PARAM_PROLOGUE;
+	PARAM_SELF_PROLOGUE(DLevelCompatibility);
 	PARAM_INT(thing);
 	PARAM_INT(flags);
 
@@ -421,7 +453,7 @@ DEFINE_ACTION_FUNCTION(DLevelCompatibility, SetThingFlags)
 
 DEFINE_ACTION_FUNCTION(DLevelCompatibility, SetVertex)
 {
-	PARAM_PROLOGUE;
+	PARAM_SELF_PROLOGUE(DLevelCompatibility);
 	PARAM_UINT(vertex);
 	PARAM_FLOAT(x);
 	PARAM_FLOAT(y);
@@ -436,7 +468,7 @@ DEFINE_ACTION_FUNCTION(DLevelCompatibility, SetVertex)
 
 DEFINE_ACTION_FUNCTION(DLevelCompatibility, SetLineSectorRef)
 {
-	PARAM_PROLOGUE;
+	PARAM_SELF_PROLOGUE(DLevelCompatibility);
 	PARAM_UINT(lineidx);
 	PARAM_UINT(sideidx);
 	PARAM_UINT(sectoridx);
@@ -457,7 +489,7 @@ DEFINE_ACTION_FUNCTION(DLevelCompatibility, SetLineSectorRef)
 
 DEFINE_ACTION_FUNCTION(DLevelCompatibility, GetDefaultActor)
 {
-	PARAM_PROLOGUE;
+	PARAM_SELF_PROLOGUE(DLevelCompatibility);
 	PARAM_NAME(actorclass);
 	ACTION_RETURN_OBJECT(GetDefaultByName(actorclass));
 }

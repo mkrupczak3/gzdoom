@@ -714,6 +714,25 @@ protected:
 	FBehavior	    *activeBehavior;
 	int				InModuleScriptNumber;
 
+	TArray<FString> ACS_StringBuilderStack;
+
+	inline void STRINGBUILDER_START(FString &Builder)
+	{
+		if (Builder.IsNotEmpty() || ACS_StringBuilderStack.Size())
+		{
+			ACS_StringBuilderStack.Push(Builder);
+			Builder = "";
+		}
+	}
+
+	inline void STRINGBUILDER_FINISH(FString &Builder)
+	{
+		if (!ACS_StringBuilderStack.Pop(Builder))
+		{
+			Builder = "";
+		}
+	}
+
 	void Link();
 	void Unlink();
 	void PutLast();
@@ -788,10 +807,6 @@ struct FBehavior::ArrayInfo
 };
 
 TArray<FBehavior *> FBehavior::StaticModules;
-TArray<FString> ACS_StringBuilderStack;
-
-#define STRINGBUILDER_START(Builder) if (Builder.IsNotEmpty() || ACS_StringBuilderStack.Size()) { ACS_StringBuilderStack.Push(Builder); Builder = ""; }
-#define STRINGBUILDER_FINISH(Builder) if (!ACS_StringBuilderStack.Pop(Builder)) { Builder = ""; }
 
 //============================================================================
 //
@@ -1816,10 +1831,7 @@ int CheckInventory (AActor *activator, const char *type, bool max)
 	{
 		if (max)
 		{
-			if (activator->IsKindOf (RUNTIME_CLASS (APlayerPawn)))
-				return static_cast<APlayerPawn *>(activator)->GetMaxHealth();
-			else
-				return activator->SpawnHealth();
+			return activator->GetMaxHealth();
 		}
 		return activator->health;
 	}
@@ -1992,7 +2004,7 @@ void FBehavior::StaticLoadDefaultModules ()
 	}
 }
 
-FBehavior *FBehavior::StaticLoadModule (int lumpnum, FileReader *fr, int len)
+FBehavior *FBehavior::StaticLoadModule (int lumpnum, FileReader *fr, int len, int reallumpnum)
 {
 	if (lumpnum == -1 && fr == NULL) return NULL;
 
@@ -2005,7 +2017,7 @@ FBehavior *FBehavior::StaticLoadModule (int lumpnum, FileReader *fr, int len)
 	}
 
 	FBehavior * behavior = new FBehavior ();
-	if (behavior->Init(lumpnum, fr, len))
+	if (behavior->Init(lumpnum, fr, len, reallumpnum))
 	{
 		return behavior;
 	}
@@ -2268,7 +2280,7 @@ FBehavior::FBehavior()
 }
 	
 	
-bool FBehavior::Init(int lumpnum, FileReader * fr, int len)
+bool FBehavior::Init(int lumpnum, FileReader * fr, int len, int reallumpnum)
 {
 	uint8_t *object;
 	int i;
@@ -2361,6 +2373,8 @@ bool FBehavior::Init(int lumpnum, FileReader * fr, int len)
 			// Forget about the compatibility cruft at the end of the lump
 			DataSize = LittleLong(((uint32_t *)object)[1]) - 8;
 		}
+
+		ShouldLocalize = false;
 	}
 	else
 	{
@@ -2374,6 +2388,17 @@ bool FBehavior::Init(int lumpnum, FileReader * fr, int len)
 		StringTable = LittleLong(((uint32_t *)Data)[1]);
 		StringTable += LittleLong(((uint32_t *)(Data + StringTable))[0]) * 12 + 4;
 		UnescapeStringTable(Data + StringTable, Data, false);
+		// If this is an original Hexen BEHAVIOR, set up some localization info for it. Original Hexen BEHAVIORs are always in the old format.
+		if ((level.flags2 & LEVEL2_HEXENHACK) && gameinfo.gametype == GAME_Hexen && lumpnum == -1 && reallumpnum > 0)
+		{
+			int fileno = Wads.GetLumpFile(reallumpnum);
+			const char * filename = Wads.GetWadName(fileno);
+			if (!stricmp(filename, "HEXEN.WAD") || !stricmp(filename, "HEXDD.WAD"))
+			{
+				ShouldLocalize = true;
+			}
+		}
+
 	}
 	else
 	{
@@ -3251,7 +3276,7 @@ uint8_t *FBehavior::NextChunk (uint8_t *chunk) const
 	return NULL;
 }
 
-const char *FBehavior::StaticLookupString (uint32_t index)
+const char *FBehavior::StaticLookupString (uint32_t index, bool forprint)
 {
 	uint32_t lib = index >> LIBRARYID_SHIFT;
 
@@ -3263,10 +3288,10 @@ const char *FBehavior::StaticLookupString (uint32_t index)
 	{
 		return NULL;
 	}
-	return StaticModules[lib]->LookupString (index & 0xffff);
+	return StaticModules[lib]->LookupString (index & 0xffff, forprint);
 }
 
-const char *FBehavior::LookupString (uint32_t index) const
+const char *FBehavior::LookupString (uint32_t index, bool forprint) const
 {
 	if (StringTable == 0)
 	{
@@ -3278,7 +3303,26 @@ const char *FBehavior::LookupString (uint32_t index) const
 
 		if (index >= list[0])
 			return NULL;	// Out of range for this list;
-		return (const char *)(Data + list[1+index]);
+
+		const char *s = (const char *)(Data + list[1 + index]);
+		// Allow translations for Hexen's original strings.
+		// This synthesizes a string label and looks it up.
+		// It will only do this for original Hexen maps and PCD_PRINTSTRING operations.
+		// For localizing user content better solutions exist so this hack won't be available as an editing feature.
+		if (ShouldLocalize && forprint)
+		{
+			FString token = s;
+			token.ToUpper();
+			token.ReplaceChars(".,-+!?", ' ');
+			token.Substitute(" ", "");
+			token.Truncate(5);
+
+			FStringf label("TXT_ACS_%s_%d_%.5s", level.MapName.GetChars(), index, token.GetChars());
+			auto p = GStrings[label];
+			if (p) return p;
+		}
+
+		return s;
 	}
 	else
 	{
@@ -3471,12 +3515,6 @@ void DACSThinker::Tick ()
 
 //	GlobalACSStrings.Clear();
 
-	if (ACS_StringBuilderStack.Size())
-	{
-		int size = ACS_StringBuilderStack.Size();
-		ACS_StringBuilderStack.Clear();
-		I_Error("Error: %d garbage entries on ACS string builder stack.", size);
-	}
 	ACSTime.Unclock();
 }
 
@@ -4002,15 +4040,15 @@ int DoSetMaster (AActor *self, AActor *master)
                 self->flags = (self->flags & ~MF_FRIENDLY) | (master->flags & MF_FRIENDLY);
                 level.total_monsters += self->CountsAsKill();
                 // Don't attack your new master
-                if (self->target == self->master) self->target = NULL;
-                if (self->lastenemy == self->master) self->lastenemy = NULL;
-                if (self->LastHeard == self->master) self->LastHeard = NULL;
+                if (self->target == self->master) self->target = nullptr;
+                if (self->lastenemy == self->master) self->lastenemy = nullptr;
+                if (self->LastHeard == self->master) self->LastHeard = nullptr;
                 return 1;
             }
             else if (master->player)
             {
                 // [KS] Be friendly to this player
-                self->master = NULL;
+                self->master = nullptr;
                 level.total_monsters -= self->CountsAsKill();
                 self->flags|=MF_FRIENDLY;
                 self->SetFriendPlayer(master->player);
@@ -4025,15 +4063,15 @@ int DoSetMaster (AActor *self, AActor *master)
                     }
                 }
                 // And stop attacking him if necessary.
-                if (self->target == master) self->target = NULL;
-                if (self->lastenemy == master) self->lastenemy = NULL;
-                if (self->LastHeard == master) self->LastHeard = NULL;
+                if (self->target == master) self->target = nullptr;
+                if (self->lastenemy == master) self->lastenemy = nullptr;
+                if (self->LastHeard == master) self->LastHeard = nullptr;
                 return 1;
             }
         }
         else
         {
-            self->master = NULL;
+            self->master = nullptr;
             self->FriendPlayer = 0;
             // Go back to whatever friendliness we usually have...
             defs = self->GetDefault();
@@ -4041,9 +4079,9 @@ int DoSetMaster (AActor *self, AActor *master)
             self->flags = (self->flags & ~MF_FRIENDLY) | (defs->flags & MF_FRIENDLY);
             level.total_monsters += self->CountsAsKill();
             // ...And re-side with our friends.
-            if (self->target && !self->IsHostile (self->target)) self->target = NULL;
-            if (self->lastenemy && !self->IsHostile (self->lastenemy)) self->lastenemy = NULL;
-            if (self->LastHeard && !self->IsHostile (self->LastHeard)) self->LastHeard = NULL;
+            if (self->target && !self->IsHostile (self->target)) self->target = nullptr;
+            if (self->lastenemy && !self->IsHostile (self->lastenemy)) self->lastenemy = nullptr;
+            if (self->LastHeard && !self->IsHostile (self->LastHeard)) self->LastHeard = nullptr;
             return 1;
         }
     }
@@ -4233,8 +4271,8 @@ void DLevelScript::DoSetActorProperty (AActor *actor, int property, int value)
 		break;
 
 	case APROP_JumpZ:
-		if (actor->IsKindOf (RUNTIME_CLASS (APlayerPawn)))
-			static_cast<APlayerPawn *>(actor)->JumpZ = ACSToDouble(value);
+		if (actor->IsKindOf(NAME_PlayerPawn))
+			actor->FloatVar(NAME_JumpZ) = ACSToDouble(value);
 		break; 	// [GRB]
 
 	case APROP_ChaseGoal:
@@ -4266,9 +4304,9 @@ void DLevelScript::DoSetActorProperty (AActor *actor, int property, int value)
 
 
 	case APROP_SpawnHealth:
-		if (actor->IsKindOf (RUNTIME_CLASS (APlayerPawn)))
+		if (actor->IsKindOf(NAME_PlayerPawn))
 		{
-			static_cast<APlayerPawn *>(actor)->MaxHealth = value;
+			actor->IntVar(NAME_MaxHealth) = value;
 		}
 		break;
 
@@ -4351,9 +4389,9 @@ void DLevelScript::DoSetActorProperty (AActor *actor, int property, int value)
 		break;
 
 	case APROP_ViewHeight:
-		if (actor->IsKindOf (RUNTIME_CLASS (APlayerPawn)))
+		if (actor->IsKindOf(NAME_PlayerPawn))
 		{
-			static_cast<APlayerPawn *>(actor)->ViewHeight = ACSToDouble(value);
+			actor->FloatVar(NAME_ViewHeight) = ACSToDouble(value);
 			if (actor->player != NULL)
 			{
 				actor->player->viewheight = ACSToDouble(value);
@@ -4362,8 +4400,8 @@ void DLevelScript::DoSetActorProperty (AActor *actor, int property, int value)
 		break;
 
 	case APROP_AttackZOffset:
-		if (actor->IsKindOf (RUNTIME_CLASS (APlayerPawn)))
-			static_cast<APlayerPawn *>(actor)->AttackZOffset = ACSToDouble(value);
+		if (actor->IsKindOf(NAME_PlayerPawn))
+			actor->FloatVar(NAME_AttackZOffset) = ACSToDouble(value);
 		break;
 
 	case APROP_StencilColor:
@@ -4428,18 +4466,11 @@ int DLevelScript::GetActorProperty (int tid, int property)
 	case APROP_Notarget:	return !!(actor->flags3 & MF3_NOTARGET);
 	case APROP_Notrigger:	return !!(actor->flags6 & MF6_NOTRIGGER);
 	case APROP_Dormant:		return !!(actor->flags2 & MF2_DORMANT);
-	case APROP_SpawnHealth: if (actor->IsKindOf (RUNTIME_CLASS (APlayerPawn)))
-							{
-								return static_cast<APlayerPawn *>(actor)->GetMaxHealth();
-							}
-							else
-							{
-								return actor->SpawnHealth();
-							}
+	case APROP_SpawnHealth: return actor->GetMaxHealth();
 
-	case APROP_JumpZ:		if (actor->IsKindOf (RUNTIME_CLASS (APlayerPawn)))
+	case APROP_JumpZ:		if (actor->IsKindOf(NAME_PlayerPawn))
 							{
-								return DoubleToACS(static_cast<APlayerPawn *>(actor)->JumpZ);	// [GRB]
+								return DoubleToACS(actor->FloatVar(NAME_JumpZ));
 							}
 							else
 							{
@@ -4459,18 +4490,19 @@ int DLevelScript::GetActorProperty (int tid, int property)
 	case APROP_Radius:		return DoubleToACS(actor->radius);
 	case APROP_ReactionTime:return actor->reactiontime;
 	case APROP_MeleeRange:	return DoubleToACS(actor->meleerange);
-	case APROP_ViewHeight:	if (actor->IsKindOf (RUNTIME_CLASS (APlayerPawn)))
+	case APROP_ViewHeight:	if (actor->player)
 							{
-								return DoubleToACS(static_cast<APlayerPawn *>(actor)->ViewHeight);
+								return DoubleToACS(actor->player->DefaultViewHeight());
 							}
 							else
 							{
 								return 0;
 							}
 	case APROP_AttackZOffset:
-							if (actor->IsKindOf (RUNTIME_CLASS (APlayerPawn)))
+							// Note that this is inconsistent with every other place, where the return for monsters is 8, not 0!
+							if (actor->IsKindOf(NAME_PlayerPawn))
 							{
-								return DoubleToACS(static_cast<APlayerPawn *>(actor)->AttackZOffset);
+								return DoubleToACS(actor->FloatVar(NAME_AttackZOffset));
 							}
 							else
 							{
@@ -5472,7 +5504,7 @@ int DLevelScript::CallFunction(int argCount, int funcIndex, int32_t *args)
 			{
 				if (actor->player != NULL)
 				{
-					return DoubleToACS(actor->player->mo->ViewHeight + actor->player->crouchviewdelta);
+					return DoubleToACS(actor->player->DefaultViewHeight() + actor->player->crouchviewdelta);
 				}
 				else
 				{
@@ -8462,7 +8494,7 @@ scriptwait:
 
 		case PCD_PRINTSTRING:
 		case PCD_PRINTLOCALIZED:
-			lookup = FBehavior::StaticLookupString (STACK(1));
+			lookup = FBehavior::StaticLookupString (STACK(1), true);
 			if (pcd == PCD_PRINTLOCALIZED)
 			{
 				lookup = GStrings(lookup);
@@ -8937,7 +8969,7 @@ scriptwait:
 
 		case PCD_LOCALAMBIENTSOUND:
 			lookup = FBehavior::StaticLookupString (STACK(2));
-			if (lookup != NULL && activator->CheckLocalView (consoleplayer))
+			if (lookup != NULL && activator && activator->CheckLocalView (consoleplayer))
 			{
 				S_Sound (CHAN_AUTO,
 						 lookup,

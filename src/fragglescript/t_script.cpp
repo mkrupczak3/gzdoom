@@ -122,7 +122,7 @@ void DFsScript::ClearChildren()
 	for(j=0;j<MAXSCRIPTS;j++) if (children[j])
 	{
 		children[j]->Destroy();
-		children[j]=NULL;
+		children[j]=nullptr;
 	}
 }
 
@@ -136,15 +136,15 @@ DFsScript::DFsScript()
 {
 	int i;
 	
-	for(i=0; i<SECTIONSLOTS; i++) sections[i] = NULL;
-	for(i=0; i<VARIABLESLOTS; i++) variables[i] = NULL;
-	for(i=0; i<MAXSCRIPTS; i++)	children[i] = NULL;
+	for(i=0; i<SECTIONSLOTS; i++) sections[i] = nullptr;
+	for(i=0; i<VARIABLESLOTS; i++) variables[i] = nullptr;
+	for(i=0; i<MAXSCRIPTS; i++)	children[i] = nullptr;
 
-	data = NULL;
+	data = nullptr;
 	scriptnum = -1;
 	len = 0;
-	parent = NULL;
-	trigger = NULL;
+	parent = nullptr;
+	trigger = nullptr;
 	lastiftrue = false;
 }
 
@@ -157,8 +157,8 @@ DFsScript::DFsScript()
 
 DFsScript::~DFsScript()
 {
-	if (data != NULL) delete[] data;
-	data = NULL;
+	if (data != nullptr) delete[] data;
+	data = nullptr;
 }
 
 //==========================================================================
@@ -172,11 +172,11 @@ void DFsScript::OnDestroy()
 	ClearVariables(true);
 	ClearSections();
 	ClearChildren();
-	parent = NULL;
-	if (data != NULL) delete [] data;
-	data = NULL;
-	parent = NULL;
-	trigger = NULL;
+	parent = nullptr;
+	if (data != nullptr) delete [] data;
+	data = nullptr;
+	parent = nullptr;
+	trigger = nullptr;
 	Super::OnDestroy();
 }
 
@@ -215,7 +215,7 @@ void DFsScript::Serialize(FSerializer &arc)
 
 void DFsScript::ParseScript(char *position)
 {
-	if (position == NULL) 
+	if (position == nullptr) 
 	{
 		lastiftrue = false;
 		position = data;
@@ -270,7 +270,7 @@ IMPLEMENT_POINTERS_END
 
 DRunningScript::DRunningScript(AActor *trigger, DFsScript *owner, int index) 
 {
-	prev = next = NULL;
+	prev = next = nullptr;
 	script = owner;
 	GC::WriteBarrier(this, script);
 	save_point = index;
@@ -278,9 +278,9 @@ DRunningScript::DRunningScript(AActor *trigger, DFsScript *owner, int index)
 	wait_data = 0;
 
 	this->trigger = trigger;
-	if (owner == NULL)
+	if (owner == nullptr)
 	{
-		for(int i=0; i< VARIABLESLOTS; i++) variables[i] = NULL;
+		for(int i=0; i< VARIABLESLOTS; i++) variables[i] = nullptr;
 	}
 	else
 	{
@@ -333,7 +333,7 @@ void DRunningScript::OnDestroy()
 			current->Destroy();
 			current = next; // go to next in chain
 		}
-		variables[i] = NULL;
+		variables[i] = nullptr;
     }
 	Super::OnDestroy();
 }
@@ -394,7 +394,6 @@ DFraggleThinker::DFraggleThinker()
 		LevelScript->parent = global_script;
 		GC::WriteBarrier(this, RunningScripts);
 		GC::WriteBarrier(this, LevelScript);
-		nocheckposition = false;
 	}
 }
 
@@ -411,13 +410,13 @@ void DFraggleThinker::OnDestroy()
 	{
 		DRunningScript *q = p;
 		p = p->next;
-		q->prev = q->next = NULL;
+		q->prev = q->next = nullptr;
 		q->Destroy();
 	}
-	RunningScripts = NULL;
+	RunningScripts = nullptr;
 
 	LevelScript->Destroy();
-	LevelScript = NULL;
+	LevelScript = nullptr;
 
 	SpawnedThings.Clear();
 	ActiveThinker = NULL;
@@ -435,8 +434,7 @@ void DFraggleThinker::Serialize(FSerializer &arc)
 	Super::Serialize(arc);
 	arc("levelscript", LevelScript)
 		("runningscripts", RunningScripts)
-		("spawnedthings", SpawnedThings)
-		("nocheckposition", nocheckposition);
+		("spawnedthings", SpawnedThings);
 }
 
 //==========================================================================
@@ -522,7 +520,7 @@ void DFraggleThinker::Tick()
 			{
 				current->script->variables[i] = current->variables[i];
 				GC::WriteBarrier(current->script, current->variables[i]);
-				current->variables[i] = NULL;
+				current->variables[i] = nullptr;
 			}
 			current->script->trigger = current->trigger; // copy trigger
 			

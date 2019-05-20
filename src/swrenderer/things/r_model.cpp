@@ -161,19 +161,20 @@ namespace swrenderer
 			float x = (float)actor->X();
 			float y = (float)actor->Y();
 			float z = (float)actor->Center();
-			float radiusSquared = (float)(actor->renderradius * actor->renderradius);
+			float actorradius = (float)actor->RenderRadius();
+			float radiusSquared = actorradius * actorradius;
 
 			BSPWalkCircle(x, y, radiusSquared, [&](subsector_t *subsector) // Iterate through all subsectors potentially touched by actor
 			{
 				FLightNode * node = subsector->lighthead;
 				while (node) // check all lights touching a subsector
 				{
-					ADynamicLight *light = node->lightsource;
-					if (light->visibletoplayer && !(light->flags2&MF2_DORMANT) && (!(light->lightflags&LF_DONTLIGHTSELF) || light->target != actor) && !(light->lightflags&LF_DONTLIGHTACTORS))
+					FDynamicLight *light = node->lightsource;
+					if (light->ShouldLightActor(actor))
 					{
 						int group = subsector->sector->PortalGroup;
 						DVector3 pos = light->PosRelative(group);
-						float radius = (float)(light->GetRadius() + actor->renderradius);
+						float radius = (float)(light->GetRadius() + actorradius);
 						double dx = pos.X - x;
 						double dy = pos.Y - y;
 						double dz = pos.Z - z;
@@ -194,9 +195,9 @@ namespace swrenderer
 			Lights = Thread->FrameMemory->AllocMemory<PolyLight>(NumLights);
 			for (int i = 0; i < NumLights; i++)
 			{
-				ADynamicLight *lightsource = addedLights[i];
+				FDynamicLight *lightsource = addedLights[i];
 
-				bool is_point_light = (lightsource->lightflags & LF_ATTENUATE) != 0;
+				bool is_point_light = lightsource->IsAttenuated();
 
 				uint32_t red = lightsource->GetRed();
 				uint32_t green = lightsource->GetGreen();

@@ -64,6 +64,7 @@
 #include "gi.h"
 
 #include "gameconfigfile.h"
+#include "gstrings.h"
 
 FGameConfigFile *GameConfig;
 
@@ -510,7 +511,7 @@ void WritePNGfile (FileWriter *file, const uint8_t *buffer, const PalEntry *pale
 		!M_AppendPNGText (file, "Software", software) ||
 		!M_FinishPNG (file))
 	{
-		Printf ("Could not create screenshot.\n");
+		Printf ("%s\n", GStrings("TXT_SCREENSHOTERR"));
 	}
 }
 

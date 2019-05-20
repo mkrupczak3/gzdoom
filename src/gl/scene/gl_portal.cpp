@@ -225,9 +225,9 @@ bool GLPortal::Start(bool usestencil, bool doquery, FDrawInfo *outer_di, FDrawIn
 				else doquery = false;	// some kind of error happened
 
 				DrawPortalStencil(outer_di, STP_Stencil);
-
+#ifndef __MOBILE__
 				glEndQuery(GL_SAMPLES_PASSED);
-
+#endif
 				// Clear Z-buffer
 				glStencilFunc(GL_EQUAL, recursion + 1, ~0);		// draw sky into stencil
 				glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);		// this stage doesn't modify the stencil

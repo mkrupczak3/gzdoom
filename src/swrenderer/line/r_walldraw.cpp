@@ -204,7 +204,7 @@ namespace swrenderer
 			FLightNode *cur_node = light_list;
 			while (cur_node)
 			{
-				if (!(cur_node->lightsource->flags2&MF2_DORMANT))
+				if (cur_node->lightsource->IsActive())
 					max_lights++;
 				cur_node = cur_node->nextLight;
 			}
@@ -216,7 +216,7 @@ namespace swrenderer
 			cur_node = light_list;
 			while (cur_node)
 			{
-				if (!(cur_node->lightsource->flags2&MF2_DORMANT))
+				if (cur_node->lightsource->IsActive())
 				{
 					double lightX = cur_node->lightsource->X() - Thread->Viewport->viewpoint.Pos.X;
 					double lightY = cur_node->lightsource->Y() - Thread->Viewport->viewpoint.Pos.Y;
@@ -227,7 +227,7 @@ namespace swrenderer
 					float lz = (float)lightZ;
 
 					// Precalculate the constant part of the dot here so the drawer doesn't have to.
-					bool is_point_light = (cur_node->lightsource->lightflags & LF_ATTENUATE) != 0;
+					bool is_point_light = cur_node->lightsource->IsAttenuated();
 					float lconstant = lx * lx + ly * ly;
 					float nlconstant = is_point_light ? lx * drawerargs.dc_normal.X + ly * drawerargs.dc_normal.Y : 0.0f;
 
@@ -383,9 +383,6 @@ namespace swrenderer
 			WallSampler sampler(Thread->Viewport.get(), y1, texturemid, swal[x], yrepeat, lwal[x] + xoffset, xmagnitude, rw_pic);
 			Draw1Column(x, y1, y2, sampler);
 		}
-
-		if (Thread->MainThread)
-			NetUpdate();
 	}
 
 	void RenderWallPart::ProcessNormalWall(const short *uwal, const short *dwal, double texturemid, float *swal, fixed_t *lwal)

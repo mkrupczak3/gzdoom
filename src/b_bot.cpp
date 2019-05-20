@@ -49,6 +49,7 @@
 #include "d_player.h"
 #include "w_wad.h"
 #include "vm.h"
+#include "g_levellocals.h"
 
 IMPLEMENT_CLASS(DBot, false, true)
 
@@ -71,14 +72,14 @@ DBot::DBot ()
 
 void DBot::Clear ()
 {
-	player = NULL;
+	player = nullptr;
 	Angle = 0.;
-	dest = NULL;
-	prev = NULL;
-	enemy = NULL;
-	missile = NULL;
-	mate = NULL;
-	last_mate = NULL;
+	dest = nullptr;
+	prev = nullptr;
+	enemy = nullptr;
+	missile = nullptr;
+	mate = nullptr;
+	last_mate = nullptr;
 	memset(&skill, 0, sizeof(skill));
 	t_active = 0;
 	t_respawn = 0;
@@ -138,7 +139,7 @@ void DBot::Tick ()
 {
 	Super::Tick ();
 
-	if (player->mo == NULL || bglobal.freeze)
+	if (player->mo == nullptr || level.isFrozen())
 	{
 		return;
 	}
@@ -176,7 +177,7 @@ CCMD (addbot)
 	if (argv.argc() > 1)
 		bglobal.SpawnBot (argv[1]);
 	else
-		bglobal.SpawnBot (NULL);
+		bglobal.SpawnBot (nullptr);
 }
 
 void FCajunMaster::ClearPlayer (int i, bool keepTeam)
@@ -184,7 +185,7 @@ void FCajunMaster::ClearPlayer (int i, bool keepTeam)
 	if (players[i].mo)
 	{
 		players[i].mo->Destroy ();
-		players[i].mo = NULL;
+		players[i].mo = nullptr;
 	}
 	botinfo_t *bot = botinfo;
 	while (bot && stricmp (players[i].userinfo.GetName(), bot->name))
@@ -194,10 +195,10 @@ void FCajunMaster::ClearPlayer (int i, bool keepTeam)
 		bot->inuse = BOTINUSE_No;
 		bot->lastteam = keepTeam ? players[i].userinfo.GetTeam() : TEAM_NONE;
 	}
-	if (players[i].Bot != NULL)
+	if (players[i].Bot != nullptr)
 	{
 		players[i].Bot->Destroy ();
-		players[i].Bot = NULL;
+		players[i].Bot = nullptr;
 	}
 	players[i].~player_t();
 	::new(&players[i]) player_t;
@@ -261,7 +262,7 @@ void InitBotStuff()
 		while (sc.GetString())
 		{
 			PClassActor *wcls = PClass::FindActor(sc.String);
-			if (wcls != NULL && wcls->IsDescendantOf(NAME_Weapon))
+			if (wcls != nullptr && wcls->IsDescendantOf(NAME_Weapon))
 			{
 				BotInfoData bi = {};
 				sc.MustGetStringName(",");
@@ -306,7 +307,7 @@ void InitBotStuff()
 	for(unsigned i=0;i<countof(warnbotmissiles);i++)
 	{
 		AActor *a = GetDefaultByName (warnbotmissiles[i]);
-		if (a != NULL)
+		if (a != nullptr)
 		{
 			a->flags3|=MF3_WARNBOT;
 		}

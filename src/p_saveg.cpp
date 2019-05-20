@@ -830,8 +830,7 @@ void CopyPlayer(player_t *dst, player_t *src, const char *name)
 	bool attackdown = dst->attackdown;
 	bool usedown = dst->usedown;
 
-
-	*dst = *src;		// To avoid memory leaks at this point the userinfo in src must be empty which is taken care of by the TransferFrom call above.
+	dst->CopyFrom(*src, true);	// To avoid memory leaks at this point the userinfo in src must be empty which is taken care of by the TransferFrom call above.
 
 	dst->cheats |= chasecam;
 
@@ -873,9 +872,6 @@ void CopyPlayer(player_t *dst, player_t *src, const char *name)
 
 		pspr = pspr->Next;
 	}
-
-	// Don't let the psprites be destroyed when src is destroyed.
-	src->psprites = nullptr;
 
 	// These 2 variables may not be overwritten.
 	dst->attackdown = attackdown;
@@ -972,7 +968,8 @@ void G_SerializeLevel(FSerializer &arc, bool hubload)
 		("level.deathsequence", level.deathsequence)
 		("level.bodyqueslot", level.bodyqueslot)
 		("level.spawnindex", level.spawnindex)
-		.Array("level.bodyque", level.bodyque, level.BODYQUESIZE);
+		.Array("level.bodyque", level.bodyque, level.BODYQUESIZE)
+		("level.frozenstate", level.frozenstate);
 
 	// Hub transitions must keep the current total time
 	if (!hubload)
@@ -984,6 +981,7 @@ void G_SerializeLevel(FSerializer &arc, bool hubload)
 		sky2texture = level.skytexture2;
 		R_InitSkyMap();
 		G_AirControlChanged();
+		bglobal.freeze = !!(level.frozenstate & 2);
 	}
 
 

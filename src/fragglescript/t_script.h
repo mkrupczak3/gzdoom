@@ -232,7 +232,7 @@ public:
 
 	DFsSection()
 	{
-		next = NULL;
+		next = nullptr;
 	}
 
 	void Serialize(FSerializer &ar);
@@ -681,8 +681,6 @@ public:
 	TObjPtr<DFsScript*> LevelScript;
 	TObjPtr<DRunningScript*> RunningScripts;
 	TArray<TObjPtr<AActor*> > SpawnedThings;
-	bool nocheckposition = false;
-	bool setcolormaterial = false;
 
 	DFraggleThinker();
 	void OnDestroy() override;

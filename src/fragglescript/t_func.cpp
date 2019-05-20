@@ -285,7 +285,7 @@ static int T_GetPlayerNum(const svalue_t &arg)
 	return playernum;
 }
 
-APlayerPawn *T_GetPlayerActor(const svalue_t &arg)
+AActor *T_GetPlayerActor(const svalue_t &arg)
 {
 	int num = T_GetPlayerNum(arg);
 	return num == -1 ? nullptr : players[num].mo;
@@ -599,7 +599,7 @@ void FParser::SF_Include(void)
 
 void FParser::SF_Input(void)
 {
-	Printf(PRINT_BOLD,"input() function not available in doom\n");
+	Printf(PRINT_BOLD,"input() function not available in Doom\n");
 }
 
 //==========================================================================
@@ -887,7 +887,7 @@ void FParser::SF_Spawn(void)
 		{
 			t_return.value.mobj->Angles.Yaw = angle;
 
-			if (!DFraggleThinker::ActiveThinker->nocheckposition)
+			if (!level.info->fs_nocheckposition)
 			{
 				if (!P_TestMobjLocation(t_return.value.mobj))
 				{
@@ -1768,7 +1768,7 @@ class DLightLevel : public DLighting
 	unsigned char destlevel;
 	unsigned char speed;
 
-	DLightLevel() {}
+	DLightLevel() = default;
 
 public:
 
@@ -3311,7 +3311,7 @@ void FParser::SF_Resurrect()
 		mo->Height = mo->GetDefault()->Height;
 		mo->radius = mo->GetDefault()->radius;
 		mo->Revive();
-		mo->target = NULL;
+		mo->target = nullptr;
 	}
 }
 
@@ -3724,19 +3724,7 @@ void FParser::SF_SetColor(void)
 		FSSectorTagIterator itr(tagnum);
 		while ((i = itr.Next()) >= 0)
 		{
-			if (!DFraggleThinker::ActiveThinker->setcolormaterial)
-			{
-				level.sectors[i].SetColor(color, 0);
-			}
-			else
-			{
-				// little hack for testing the D64 color stuff.
-				for (int j = 0; j < 4; j++) level.sectors[i].SetSpecialColor(j, color);
-				// simulates 'nocoloredspritelighting' settings.
-				int v = (color.r + color.g + color.b) / 3;
-				v = (255 + v + v) / 3;
-				level.sectors[i].SetSpecialColor(sector_t::sprites, v, v, v);
-			}
+			level.sectors[i].SetColor(color, 0);
 		}
 	}
 }
