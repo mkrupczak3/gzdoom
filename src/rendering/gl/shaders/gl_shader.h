@@ -205,7 +205,7 @@ public:
 
 class FBufferedUniformPE
 {
-	PalEntry mBuffer;
+	FVector4PalEntry mBuffer;
 	int mIndex;
 
 public:
@@ -215,12 +215,12 @@ public:
 		mBuffer = 0;
 	}
 
-	void Set(PalEntry newvalue)
+	void Set(const FVector4PalEntry &newvalue)
 	{
 		if (newvalue != mBuffer)
 		{
 			mBuffer = newvalue;
-			glUniform4f(mIndex, newvalue.r/255.f, newvalue.g/255.f, newvalue.b/255.f, newvalue.a/255.f);
+			glUniform4f(mIndex, newvalue.r, newvalue.g, newvalue.b, newvalue.a);
 		}
 	}
 };
@@ -301,8 +301,8 @@ public:
 	FShader *BindEffect(int effect, EPassType passType);
 	FShader *Get(unsigned int eff, bool alphateston, EPassType passType);
 
+    void SetActiveShader(FShader *sh);
 private:
-	void SetActiveShader(FShader *sh);
 
 	FShader *mActiveShader = nullptr;
 	TArray<FShaderCollection*> mPassShaders;

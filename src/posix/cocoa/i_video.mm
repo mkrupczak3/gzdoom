@@ -40,6 +40,7 @@
 
 #include "i_common.h"
 
+#include "v_video.h"
 #include "bitmap.h"
 #include "c_dispatch.h"
 #include "doomstat.h"
@@ -94,7 +95,7 @@ EXTERN_CVAR(Bool, vid_vsync)
 EXTERN_CVAR(Bool, vid_hidpi)
 EXTERN_CVAR(Int,  vid_defwidth)
 EXTERN_CVAR(Int,  vid_defheight)
-EXTERN_CVAR(Int,  vid_backend)
+EXTERN_CVAR(Int,  vid_enablevulkan)
 EXTERN_CVAR(Bool, vk_debug)
 
 CUSTOM_CVAR(Bool, vid_autoswitch, true, CVAR_ARCHIVE | CVAR_GLOBALCONFIG | CVAR_NOINITCALL)
@@ -250,6 +251,11 @@ namespace
 	return [self.class.layerClass layer];
 }
 
+-(BOOL) isOpaque
+{
+	return YES;
+}
+
 @end
 
 
@@ -341,7 +347,7 @@ class CocoaVideo : public IVideo
 public:
 	CocoaVideo()
 	{
-		ms_isVulkanEnabled = vid_backend == 0 && NSAppKitVersionNumber >= 1404; // NSAppKitVersionNumber10_11
+		ms_isVulkanEnabled = vid_enablevulkan == 1 && NSAppKitVersionNumber >= 1404; // NSAppKitVersionNumber10_11
 	}
 
 	~CocoaVideo()
@@ -379,6 +385,11 @@ public:
 				// CVAR from pre-Vulkan era has a priority over vk_device selection
 				setenv("MVK_CONFIG_FORCE_LOW_POWER_GPU", "1", 0);
 			}
+
+			// The following settings improve performance like suggested at
+			// https://github.com/KhronosGroup/MoltenVK/issues/581#issuecomment-487293665
+			setenv("MVK_CONFIG_SYNCHRONOUS_QUEUE_SUBMITS", "0", 0);
+			setenv("MVK_CONFIG_PRESENT_WITH_COMMAND_BUFFER", "0", 0);
 
 			try
 			{
@@ -482,7 +493,7 @@ void SystemBaseFrameBuffer::ToggleFullscreen(bool yes)
 
 void SystemBaseFrameBuffer::SetWindowSize(int width, int height)
 {
-	if (width < MINIMUM_WIDTH || height < MINIMUM_HEIGHT)
+	if (width < VID_MIN_WIDTH || height < VID_MIN_HEIGHT)
 	{
 		return;
 	}
@@ -549,8 +560,8 @@ void SystemBaseFrameBuffer::SetWindowedMode()
 		[m_window setHidesOnDeactivate:NO];
 	}
 
-	const int minimumFrameWidth  = MINIMUM_WIDTH;
-	const int minimumFrameHeight = MINIMUM_HEIGHT + GetTitleBarHeight();
+	const int minimumFrameWidth  = VID_MIN_WIDTH;
+	const int minimumFrameHeight = VID_MIN_HEIGHT + GetTitleBarHeight();
 	const NSSize minimumFrameSize = NSMakeSize(minimumFrameWidth, minimumFrameHeight);
 	[m_window setMinSize:minimumFrameSize];
 

@@ -14,11 +14,14 @@ VkRenderPassManager::VkRenderPassManager()
 {
 }
 
+VkRenderPassManager::~VkRenderPassManager()
+{
+	DynamicSet.reset(); // Needed since it must come before destruction of DynamicDescriptorPool
+}
+
 void VkRenderPassManager::Init()
 {
 	CreateDynamicSetLayout();
-	CreateTextureSetLayout();
-	CreatePipelineLayout();
 	CreateDescriptorPool();
 	CreateDynamicSet();
 }
@@ -26,6 +29,22 @@ void VkRenderPassManager::Init()
 void VkRenderPassManager::RenderBuffersReset()
 {
 	RenderPassSetup.clear();
+}
+
+void VkRenderPassManager::TextureSetPoolReset()
+{
+	if (auto fb = GetVulkanFrameBuffer())
+	{
+		auto &deleteList = fb->FrameDeleteList;
+
+		for (auto &desc : TextureDescriptorPools)
+		{
+			deleteList.DescriptorPools.push_back(std::move(desc));
+		}
+	}
+	TextureDescriptorPools.clear();
+	TextureDescriptorSetsLeft = 0;
+	TextureDescriptorsLeft = 0;
 }
 
 VkRenderPassSetup *VkRenderPassManager::GetRenderPass(const VkRenderPassKey &key)
@@ -61,11 +80,13 @@ int VkRenderPassManager::GetVertexFormat(int numBindingPoints, int numAttributes
 	VkVertexFormat fmt;
 	fmt.NumBindingPoints = numBindingPoints;
 	fmt.Stride = stride;
-	fmt.UseVertexData = false;
+	fmt.UseVertexData = 0;
 	for (int j = 0; j < numAttributes; j++)
 	{
 		if (attrs[j].location == VATTR_COLOR)
-			fmt.UseVertexData = true;
+			fmt.UseVertexData |= 1;
+		else if (attrs[j].location == VATTR_NORMAL)
+			fmt.UseVertexData |= 2;
 		fmt.Attrs.push_back(attrs[j]);
 	}
 	VertexFormats.push_back(fmt);
@@ -76,7 +97,7 @@ void VkRenderPassManager::CreateDynamicSetLayout()
 {
 	DescriptorSetLayoutBuilder builder;
 	builder.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
-	builder.addBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1, VK_SHADER_STAGE_FRAGMENT_BIT);
+	builder.addBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);
 	builder.addBinding(2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
 	builder.addBinding(3, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
 	builder.addBinding(4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -84,54 +105,97 @@ void VkRenderPassManager::CreateDynamicSetLayout()
 	DynamicSetLayout->SetDebugName("VkRenderPassManager.DynamicSetLayout");
 }
 
-void VkRenderPassManager::CreateTextureSetLayout()
+VulkanDescriptorSetLayout *VkRenderPassManager::GetTextureSetLayout(int numLayers)
 {
+	if (TextureSetLayouts.size() < (size_t)numLayers)
+		TextureSetLayouts.resize(numLayers);
+
+	auto &layout = TextureSetLayouts[numLayers - 1];
+	if (layout)
+		return layout.get();
+
 	DescriptorSetLayoutBuilder builder;
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < numLayers; i++)
 	{
 		builder.addBinding(i, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);
 	}
-	TextureSetLayout = builder.create(GetVulkanFrameBuffer()->device);
-	TextureSetLayout->SetDebugName("VkRenderPassManager.TextureSetLayout");
+	layout = builder.create(GetVulkanFrameBuffer()->device);
+	layout->SetDebugName("VkRenderPassManager.TextureSetLayout");
+	return layout.get();
 }
 
-void VkRenderPassManager::CreatePipelineLayout()
+VulkanPipelineLayout* VkRenderPassManager::GetPipelineLayout(int numLayers)
 {
+	if (PipelineLayouts.size() <= (size_t)numLayers)
+		PipelineLayouts.resize(numLayers + 1);
+
+	auto &layout = PipelineLayouts[numLayers];
+	if (layout)
+		return layout.get();
+
 	PipelineLayoutBuilder builder;
 	builder.addSetLayout(DynamicSetLayout.get());
-	builder.addSetLayout(TextureSetLayout.get());
+	if (numLayers != 0)
+		builder.addSetLayout(GetTextureSetLayout(numLayers));
 	builder.addPushConstantRange(VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstants));
-	PipelineLayout = builder.create(GetVulkanFrameBuffer()->device);
-	PipelineLayout->SetDebugName("VkRenderPassManager.PipelineLayout");
+	layout = builder.create(GetVulkanFrameBuffer()->device);
+	layout->SetDebugName("VkRenderPassManager.PipelineLayout");
+	return layout.get();
 }
 
 void VkRenderPassManager::CreateDescriptorPool()
 {
 	DescriptorPoolBuilder builder;
 	builder.addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 3);
-	builder.addPoolSize(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1);
-	builder.addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 5000 * 6);
-	builder.setMaxSets(5000);
-	DescriptorPool = builder.create(GetVulkanFrameBuffer()->device);
-	DescriptorPool->SetDebugName("VkRenderPassManager.DescriptorPool");
+	builder.addPoolSize(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1);
+	builder.addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1);
+	builder.setMaxSets(1);
+	DynamicDescriptorPool = builder.create(GetVulkanFrameBuffer()->device);
+	DynamicDescriptorPool->SetDebugName("VkRenderPassManager.DynamicDescriptorPool");
 }
 
 void VkRenderPassManager::CreateDynamicSet()
 {
-	DynamicSet = DescriptorPool->allocate(DynamicSetLayout.get());
+	DynamicSet = DynamicDescriptorPool->allocate(DynamicSetLayout.get());
+	if (!DynamicSet)
+		I_FatalError("CreateDynamicSet failed.\n");
 }
 
 void VkRenderPassManager::UpdateDynamicSet()
 {
 	auto fb = GetVulkanFrameBuffer();
 
+	// In some rare cases drawing commands may already have been created before VulkanFrameBuffer::BeginFrame is called.
+	// Make sure there there are no active command buffers using DynamicSet when we update it:
+	fb->GetRenderState()->EndRenderPass();
+	fb->WaitForCommands(false);
+
 	WriteDescriptors update;
 	update.addBuffer(DynamicSet.get(), 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, fb->ViewpointUBO->mBuffer.get(), 0, sizeof(HWViewpointUniforms));
-	update.addBuffer(DynamicSet.get(), 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, fb->LightBufferSSO->mBuffer.get(), 0, fb->GetLightBufferBlockSize());
+	update.addBuffer(DynamicSet.get(), 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, fb->LightBufferSSO->mBuffer.get());
 	update.addBuffer(DynamicSet.get(), 2, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, fb->MatricesUBO->mBuffer.get(), 0, sizeof(MatricesUBO));
 	update.addBuffer(DynamicSet.get(), 3, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, fb->StreamUBO->mBuffer.get(), 0, sizeof(StreamUBO));
 	update.addCombinedImageSampler(DynamicSet.get(), 4, fb->GetBuffers()->ShadowmapView.get(), fb->GetBuffers()->ShadowmapSampler.get(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 	update.updateSets(fb->device);
+}
+
+std::unique_ptr<VulkanDescriptorSet> VkRenderPassManager::AllocateTextureDescriptorSet(int numLayers)
+{
+	if (TextureDescriptorSetsLeft == 0 || TextureDescriptorsLeft < numLayers)
+	{
+		TextureDescriptorSetsLeft = 1000;
+		TextureDescriptorsLeft = 2000;
+
+		DescriptorPoolBuilder builder;
+		builder.addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, TextureDescriptorsLeft);
+		builder.setMaxSets(TextureDescriptorSetsLeft);
+		TextureDescriptorPools.push_back(builder.create(GetVulkanFrameBuffer()->device));
+		TextureDescriptorPools.back()->SetDebugName("VkRenderPassManager.TextureDescriptorPool");
+	}
+
+	TextureDescriptorSetsLeft--;
+	TextureDescriptorsLeft -= numLayers;
+	return TextureDescriptorPools.back()->allocate(GetTextureSetLayout(numLayers));
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -149,17 +213,23 @@ void VkRenderPassSetup::CreateRenderPass(const VkRenderPassKey &key)
 	VkFormat drawBufferFormats[] = { VK_FORMAT_R16G16B16A16_SFLOAT, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_A2R10G10B10_UNORM_PACK32 };
 
 	RenderPassBuilder builder;
-	for (int i = 0; i < key.DrawBuffers; i++)
+
+	builder.addAttachment(
+		key.DrawBufferFormat, (VkSampleCountFlagBits)key.Samples,
+		(key.ClearTargets & CT_Color) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
+	for (int i = 1; i < key.DrawBuffers; i++)
 	{
 		builder.addAttachment(
-			drawBufferFormats[i], i == 0 ? (VkSampleCountFlagBits)key.Samples : buffers->GetSceneSamples(),
+			drawBufferFormats[i], buffers->GetSceneSamples(),
 			(key.ClearTargets & CT_Color) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE,
 			VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 	}
 	if (key.UsesDepthStencil())
 	{
 		builder.addDepthStencilAttachment(
-			buffers->SceneDepthStencilFormat, buffers->GetSceneSamples(),
+			buffers->SceneDepthStencilFormat, key.DrawBufferFormat == VK_FORMAT_R8G8B8A8_UNORM ? VK_SAMPLE_COUNT_1_BIT : buffers->GetSceneSamples(),
 			(key.ClearTargets & CT_Depth) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE,
 			(key.ClearTargets & CT_Stencil) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE,
 			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
@@ -196,7 +266,7 @@ void VkRenderPassSetup::CreatePipeline(const VkRenderPassKey &key)
 	VkShaderProgram *program;
 	if (key.SpecialEffect != EFF_NONE)
 	{
-		program = fb->GetShaderManager()->GetEffect(key.SpecialEffect);
+		program = fb->GetShaderManager()->GetEffect(key.SpecialEffect, key.DrawBuffers > 1 ? GBUFFER_PASS : NORMAL_PASS);
 	}
 	else
 	{
@@ -216,7 +286,7 @@ void VkRenderPassSetup::CreatePipeline(const VkRenderPassKey &key)
 		VK_FORMAT_R32G32_SFLOAT,
 		VK_FORMAT_R32_SFLOAT,
 		VK_FORMAT_R8G8B8A8_UNORM,
-		VK_FORMAT_A2R10G10B10_SNORM_PACK32
+		VK_FORMAT_A2B10G10R10_SNORM_PACK32
 	};
 
 	bool inputLocations[6] = { false, false, false, false, false, false };
@@ -265,14 +335,18 @@ void VkRenderPassSetup::CreatePipeline(const VkRenderPassKey &key)
 	builder.setDepthFunc(depthfunc2vk[key.DepthFunc]);
 	builder.setDepthClampEnable(key.DepthClamp);
 	builder.setDepthBias(key.DepthBias, 0.0f, 0.0f, 0.0f);
-	builder.setCull(key.CullMode == Cull_None ? VK_CULL_MODE_NONE : VK_CULL_MODE_FRONT_AND_BACK, key.CullMode == Cull_CW ? VK_FRONT_FACE_CLOCKWISE : VK_FRONT_FACE_COUNTER_CLOCKWISE);
+
+	// Note: CCW and CW is intentionally swapped here because the vulkan and opengl coordinate systems differ.
+	// main.vp addresses this by patching up gl_Position.z, which has the side effect of flipping the sign of the front face calculations.
+	builder.setCull(key.CullMode == Cull_None ? VK_CULL_MODE_NONE : VK_CULL_MODE_BACK_BIT, key.CullMode == Cull_CW ? VK_FRONT_FACE_COUNTER_CLOCKWISE : VK_FRONT_FACE_CLOCKWISE);
+
 	builder.setColorWriteMask((VkColorComponentFlags)key.ColorMask);
 	builder.setStencil(VK_STENCIL_OP_KEEP, op2vk[key.StencilPassOp], VK_STENCIL_OP_KEEP, VK_COMPARE_OP_EQUAL, 0xffffffff, 0xffffffff, 0);
 	builder.setBlendMode(key.RenderStyle);
 	builder.setSubpassColorAttachmentCount(key.DrawBuffers);
 	builder.setRasterizationSamples((VkSampleCountFlagBits)key.Samples);
 
-	builder.setLayout(fb->GetRenderPassManager()->PipelineLayout.get());
+	builder.setLayout(fb->GetRenderPassManager()->GetPipelineLayout(key.NumTextureLayers));
 	builder.setRenderPass(RenderPass.get());
 	Pipeline = builder.create(fb->device);
 	Pipeline->SetDebugName("VkRenderPassSetup.Pipeline");

@@ -646,6 +646,7 @@ CVAR (Flag, compat_pushwindow,			compatflags2, COMPATF2_PUSHWINDOW);
 CVAR (Flag, compat_checkswitchrange,	compatflags2, COMPATF2_CHECKSWITCHRANGE);
 CVAR (Flag, compat_explode1,			compatflags2, COMPATF2_EXPLODE1);
 CVAR (Flag, compat_explode2,			compatflags2, COMPATF2_EXPLODE2);
+CVAR (Flag, compat_railing,				compatflags2, COMPATF2_RAILING);
 
 CVAR(Bool, vid_activeinbackground, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 
@@ -858,9 +859,10 @@ void D_Display ()
 		screen->DrawTexture (tex, x, 4, DTA_CleanNoMove, true, TAG_DONE);
 		if (paused && multiplayer)
 		{
+			FFont *font = generic_ui? NewSmallFont : SmallFont;
 			pstring << ' ' << players[paused - 1].userinfo.GetName();
-			screen->DrawText(SmallFont, CR_RED,
-				(screen->GetWidth() - SmallFont->StringWidth(pstring)*CleanXfac) / 2,
+			screen->DrawText(font, CR_RED,
+				(screen->GetWidth() - font->StringWidth(pstring)*CleanXfac) / 2,
 				(tex->GetDisplayHeight() * CleanYfac) + 4, pstring, DTA_CleanNoMove, true, TAG_DONE);
 		}
 	}
@@ -1074,13 +1076,6 @@ void D_PageDrawer (void)
 			DTA_Masked, false,
 			DTA_BilinearFilter, true,
 			TAG_DONE);
-	}
-	else
-	{
-		if (!PageBlank)
-		{
-			screen->DrawText (SmallFont, CR_WHITE, 0, 0, "Page graphic goes here", TAG_DONE);
-		}
 	}
 	if (Advisory != NULL)
 	{
@@ -2394,7 +2389,7 @@ void D_DoomMain (void)
 		}
 
 		if (!batchrun) Printf ("W_Init: Init WADfiles.\n");
-		Wads.InitMultipleFiles (allwads);
+		Wads.InitMultipleFiles (allwads, iwad_info->DeleteLumps);
 		allwads.Clear();
 		allwads.ShrinkToFit();
 		SetMapxxFlag();

@@ -147,6 +147,7 @@ void GLBuffer::GPUWaitSync()
 	{
 		Printf("Error on glClientWaitSync: %d\n", status);
 	}
+	glDeleteSync(mGLSync);// Is this needed?
 }
 
 void GLBuffer::Resize(size_t newsize)

@@ -82,7 +82,6 @@ OpenGLFrameBuffer::OpenGLFrameBuffer(void *hMonitor, bool fullscreen) :
 	gl_RenderState.Reset();
 
 	GLRenderer = nullptr;
-	InitPalette();
 }
 
 OpenGLFrameBuffer::~OpenGLFrameBuffer()
@@ -277,7 +276,7 @@ void OpenGLFrameBuffer::Swap()
 	Finish.Clock();
 
 	//if (swapbefore) glFinish();
-
+    GLRenderer->mShaderManager->SetActiveShader(0);
 	screen->mVertexData->DropSync();
 
 	FPSLimit();
@@ -371,7 +370,7 @@ IIndexBuffer *OpenGLFrameBuffer::CreateIndexBuffer()
 	return new GLIndexBuffer; 
 }
 
-IDataBuffer *OpenGLFrameBuffer::CreateDataBuffer(int bindingpoint, bool ssbo)
+IDataBuffer *OpenGLFrameBuffer::CreateDataBuffer(int bindingpoint, bool ssbo, bool needsresize)
 {
 	return new GLDataBuffer(bindingpoint, ssbo);
 }
@@ -485,10 +484,8 @@ void OpenGLFrameBuffer::Draw2D()
 {
 	if (GLRenderer != nullptr)
 	{
-		FGLDebug::PushGroup("Draw2D");
 		GLRenderer->mBuffers->BindCurrentFB();
 		::Draw2D(&m2DDrawer, gl_RenderState);
-		FGLDebug::PopGroup();
 	}
 }
 

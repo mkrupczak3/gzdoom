@@ -3768,8 +3768,7 @@ int DLevelScript::DoSpawn (int type, const DVector3 &pos, int tid, DAngle angle,
 			if (force || P_TestMobjLocation (actor))
 			{
 				actor->Angles.Yaw = angle;
-				actor->tid = tid;
-				actor->AddToHash ();
+				actor->SetTID(tid);
 				if (actor->flags & MF_SPECIAL)
 					actor->flags |= MF_DROPPED;  // Don't respawn
 				actor->flags2 = oldFlags2;
@@ -4372,7 +4371,7 @@ int DLevelScript::GetActorProperty (int tid, int property)
 	case APROP_Radius:		return DoubleToACS(actor->radius);
 	case APROP_ReactionTime:return actor->reactiontime;
 	case APROP_MeleeRange:	return DoubleToACS(actor->meleerange);
-	case APROP_ViewHeight:	if (actor->IsKindOf(NAME_PlayerPawn))
+	case APROP_ViewHeight:	if (actor->player)
 							{
 								return DoubleToACS(actor->player->DefaultViewHeight());
 							}
@@ -5856,8 +5855,7 @@ int DLevelScript::CallFunction(int argCount, int funcIndex, int32_t *args)
 					AActor *puff = P_LineAttack(activator, angle, range, pitch, damage, damagetype, pufftype, fhflags);
 					if (puff != NULL && pufftid != 0)
 					{
-						puff->tid = pufftid;
-						puff->AddToHash();
+						puff->SetTID(pufftid);
 					}
 				}
 				else
@@ -5870,8 +5868,7 @@ int DLevelScript::CallFunction(int argCount, int funcIndex, int32_t *args)
 						AActor *puff = P_LineAttack(source, angle, range, pitch, damage, damagetype, pufftype, fhflags);
 						if (puff != NULL && pufftid != 0)
 						{
-							puff->tid = pufftid;
-							puff->AddToHash();
+							puff->SetTID(pufftid);
 						}
 					}
 				}
@@ -6291,9 +6288,7 @@ doplaysound:			if (funcIndex == ACSF_PlayActorSound)
 
 				if ((pickedActor->tid == 0) || (flags & PICKAF_FORCETID))
 				{
-					pickedActor->RemoveFromHash();
-					pickedActor->tid = args[4];
-					pickedActor->AddToHash();
+					pickedActor->SetTID(args[4]);
 				}
 				if (flags & PICKAF_RETURNTID)
 				{
@@ -8662,18 +8657,17 @@ scriptwait:
 						color = CLAMPCOLOR(Stack[optstart-4]);
 					}
 
-					FFont *font = activefont ? activefont : SmallFont;
 					switch (type & 0xFF)
 					{
 					default:	// normal
 						alpha = (optstart < sp) ? ACSToFloat(Stack[optstart]) : 1.f;
-						msg = Create<DHUDMessage> (font, work, x, y, hudwidth, hudheight, color, holdTime);
+						msg = Create<DHUDMessage> (activefont, work, x, y, hudwidth, hudheight, color, holdTime);
 						break;
 					case 1:		// fade out
 						{
 							float fadeTime = (optstart < sp) ? ACSToFloat(Stack[optstart]) : 0.5f;
 							alpha = (optstart < sp-1) ? ACSToFloat(Stack[optstart+1]) : 1.f;
-							msg = Create<DHUDMessageFadeOut> (font, work, x, y, hudwidth, hudheight, color, holdTime, fadeTime);
+							msg = Create<DHUDMessageFadeOut> (activefont, work, x, y, hudwidth, hudheight, color, holdTime, fadeTime);
 						}
 						break;
 					case 2:		// type on, then fade out
@@ -8681,7 +8675,7 @@ scriptwait:
 							float typeTime = (optstart < sp) ? ACSToFloat(Stack[optstart]) : 0.05f;
 							float fadeTime = (optstart < sp-1) ? ACSToFloat(Stack[optstart+1]) : 0.5f;
 							alpha = (optstart < sp-2) ? ACSToFloat(Stack[optstart+2]) : 1.f;
-							msg = Create<DHUDMessageTypeOnFadeOut> (font, work, x, y, hudwidth, hudheight, color, typeTime, holdTime, fadeTime);
+							msg = Create<DHUDMessageTypeOnFadeOut> (activefont, work, x, y, hudwidth, hudheight, color, typeTime, holdTime, fadeTime);
 						}
 						break;
 					case 3:		// fade in, then fade out
@@ -8689,7 +8683,7 @@ scriptwait:
 							float inTime = (optstart < sp) ? ACSToFloat(Stack[optstart]) : 0.5f;
 							float outTime = (optstart < sp-1) ? ACSToFloat(Stack[optstart+1]) : 0.5f;
 							alpha = (optstart < sp-2) ? ACSToFloat(Stack[optstart + 2]) : 1.f;
-							msg = Create<DHUDMessageFadeInOut> (font, work, x, y, hudwidth, hudheight, color, holdTime, inTime, outTime);
+							msg = Create<DHUDMessageFadeInOut> (activefont, work, x, y, hudwidth, hudheight, color, holdTime, inTime, outTime);
 						}
 						break;
 					}
@@ -9627,12 +9621,12 @@ scriptwait:
 			break;
 
 		case PCD_SETMARINEWEAPON:
-			ScriptUtil::Exec(NAME_SetMarineWeapon, ScriptUtil::Pointer, activator, ScriptUtil::Int, STACK(2), ScriptUtil::Int, STACK(1), ScriptUtil::End);
+			ScriptUtil::Exec(NAME_SetMarineWeapon, ScriptUtil::Pointer, Level, ScriptUtil::Pointer, activator, ScriptUtil::Int, STACK(2), ScriptUtil::Int, STACK(1), ScriptUtil::End);
 			sp -= 2;
 			break;
 
 		case PCD_SETMARINESPRITE:
-			ScriptUtil::Exec(NAME_SetMarineSprite, ScriptUtil::Pointer, activator, ScriptUtil::Int, STACK(2), ScriptUtil::Class, GetClassForIndex(STACK(1)), ScriptUtil::End);
+			ScriptUtil::Exec(NAME_SetMarineSprite, ScriptUtil::Pointer, Level, ScriptUtil::Pointer, activator, ScriptUtil::Int, STACK(2), ScriptUtil::Class, GetClassForIndex(STACK(1)), ScriptUtil::End);
 			sp -= 2;
 			break;
 
@@ -10460,7 +10454,7 @@ CCMD (scriptstat)
 {
 	for (auto Level : AllLevels())
 	{
-		Printf("Script status for %s", Level->MapName.GetChars());
+		Printf("Script status for %s\n", Level->MapName.GetChars());
 		if (Level->ACSThinker == nullptr)
 		{
 			Printf("No scripts are running.\n");

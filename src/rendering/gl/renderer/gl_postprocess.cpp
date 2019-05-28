@@ -43,7 +43,6 @@
 #include "hwrenderer/postprocessing/hw_postprocess_cvars.h"
 #include "hwrenderer/utility/hw_vrmodes.h"
 #include "hwrenderer/data/flatvertices.h"
-#include "gl/shaders/gl_postprocessshaderinstance.h"
 #include "gl/textures/gl_hwtexture.h"
 #include "r_videoscale.h"
 
@@ -70,7 +69,7 @@ void FGLRenderer::PostProcessScene(int fixedcm, const std::function<void()> &aft
 	GLPPRenderState renderstate(mBuffers);
 
 	hw_postprocess.exposure.Render(&renderstate, sceneWidth, sceneHeight);
-	mCustomPostProcessShaders->Run("beforebloom");
+	hw_postprocess.customShaders.Run(&renderstate, "beforebloom");
 	hw_postprocess.bloom.RenderBloom(&renderstate, sceneWidth, sceneHeight, fixedcm);
 
 	mBuffers->BindCurrentFB();
@@ -80,7 +79,7 @@ void FGLRenderer::PostProcessScene(int fixedcm, const std::function<void()> &aft
 	hw_postprocess.colormap.Render(&renderstate, fixedcm);
 	hw_postprocess.lens.Render(&renderstate);
 	hw_postprocess.fxaa.Render(&renderstate);
-	mCustomPostProcessShaders->Run("scene");
+	hw_postprocess.customShaders.Run(&renderstate, "scene");
 }
 
 //-----------------------------------------------------------------------------
@@ -164,7 +163,8 @@ void FGLRenderer::CopyToBackbuffer(const IntRect *bounds, bool applyGamma)
 	screen->Draw2D();	// draw all pending 2D stuff before copying the buffer
 	screen->Clear2D();
 
-	mCustomPostProcessShaders->Run("screen");
+	GLPPRenderState renderstate(mBuffers);
+	hw_postprocess.customShaders.Run(&renderstate, "screen");
 
 	FGLDebug::PushGroup("CopyToBackbuffer");
 	FGLPostProcessState savedState;
@@ -225,11 +225,12 @@ void FGLRenderer::DrawPresentTexture(const IntRect &box, bool applyGamma)
 	{
 		// Full screen exclusive mode treats a rgba16f frame buffer as linear.
 		// It probably will eventually in desktop mode too, but the DWM doesn't seem to support that.
-		mPresentShader->Uniforms->InvGamma *= 2.2f;
+		mPresentShader->Uniforms->HdrMode = 1;
 		mPresentShader->Uniforms->ColorScale = (gl_dither_bpc == -1) ? 1023.0f : (float)((1 << gl_dither_bpc) - 1);
 	}
 	else
 	{
+		mPresentShader->Uniforms->HdrMode = 0;
 		mPresentShader->Uniforms->ColorScale = (gl_dither_bpc == -1) ? 255.0f : (float)((1 << gl_dither_bpc) - 1);
 	}
 	mPresentShader->Uniforms->Scale = { screen->mScreenViewport.width / (float)mBuffers->GetWidth(), screen->mScreenViewport.height / (float)mBuffers->GetHeight() };

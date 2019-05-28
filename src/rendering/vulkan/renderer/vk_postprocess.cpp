@@ -34,7 +34,7 @@ void VkPostprocess::SetActiveRenderTarget()
 	imageTransition.addImage(buffers->PipelineImage[mCurrentPipelineImage].get(), &buffers->PipelineLayout[mCurrentPipelineImage], VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, false);
 	imageTransition.execute(fb->GetDrawCommands());
 
-	fb->GetRenderState()->SetRenderTarget(buffers->PipelineView[mCurrentPipelineImage].get(), buffers->GetWidth(), buffers->GetHeight(), VK_SAMPLE_COUNT_1_BIT);
+	fb->GetRenderState()->SetRenderTarget(buffers->PipelineView[mCurrentPipelineImage].get(), nullptr, buffers->GetWidth(), buffers->GetHeight(), VK_FORMAT_R16G16B16A16_SFLOAT, VK_SAMPLE_COUNT_1_BIT);
 }
 
 void VkPostprocess::PostProcessScene(int fixedcm, const std::function<void()> &afterBloomDrawEndScene2D)
@@ -46,7 +46,7 @@ void VkPostprocess::PostProcessScene(int fixedcm, const std::function<void()> &a
 	VkPPRenderState renderstate;
 
 	hw_postprocess.exposure.Render(&renderstate, sceneWidth, sceneHeight);
-	//mCustomPostProcessShaders->Run("beforebloom");
+	hw_postprocess.customShaders.Run(&renderstate, "beforebloom");
 	hw_postprocess.bloom.RenderBloom(&renderstate, sceneWidth, sceneHeight, fixedcm);
 
 	SetActiveRenderTarget();
@@ -56,7 +56,7 @@ void VkPostprocess::PostProcessScene(int fixedcm, const std::function<void()> &a
 	hw_postprocess.colormap.Render(&renderstate, fixedcm);
 	hw_postprocess.lens.Render(&renderstate);
 	hw_postprocess.fxaa.Render(&renderstate);
-	//mCustomPostProcessShaders->Run("scene");
+	hw_postprocess.customShaders.Run(&renderstate, "scene");
 }
 
 void VkPostprocess::BlitSceneToPostprocess()
@@ -175,6 +175,9 @@ void VkPostprocess::DrawPresentTexture(const IntRect &box, bool applyGamma, bool
 {
 	auto fb = GetVulkanFrameBuffer();
 
+	VkPPRenderState renderstate;
+	hw_postprocess.customShaders.Run(&renderstate, "screen");
+
 	PresentUniforms uniforms;
 	if (!applyGamma /*|| framebuffer->IsHWGammaActive()*/)
 	{
@@ -197,10 +200,14 @@ void VkPostprocess::DrawPresentTexture(const IntRect &box, bool applyGamma, bool
 
 	if (applyGamma && fb->swapChain->swapChainFormat.colorSpace == VK_COLOR_SPACE_HDR10_ST2084_EXT)
 	{
-		uniforms.InvGamma *= 2.2f;
+		uniforms.HdrMode = 1;
+	}
+	else
+	{
+		uniforms.HdrMode = 0;
 	}
 
-	VkPPRenderState renderstate;
+	renderstate.Clear();
 	renderstate.Shader = &hw_postprocess.present.Present;
 	renderstate.Uniforms.Set(uniforms);
 	renderstate.Viewport = box;
@@ -264,19 +271,25 @@ void VkPostprocess::UpdateShadowMap()
 	}
 }
 
-void VkPostprocess::BeginFrame()
+std::unique_ptr<VulkanDescriptorSet> VkPostprocess::AllocateDescriptorSet(VulkanDescriptorSetLayout *layout)
 {
-	mFrameDescriptorSets.clear();
-
-	if (!mDescriptorPool)
+	if (mDescriptorPool)
 	{
-		DescriptorPoolBuilder builder;
-		builder.addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 200);
-		builder.addPoolSize(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 4);
-		builder.setMaxSets(100);
-		mDescriptorPool = builder.create(GetVulkanFrameBuffer()->device);
-		mDescriptorPool->SetDebugName("VkPostprocess.mDescriptorPool");
+		auto descriptors = mDescriptorPool->tryAllocate(layout);
+		if (descriptors)
+			return descriptors;
+
+		GetVulkanFrameBuffer()->FrameDeleteList.DescriptorPools.push_back(std::move(mDescriptorPool));
 	}
+
+	DescriptorPoolBuilder builder;
+	builder.addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 200);
+	builder.addPoolSize(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 4);
+	builder.setMaxSets(100);
+	mDescriptorPool = builder.create(GetVulkanFrameBuffer()->device);
+	mDescriptorPool->SetDebugName("VkPostprocess.mDescriptorPool");
+
+	return mDescriptorPool->allocate(layout);
 }
 
 void VkPostprocess::RenderBuffersReset()
@@ -286,7 +299,7 @@ void VkPostprocess::RenderBuffersReset()
 
 VulkanSampler *VkPostprocess::GetSampler(PPFilterMode filter, PPWrapMode wrap)
 {
-	int index = (((int)filter) << 2) | (int)wrap;
+	int index = (((int)filter) << 1) | (int)wrap;
 	auto &sampler = mSamplers[index];
 	if (sampler)
 		return sampler.get();
@@ -393,12 +406,12 @@ VkPPShader::VkPPShader(PPShader *shader)
 
 	ShaderBuilder vertbuilder;
 	vertbuilder.setVertexShader(LoadShaderCode(shader->VertexShader, "", shader->Version));
-	VertexShader = vertbuilder.create(fb->device);
+	VertexShader = vertbuilder.create(shader->VertexShader.GetChars(), fb->device);
 	VertexShader->SetDebugName(shader->VertexShader.GetChars());
 
 	ShaderBuilder fragbuilder;
 	fragbuilder.setFragmentShader(LoadShaderCode(shader->FragmentShader, prolog, shader->Version));
-	FragmentShader = fragbuilder.create(fb->device);
+	FragmentShader = fragbuilder.create(shader->FragmentShader.GetChars(), fb->device);
 	FragmentShader->SetDebugName(shader->FragmentShader.GetChars());
 }
 
@@ -417,6 +430,16 @@ FString VkPPShader::LoadShaderCode(const FString &lumpName, const FString &defin
 }
 
 /////////////////////////////////////////////////////////////////////////////
+
+void VkPPRenderState::PushGroup(const FString &name)
+{
+	GetVulkanFrameBuffer()->PushGroup(name);
+}
+
+void VkPPRenderState::PopGroup()
+{
+	GetVulkanFrameBuffer()->PopGroup();
+}
 
 void VkPPRenderState::Draw()
 {
@@ -442,9 +465,15 @@ void VkPPRenderState::Draw()
 		key.OutputFormat = VK_FORMAT_R16G16B16A16_SFLOAT;
 
 	if (Output.Type == PPTextureType::SceneColor)
+	{
+		key.StencilTest = 1;
 		key.Samples = fb->GetBuffers()->GetSceneSamples();
+	}
 	else
+	{
+		key.StencilTest = 0;
 		key.Samples = VK_SAMPLE_COUNT_1_BIT;
+	}
 
 	auto &passSetup = pp->mRenderPassSetup[key];
 	if (!passSetup)
@@ -452,9 +481,9 @@ void VkPPRenderState::Draw()
 
 	int framebufferWidth = 0, framebufferHeight = 0;
 	VulkanDescriptorSet *input = GetInput(passSetup.get(), Textures, ShadowMapBuffers);
-	VulkanFramebuffer *output = GetOutput(passSetup.get(), Output, framebufferWidth, framebufferHeight);
+	VulkanFramebuffer *output = GetOutput(passSetup.get(), Output, key.StencilTest, framebufferWidth, framebufferHeight);
 
-	RenderScreenQuad(passSetup.get(), input, output, framebufferWidth, framebufferHeight, Viewport.left, Viewport.top, Viewport.width, Viewport.height, Uniforms.Data.Data(), Uniforms.Data.Size());
+	RenderScreenQuad(passSetup.get(), input, output, framebufferWidth, framebufferHeight, Viewport.left, Viewport.top, Viewport.width, Viewport.height, Uniforms.Data.Data(), Uniforms.Data.Size(), key.StencilTest);
 
 	// Advance to next PP texture if our output was sent there
 	if (Output.Type == PPTextureType::NextPipelineTexture)
@@ -463,7 +492,7 @@ void VkPPRenderState::Draw()
 	}
 }
 
-void VkPPRenderState::RenderScreenQuad(VkPPRenderPassSetup *passSetup, VulkanDescriptorSet *descriptorSet, VulkanFramebuffer *framebuffer, int framebufferWidth, int framebufferHeight, int x, int y, int width, int height, const void *pushConstants, uint32_t pushConstantsSize)
+void VkPPRenderState::RenderScreenQuad(VkPPRenderPassSetup *passSetup, VulkanDescriptorSet *descriptorSet, VulkanFramebuffer *framebuffer, int framebufferWidth, int framebufferHeight, int x, int y, int width, int height, const void *pushConstants, uint32_t pushConstantsSize, bool stencilTest)
 {
 	auto fb = GetVulkanFrameBuffer();
 	auto cmdbuffer = fb->GetDrawCommands();
@@ -497,6 +526,8 @@ void VkPPRenderState::RenderScreenQuad(VkPPRenderPassSetup *passSetup, VulkanDes
 	cmdbuffer->bindVertexBuffers(0, 1, vertexBuffers, offsets);
 	cmdbuffer->setViewport(0, 1, &viewport);
 	cmdbuffer->setScissor(0, 1, &scissor);
+	if (stencilTest)
+		cmdbuffer->setStencilReference(VK_STENCIL_FRONT_AND_BACK, screen->stencilValue);
 	if (pushConstantsSize > 0)
 		cmdbuffer->pushConstants(passSetup->PipelineLayout.get(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, pushConstantsSize, pushConstants);
 	cmdbuffer->draw(4, 1, FFlatVertexBuffer::PRESENT_INDEX, 0);
@@ -507,7 +538,7 @@ VulkanDescriptorSet *VkPPRenderState::GetInput(VkPPRenderPassSetup *passSetup, c
 {
 	auto fb = GetVulkanFrameBuffer();
 	auto pp = fb->GetPostprocess();
-	auto descriptors = pp->mDescriptorPool->allocate(passSetup->DescriptorLayout.get());
+	auto descriptors = pp->AllocateDescriptorSet(passSetup->DescriptorLayout.get());
 	descriptors->SetDebugName("VkPostprocess.descriptors");
 
 	WriteDescriptors write;
@@ -533,11 +564,12 @@ VulkanDescriptorSet *VkPPRenderState::GetInput(VkPPRenderPassSetup *passSetup, c
 	write.updateSets(fb->device);
 	imageTransition.execute(fb->GetDrawCommands());
 
-	pp->mFrameDescriptorSets.push_back(std::move(descriptors));
-	return pp->mFrameDescriptorSets.back().get();
+	VulkanDescriptorSet *set = descriptors.get();
+	fb->FrameDeleteList.Descriptors.push_back(std::move(descriptors));
+	return set;
 }
 
-VulkanFramebuffer *VkPPRenderState::GetOutput(VkPPRenderPassSetup *passSetup, const PPOutput &output, int &framebufferWidth, int &framebufferHeight)
+VulkanFramebuffer *VkPPRenderState::GetOutput(VkPPRenderPassSetup *passSetup, const PPOutput &output, bool stencilTest, int &framebufferWidth, int &framebufferHeight)
 {
 	auto fb = GetVulkanFrameBuffer();
 
@@ -549,6 +581,8 @@ VulkanFramebuffer *VkPPRenderState::GetOutput(VkPPRenderPassSetup *passSetup, co
 	{
 		VkPPImageTransition imageTransition;
 		imageTransition.addImage(tex.image, tex.layout, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, output.Type == PPTextureType::NextPipelineTexture);
+		if (stencilTest)
+			imageTransition.addImage(fb->GetBuffers()->SceneDepthStencil.get(), &fb->GetBuffers()->SceneDepthStencilLayout, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, false);
 		imageTransition.execute(fb->GetDrawCommands());
 
 		view = tex.view->view;
@@ -569,6 +603,8 @@ VulkanFramebuffer *VkPPRenderState::GetOutput(VkPPRenderPassSetup *passSetup, co
 		builder.setRenderPass(passSetup->RenderPass.get());
 		builder.setSize(w, h);
 		builder.addAttachment(view);
+		if (stencilTest)
+			builder.addAttachment(fb->GetBuffers()->SceneDepthStencilView.get());
 		framebuffer = builder.create(GetVulkanFrameBuffer()->device);
 		framebuffer->SetDebugName(tex.debugname);
 	}
@@ -715,6 +751,12 @@ void VkPPRenderPassSetup::CreatePipeline(const VkPPRenderPassKey &key)
 	// Note: the actual values are ignored since we use dynamic viewport+scissor states
 	builder.setViewport(0.0f, 0.0f, 320.0f, 200.0f);
 	builder.setScissor(0.0f, 0.0f, 320.0f, 200.0f);
+	if (key.StencilTest)
+	{
+		builder.addDynamicState(VK_DYNAMIC_STATE_STENCIL_REFERENCE);
+		builder.setDepthStencilEnable(false, false, true);
+		builder.setStencil(VK_STENCIL_OP_KEEP, VK_STENCIL_OP_KEEP, VK_STENCIL_OP_KEEP, VK_COMPARE_OP_EQUAL, 0xffffffff, 0xffffffff, 0);
+	}
 	builder.setTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP);
 	builder.setBlendMode(key.BlendMode);
 	builder.setRasterizationSamples(key.Samples);
@@ -731,13 +773,35 @@ void VkPPRenderPassSetup::CreateRenderPass(const VkPPRenderPassKey &key)
 		builder.addAttachment(key.OutputFormat, key.Samples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 	else
 		builder.addAttachment(key.OutputFormat, key.Samples, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+	if (key.StencilTest)
+	{
+		builder.addDepthStencilAttachment(
+			GetVulkanFrameBuffer()->GetBuffers()->SceneDepthStencilFormat, key.Samples,
+			VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE,
+			VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE,
+			VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+	}
+
 	builder.addSubpass();
 	builder.addSubpassColorAttachmentRef(0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-	builder.addExternalSubpassDependency(
-		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-		VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-		VK_ACCESS_COLOR_ATTACHMENT_READ_BIT);
+	if (key.StencilTest)
+	{
+		builder.addSubpassDepthStencilAttachmentRef(1, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+		builder.addExternalSubpassDependency(
+			VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+			VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+			VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_SHADER_READ_BIT);
+	}
+	else
+	{
+		builder.addExternalSubpassDependency(
+			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+			VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+			VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_SHADER_READ_BIT);
+	}
+
 	RenderPass = builder.create(GetVulkanFrameBuffer()->device);
 	RenderPass->SetDebugName("VkPPRenderPassSetup.RenderPass");
 }

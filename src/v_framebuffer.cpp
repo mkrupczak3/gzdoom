@@ -216,8 +216,8 @@ void DFrameBuffer::Update()
 	int initialHeight = GetClientHeight();
 	int clientWidth = ViewportScaledWidth(initialWidth, initialHeight);
 	int clientHeight = ViewportScaledHeight(initialWidth, initialHeight);
-	if (clientWidth < 640) clientWidth = 640;
-	if (clientHeight < 400) clientHeight = 400;
+	if (clientWidth < VID_MIN_WIDTH) clientWidth = VID_MIN_WIDTH;
+	if (clientHeight < VID_MIN_HEIGHT) clientHeight = VID_MIN_HEIGHT;
 	if (clientWidth > 0 && clientHeight > 0 && (GetWidth() != clientWidth || GetHeight() != clientHeight))
 	{
 		SetVirtualSize(clientWidth, clientHeight);
@@ -431,7 +431,7 @@ void DFrameBuffer::FPSLimit()
 	using namespace std::chrono;
 	using namespace std::this_thread;
 
-	if (vid_maxfps <= 0 || vid_vsync || cl_capfps)
+	if (vid_maxfps <= 0 || cl_capfps)
 		return;
 
 	uint64_t targetWakeTime = fpsLimitTime + 1'000'000 / vid_maxfps;
