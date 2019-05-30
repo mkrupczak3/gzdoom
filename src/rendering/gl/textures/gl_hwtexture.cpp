@@ -201,6 +201,9 @@ void FHardwareTexture::AllocateBuffer(int w, int h, int texelsize)
 		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, glBufferID);
 		glBufferData(GL_PIXEL_UNPACK_BUFFER, w*h*texelsize, nullptr, GL_STREAM_DRAW);
 		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+#ifdef __MOBILE__
+		size = w*h*texelsize;
+#endif
 	}
 }
 
@@ -208,7 +211,11 @@ void FHardwareTexture::AllocateBuffer(int w, int h, int texelsize)
 uint8_t *FHardwareTexture::MapBuffer()
 {
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, glBufferID);
+#ifdef __MOBILE__
+    return (uint8_t*)glMapBufferRange (GL_PIXEL_UNPACK_BUFFER, 0, size, GL_MAP_WRITE_BIT );
+#else
 	return (uint8_t*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+#endif
 }
 
 //===========================================================================
