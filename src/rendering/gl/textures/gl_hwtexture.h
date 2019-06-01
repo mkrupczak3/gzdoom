@@ -46,10 +46,15 @@ private:
     int size;
 #endif
 	int GetDepthBuffer(int w, int h);
-
+#ifdef NO_PIX_BUFF
+    uint8_t * texBuffer;
+#endif
 public:
 	FHardwareTexture(bool nocompress)
 	{
+#ifdef NO_PIX_BUFF
+        texBuffer = NULL;
+#endif
 		forcenocompression = nocompress;
 	}
 

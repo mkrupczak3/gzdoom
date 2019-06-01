@@ -152,7 +152,6 @@ void OpenGLFrameBuffer::InitializeState()
 
 	SetViewportRects(nullptr);
 
-
 	for (int n = 0; n < nbrHwBuffers; n++)
 	{
 		mVertexDataBuf[n] = new FFlatVertexBuffer(GetWidth(), GetHeight());
@@ -164,10 +163,6 @@ void OpenGLFrameBuffer::InitializeState()
 		mSkyDataBuf[n] = new FSkyVertexBuffer;
 	}
 	NextSkyBuffer();
-
-	//mSkyData = new FSkyVertexBuffer;
-	//mViewpoints = new GLViewpointBuffer;
-
 
 	for (int n = 0; n < nbrHwBuffers; n++)
 	{

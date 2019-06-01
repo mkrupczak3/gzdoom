@@ -3,14 +3,14 @@ LOCAL_PATH := $(call my-dir)/../src
 
 include $(CLEAR_VARS)
 
-LOCAL_SHORT_COMMANDS := true
+#LOCAL_SHORT_COMMANDS := true
 
-LOCAL_MODULE    := gzdoom_gl3
+LOCAL_MODULE    := g4
 
-LOCAL_CFLAGS   :=  -frtti -D__MOBILE__ -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
+LOCAL_CFLAGS   :=  -frtti -D__MOBILE__  -DOPNMIDI_DISABLE_GX_EMULATOR -DGZDOOM  -DGZDOOM_GL3 -D__STDINT_LIMITS -DENGINE_NAME=\"gzdoom_dev\"
+#-DNO_PIX_BUFF
 
-
-LOCAL_CPPFLAGS := -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14 -DHAVE_JWZGLES  -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
+LOCAL_CPPFLAGS := -DHAVE_FLUIDSYNTH -DHAVE_MPG123 -DHAVE_SNDFILE -std=c++14  -Wno-inconsistent-missing-override -Werror=format-security  -fexceptions -fpermissive -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -D__forceinline=inline -DNO_GTK -DNO_SSE -fsigned-char
 
 LOCAL_CFLAGS  += -DNO_SEND_STATS
 
@@ -164,18 +164,6 @@ POLYRENDER_SOURCES = \
 	rendering/polyrenderer/drawers/poly_draw_args.cpp \
 	rendering/polyrenderer/drawers/screen_triangle.cpp \
 	rendering/polyrenderer/math/gpu_types.cpp \
-
-
-VM_JIT_SOURCES = \
-	scripting/vm/jit.cpp \
-	scripting/vm/jit_runtime.cpp \
-	scripting/vm/jit_call.cpp \
-	scripting/vm/jit_flow.cpp \
-	scripting/vm/jit_load.cpp \
-	scripting/vm/jit_math.cpp \
-	scripting/vm/jit_move.cpp \
-	scripting/vm/jit_store.cpp \
-
 
 
  FASTMATH_SOURCES = \

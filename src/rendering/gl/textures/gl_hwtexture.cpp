@@ -195,6 +195,10 @@ void FHardwareTexture::AllocateBuffer(int w, int h, int texelsize)
 	if (texelsize < 1 || texelsize > 4) texelsize = 4;
 	glTextureBytes = texelsize;
 	bufferpitch = w;
+#ifdef NO_PIX_BUFF
+    texBuffer = (uint8_t *)malloc(w*h*texelsize);
+    return;
+#endif
 	if (rw == w || rh == h)
 	{
 		glGenBuffers(1, &glBufferID);
@@ -210,6 +214,9 @@ void FHardwareTexture::AllocateBuffer(int w, int h, int texelsize)
 
 uint8_t *FHardwareTexture::MapBuffer()
 {
+#ifdef NO_PIX_BUFF
+    return texBuffer;
+#endif
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, glBufferID);
 #ifdef __MOBILE__
     return (uint8_t*)glMapBufferRange (GL_PIXEL_UNPACK_BUFFER, 0, size, GL_MAP_WRITE_BIT );
@@ -224,7 +231,11 @@ uint8_t *FHardwareTexture::MapBuffer()
 //
 //===========================================================================
 FHardwareTexture::~FHardwareTexture() 
-{ 
+{
+#ifdef NO_PIX_BUFF
+    if( texBuffer )
+        free( texBuffer );
+#endif
 	if (glTexID != 0) glDeleteTextures(1, &glTexID);
 	if (glBufferID != 0) glDeleteBuffers(1, &glBufferID);
 }

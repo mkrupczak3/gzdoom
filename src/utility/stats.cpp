@@ -110,6 +110,9 @@ void FStat::PrintStat ()
 					DTA_VirtualHeight, screen->GetHeight() / textScale,
 					DTA_KeepRatio, true, TAG_DONE);
 				count++;
+#ifdef __ANDROID__
+                //LOGI("STAT: %s", stattext.GetChars());
+#endif
 			}
 		}
 	}
