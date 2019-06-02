@@ -1529,6 +1529,10 @@ void DAutomap::doFollowPlayer ()
 	}
 }
 
+#ifdef __MOBILE__
+extern void Mobile_AM_controls(double *zoom, double *pan_x, double *pan_y );
+#endif
+
 //=============================================================================
 //
 // Updates on Game Tick
@@ -1554,6 +1558,12 @@ void DAutomap::Ticker ()
 		if (Button_AM_PanUp.bDown) m_paninc.y += FTOM(F_PANINC);
 		if (Button_AM_PanDown.bDown) m_paninc.y -= FTOM(F_PANINC);
 	}
+
+#ifdef __MOBILE__
+    double zoom = am_zoomdir;
+	Mobile_AM_controls(&zoom,&m_paninc.x,&m_paninc.y);
+	am_zoomdir = zoom;
+#endif
 
 	// Change the zoom if necessary
 	if (Button_AM_ZoomIn.bDown || Button_AM_ZoomOut.bDown || am_zoomdir != 0)
