@@ -185,7 +185,7 @@ FMaterial::FMaterial(FTexture * tx, bool expanded)
 			else
 				mShaderIndex = SHADER_Brightmap;
 		}
-
+#ifndef __MOBILE__
 		if (tx->shaderindex >= FIRST_USER_SHADER)
 		{
 			const UserShaderDesc &usershader = usershaders[tx->shaderindex - FIRST_USER_SHADER];
@@ -199,6 +199,7 @@ FMaterial::FMaterial(FTexture * tx, bool expanded)
 				mShaderIndex = tx->shaderindex;
 			}
 		}
+#endif
 	}
 	mWidth = tx->GetWidth();
 	mHeight = tx->GetHeight();

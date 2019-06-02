@@ -727,6 +727,7 @@ void FShaderCollection::CompileShaders(EPassType passType)
 		}
 	}
 
+#ifndef __MOBILE__
 	for(unsigned i = 0; i < usershaders.Size(); i++)
 	{
 		FString name = ExtractFileBase(usershaders[i].shader);
@@ -734,6 +735,7 @@ void FShaderCollection::CompileShaders(EPassType passType)
 		FShader *shc = Compile(name, usershaders[i].shader, defaultshaders[usershaders[i].shaderType].lightfunc, defines, true, passType);
 		mMaterialShaders.Push(shc);
 	}
+#endif
 
 	for(int i=0;i<MAX_EFFECTS;i++)
 	{
